@@ -195,10 +195,10 @@ export const ROLE_THEMES = {
         hover: 'hover:bg-pink-800'
     },
     [UserRole.STAFF]: {
-        primary: 'text-mosport-staff',
-        bg: 'bg-mosport-staff',
-        border: 'border-white',
-        hover: 'hover:bg-gray-200'
+        primary: 'text-purple-400',
+        bg: 'bg-purple-600',
+        border: 'border-purple-500',
+        hover: 'hover:bg-purple-700'
     }
 };
 

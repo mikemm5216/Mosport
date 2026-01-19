@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { UserRole } from '../types';
+import { Button } from './Button';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -92,15 +93,25 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className={`w-full py-3 rounded-lg font-bold text-sm text-white shadow-lg transition-all ${view === UserRole.FAN ? 'bg-mosport-fan hover:bg-blue-800 shadow-blue-900/20' :
-                            view === UserRole.VENUE ? 'bg-mosport-venue hover:bg-pink-800 shadow-pink-900/20' :
-                                'bg-mosport-staff text-black hover:bg-gray-200 shadow-gray-900/20'
-                            }`}
+                    <Button
+                        variant="primary"
+                        fullWidth
+                        onClick={() => handleLogin()}
+                        className="mb-3"
                     >
                         {view === UserRole.STAFF ? 'Access Portal' : 'Sign In'}
-                    </button>
+                    </Button>
+
+                    {(view === UserRole.FAN || view === UserRole.VENUE) && (
+                        <Button
+                            variant="outline"
+                            fullWidth
+                            onClick={() => onLoginAs(view)}
+                            className="bg-transparent border-gray-600 text-gray-400 hover:text-white hover:border-white"
+                        >
+                            Skip (Guest Mode)
+                        </Button>
+                    )}
 
                     {view === UserRole.FAN && (
                         <div className="space-y-3 pt-4 border-t border-gray-800">
