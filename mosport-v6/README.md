@@ -1,52 +1,56 @@
 # Mosport V6
 
-這是一個使用 Vite 和 TypeScript 構建的 React 專案。
+Welcome to the Mosport V6 engineering repository. This project is a modern React application built with TypeScript, Vite, and Tailwind CSS.
 
-## 專案設定 (Setup)
+## 🚀 Getting Started
 
-### 先決條件
-請確保您的系統已安裝 [Node.js](https://nodejs.org/) (建議 v18 或更高版本)。
+### Prerequisites
+- Node.js (v18 or higher)
+- npm (v9 or higher)
 
-### 安裝依賴 (Installation)
+### Installation
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
-
-## 開發 (Development)
-
-啟動本地開發伺服器：
-
+### Development
+Start the local development server:
 ```bash
 npm run dev
 ```
+Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
 
-伺服器將在 `http://localhost:3000` (或其他可用端口) 啟動。
-
-## 部署 (Deployment)
-
-本專案包含一個 GitHub Action (`.github/workflows/deploy.yml`)，用於自動部署到 GitHub Pages。
-
-### 手動構建 (Build)
-
+### Build
+Build the application for production:
 ```bash
 npm run build
 ```
+The output files will be in the `dist` directory.
 
-構建後的檔案將位於 `dist` 目錄中。
+## 🛠 Tech Stack
+- **Framework**: React 18
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Build Tool**: Vite
+- **Icons**: Heroicons (via SVG)
 
-### 預覽 (Preview)
-
-預覽構建後的應用程式：
-
-```bash
-npm run preview
+## 📦 Project Structure
+```
+src/
+  ├── components/    # Reusable UI components (Navbar, DecisionCard, etc.)
+  ├── services/      # Business logic (MoEngine)
+  ├── constants.ts   # Mock data and configuration
+  ├── types.ts       # TypeScript interfaces
+  ├── App.tsx        # Main application layout and state
+  └── main.tsx       # Entry point
 ```
 
-## 專案結構 structure
+## 🚢 Deployment
+This repository is configured with GitHub Actions for automatic deployment to GitHub Pages.
+- Pushes to `main` branch trigger a build and deploy.
+- Ensure "Build and deployment" source is set to "GitHub Actions" in your repository Settings > Pages.
 
-- `src/` - 原始碼
-  - `components/` - React 組件
-  - `services/` - 服務邏輯 (API calls 等)
-  - `App.tsx` - 主應用入口
-  - `vite.config.ts` - Vite 設定檔
+## 🛡️ Content Policy
+This codebase includes filtering mechanisms to ensure safe and appropriate content delivery.
