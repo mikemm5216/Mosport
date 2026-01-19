@@ -23,17 +23,15 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        working-directory: ./mosport-v6
         run: npm install
 
       - name: Build
-        working-directory: ./mosport-v6
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./mosport-v6/dist
+          path: ./dist
 
   deploy:
     environment:
