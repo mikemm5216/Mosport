@@ -1,4 +1,3 @@
-import React from 'react';
 import { ROLE_THEMES } from '../constants';
 import { UserRole } from '../types';
 

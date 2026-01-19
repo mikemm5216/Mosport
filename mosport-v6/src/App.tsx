@@ -102,7 +102,7 @@ function App() {
 
             <Navbar
                 currentRole={currentRole}
-                setRole={setCurrentRole}
+
                 onLoginClick={() => setIsAuthOpen(true)}
                 onHomeClick={handleHomeClick}
             />

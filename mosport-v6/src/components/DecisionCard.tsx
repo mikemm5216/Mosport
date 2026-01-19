@@ -1,4 +1,4 @@
-import React from 'react';
+import { MouseEvent } from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
 import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
@@ -11,7 +11,7 @@ interface DecisionCardProps {
 export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const isVenueRole = userRole === UserRole.VENUE;
 
-    const handleBookTable = (e: React.MouseEvent, venue: any) => {
+    const handleBookTable = (e: MouseEvent, venue: any) => {
         e.stopPropagation();
         if (venue.googleMapUrl) {
             window.open(venue.googleMapUrl, '_blank');
@@ -21,7 +21,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
         window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
     };
 
-    const handleBuyTicket = (e: React.MouseEvent) => {
+    const handleBuyTicket = (e: MouseEvent) => {
         e.stopPropagation();
         const { league, title, teamA } = signal.event;
         let url = '';
@@ -83,7 +83,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                     {isVenueRole && <span className="text-[10px] font-bold text-mosport-venue">VENUE MODE: SHOWING RANKING</span>}
                 </div>
                 <div className="divide-y divide-gray-800">
-                    {signal.matchedVenues.slice(0, 6).map((match, idx) => (
+                    {signal.matchedVenues.slice(0, 6).map((match) => (
                         <div key={match.venue.id} className="p-4 flex gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
                             <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
                                 <img
