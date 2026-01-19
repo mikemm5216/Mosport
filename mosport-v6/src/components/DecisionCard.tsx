@@ -1,8 +1,7 @@
-import { Action, Button } from './Button'; // Actually button export only
-import { DecisionSignal, UserRole, VLEAGUE_TEAM_LINKS } from '../types'; // Update imports
+import React from 'react';
 import { Button as ButtonComp } from './Button';
-import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants'; // Need to import constants
-import { UserRole } from '../types';
+import { DecisionSignal, UserRole } from '../types';
+import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
 
 interface DecisionCardProps {
     signal: DecisionSignal;

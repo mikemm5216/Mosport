@@ -1,14 +1,15 @@
+import React from 'react';
 import { ROLE_THEMES } from '../constants';
 import { UserRole } from '../types';
 
 interface NavbarProps {
     currentRole: UserRole;
-    setRole: (role: UserRole) => void;
+
     onLoginClick: () => void;
     onHomeClick: () => void;
 }
 
-export const Navbar = ({ currentRole, setRole, onLoginClick, onHomeClick }: NavbarProps) => {
+export const Navbar = ({ currentRole, onLoginClick, onHomeClick }: NavbarProps) => {
     const theme = ROLE_THEMES[currentRole];
     return (
         <nav className="sticky top-0 z-50 bg-mosport-black/90 backdrop-blur-md border-b border-gray-800">
