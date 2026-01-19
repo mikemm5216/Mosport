@@ -94,9 +94,9 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                     </div>
 
                     <Button
+                        type="submit"
                         variant="primary"
                         fullWidth
-                        onClick={() => handleLogin()}
                         className="mb-3"
                     >
                         {view === UserRole.STAFF ? 'Access Portal' : 'Sign In'}
