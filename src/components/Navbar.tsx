@@ -1,4 +1,3 @@
-import { ROLE_THEMES } from '../constants';
 import { UserRole } from '../types';
 
 interface NavbarProps {
@@ -9,8 +8,6 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ currentRole, isGuestMode = false, onLoginClick, onHomeClick }: NavbarProps) => {
-    const theme = ROLE_THEMES[currentRole];
-
     const getRoleColor = (role: UserRole) => {
         switch (role) {
             case UserRole.FAN: return 'text-mosport-fan';
