@@ -31,14 +31,6 @@ function App() {
         fetchData();
     }, [locationFilter]);
 
-    const handleRoleLogin = (role: UserRole) => {
-        setCurrentRole(role);
-        setHasEntered(true);
-        setIsGuestMode(false); // Actual login, not guest mode
-        setIsAuthOpen(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     const handleSkipLogin = (role: UserRole) => {
         setCurrentRole(role);
         setHasEntered(true);
