@@ -8,11 +8,15 @@ import { VenueAnalytics } from './components/VenueAnalytics';
 import { DecisionCard } from './components/DecisionCard';
 import { AuthModal } from './components/AuthModal';
 
+import { LandingPage } from './components/LandingPage';
+
 function App() {
     const [currentRole, setCurrentRole] = useState<UserRole>(UserRole.FAN);
     const [signals, setSignals] = useState<any[]>([]); // Using any[] for now to match the implicit structure, ideally strict DecisionSignal[]
     const [loading, setLoading] = useState(true);
     const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [hasEntered, setHasEntered] = useState(false);
+    const [isGuestMode, setIsGuestMode] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [locationFilter, setLocationFilter] = useState('Ha Noi');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
@@ -27,14 +31,18 @@ function App() {
         fetchData();
     }, [locationFilter]);
 
-    const handleRoleLogin = (role: UserRole) => {
+    const handleSkipLogin = (role: UserRole) => {
         setCurrentRole(role);
+        setHasEntered(true);
+        setIsGuestMode(true); // Skip = Guest Mode
         setIsAuthOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleHomeClick = () => {
+        setHasEntered(false);
         setCurrentRole(UserRole.FAN);
+        setIsGuestMode(false);
         setSearchTerm('');
         setLocationFilter('Ha Noi');
         setDateRange({ from: '', to: '' });
@@ -86,6 +94,19 @@ function App() {
         return matchesSearch && matchesDate;
     });
 
+    if (!hasEntered) {
+        return (
+            <>
+                <LandingPage onLoginClick={() => setIsAuthOpen(true)} />
+                <AuthModal
+                    isOpen={isAuthOpen}
+                    onClose={() => setIsAuthOpen(false)}
+                    onLoginAs={handleSkipLogin}
+                />
+            </>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-mosport-black font-sans text-gray-200 pb-20 selection:bg-pink-500 selection:text-white">
             <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-center py-2 px-4 border-b border-white/5 shadow-lg relative z-50">
@@ -102,7 +123,7 @@ function App() {
 
             <Navbar
                 currentRole={currentRole}
-
+                isGuestMode={isGuestMode}
                 onLoginClick={() => setIsAuthOpen(true)}
                 onHomeClick={handleHomeClick}
             />
@@ -153,7 +174,7 @@ function App() {
             <AuthModal
                 isOpen={isAuthOpen}
                 onClose={() => setIsAuthOpen(false)}
-                onLoginAs={handleRoleLogin}
+                onLoginAs={handleSkipLogin}
             />
         </div>
     );
