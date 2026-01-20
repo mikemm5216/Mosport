@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserRole } from '../types';
 import { Button } from './Button';
+import { generateOAuthUrl } from '../config/oauth';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -25,10 +26,27 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
         }
     };
 
-    const handleOAuthLogin = (provider: string) => {
-        // TODO: Implement actual OAuth flow in Phase 1
-        console.log(`OAuth login with ${provider}`);
-        onLoginAs(view);
+    const handleOAuthLogin = (provider: 'google' | 'facebook' | 'zalo' | 'instagram') => {
+        // 暫時保持 Instagram 使用舊流程（因為沒有獨立 OAuth）
+        if (provider === 'instagram') {
+            console.log('Instagram login via Facebook OAuth');
+            onLoginAs(view);
+            return;
+        }
+
+        // 產生 OAuth URL 並跳轉
+        const oauthUrl = generateOAuthUrl(provider, `${provider}_${view}_${Date.now()}`);
+
+        if (oauthUrl === '#') {
+            setError(`Missing ${provider} credentials. Please check .env file.`);
+            return;
+        }
+
+        // 將當前角色存到 sessionStorage，callback 時會用到
+        sessionStorage.setItem('mosport_pending_role', view);
+
+        // 跳轉到 OAuth 授權頁面
+        window.location.href = oauthUrl;
     };
 
     return (
