@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    # AI / LLM
+    OPENAI_API_KEY: Union[str, None] = None
+
     class Config:
         case_sensitive = True
         env_file = ".env"
