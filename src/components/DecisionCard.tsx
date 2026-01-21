@@ -102,16 +102,29 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                         </h4>
                                         <div className="flex items-center gap-2 mt-1">
                                             {match.verificationStatus === 'VERIFIED' && (
-                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-mosport-success bg-mosport-success/10 px-1.5 py-0.5 rounded border border-mosport-success/20">
-                                                    VERIFIED
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                                                    <span>🤖</span> AI CONFIRMED
                                                 </span>
                                             )}
-                                            <div className="flex gap-1 ml-2">
-                                                {match.venue.tags.map(tag => (
-                                                    <span key={tag.id} className="text-[9px] px-1 rounded border border-gray-700 text-gray-400">
-                                                        {tag.label}
-                                                    </span>
-                                                ))}
+                                            {match.verificationStatus === 'ON_REQUEST' && (
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded border border-yellow-400/20">
+                                                    <span>⏳</span> PENDING CHECK
+                                                </span>
+                                            )}
+                                            <div className="flex gap-1 ml-2 flex-wrap">
+                                                {match.venue.tags.map(tag => {
+                                                    let colorClass = "border-gray-700 text-gray-400";
+                                                    if (tag.type === 'BROADCAST') colorClass = "border-pink-500/30 text-pink-400 bg-pink-500/10";
+                                                    if (tag.type === 'VIBE') colorClass = "border-cyan-500/30 text-cyan-400 bg-cyan-500/10";
+                                                    if (tag.type === 'SURVIVAL') colorClass = "border-green-500/30 text-green-400 bg-green-500/10";
+
+                                                    return (
+                                                        <span key={tag.id} className={`text-[9px] px-1.5 rounded border ${colorClass} flex items-center gap-1`}>
+                                                            {tag.label}
+                                                            {tag.confidence > 0.9 && <span className="text-[6px] opacity-70">★</span>}
+                                                        </span>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>
