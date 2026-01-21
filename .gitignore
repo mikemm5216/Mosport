@@ -130,3 +130,6 @@ Desktop.ini
 .vscode
 *.swp
 *.swo
+
+# Antigravity Shadow Log
+ANTIGRAVITY_LOG.md

@@ -1,0 +1,57 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from app.api import deps
+from app.models.models import User
+from app.schemas.schemas import UserCreate, Token, UserInDB
+import uuid
+
+router = APIRouter()
+
+@router.post("/callback", response_model=Token)
+async def login_access_token(
+    user_in: UserCreate,
+    db: AsyncSession = Depends(deps.get_db)
+) -> Any:
+    """
+    OAuth Callback - Exchange code for token (Simulated) & Persist User
+    """
+    # 1. Simulate Token Exchange (Pending real Client Secrets)
+    # Generate deterministic mock profile based on code
+    mock_email = f"user_{user_in.code[:5]}@example.com"
+    if user_in.code == "DEMO_CODE":
+        mock_email = "demo@mosport.app"
+    
+    mock_name = f"User {user_in.code[:5]}"
+    mock_picture = f"https://api.dicebear.com/7.x/avataaars/svg?seed={user_in.code}"
+
+    # 2. Check if user exists
+    result = await db.execute(select(User).where(User.email == mock_email))
+    user = result.scalars().first()
+
+    if not user:
+        # Create new user
+        user = User(
+            email=mock_email,
+            name=mock_name,
+            picture_url=mock_picture,
+            role=user_in.role,
+            provider=user_in.provider,
+            is_guest=False
+        )
+        db.add(user)
+    else:
+        # Update existing
+        user.name = mock_name
+        user.picture_url = mock_picture
+        user.provider = user_in.provider
+    
+    await db.commit()
+    await db.refresh(user)
+
+    # 3. Return Token & User
+    return {
+        "access_token": f"mock_jwt_{user.id}",
+        "token_type": "bearer",
+        "user": user
+    }

@@ -41,11 +41,60 @@ export const getDecisionSignals = async (locationFilter?: string): Promise<Decis
             apiClient.getVenues({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }),
         ]);
 
-        // TODO: 將 API 資料轉換為前端格式
-        // 目前先使用 Mock 資料進行計算
-        console.log('API Data:', { events: eventsData, venues: venuesData });
+        // Transform API data to DecisionSignal structure
+        const signals: DecisionSignal[] = eventsData.map((e: any) => ({
+            eventId: e.id,
+            event: {
+                id: e.id,
+                title: e.title,
+                league: e.league,
+                startTime: new Date(e.start_time),
+                teamA: e.team_a,
+                teamB: e.team_b,
+                isHot: e.status === 'live' // simple logic for now
+            },
+            matchedVenues: (e.venues || []).map((v: any) => {
+                // Calculate a pseudo probability if not provided by backend yet
+                // For now relying on verification status if available
+                let prob = 0.5;
+                if (v.verification_status === 'confirmed') prob = 1.0;
+                else if (v.verification_status === 'authority') prob = 1.0;
+                else if (v.verification_status === 'predicted') prob = 0.7;
 
-        // 暫時 fallback 到 mock 資料
+                let status: 'VERIFIED' | 'ON_REQUEST' | 'UNVERIFIED' = 'UNVERIFIED';
+                const vStatus = v.verification_status || '';
+
+                if (vStatus === 'authority' || vStatus === 'confirmed') {
+                    status = 'VERIFIED';
+                } else if (vStatus === 'predicted') {
+                    status = 'UNVERIFIED'; // or ON_REQUEST depending on logic
+                }
+
+                return {
+                    venue: {
+                        id: v.venue_id,
+                        name: v.venue_name,
+                        location: v.venue_city,
+                        distance: '2.5 km',
+                        rating: parseFloat(v.qoe_score || '0'),
+                        imageUrl: 'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&q=80',
+                        lastVerified: new Date(),
+                        tags: []
+                    },
+                    matchProbability: prob,
+                    verificationStatus: status
+                };
+            })
+        }));
+
+        console.log('Processed API Signals:', signals);
+
+        // If API returned data, return it. Otherwise fallback.
+        if (signals.length > 0) {
+            return signals;
+        }
+
+        // Fallback to mock if API returns empty (e.g. no events in DB yet)
         return getMockDecisionSignals(locationFilter);
     } catch (error) {
         console.warn('Failed to fetch from API, using mock data:', error);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
+import { apiClient } from '../services/api';
 
 export const AuthCallback = () => {
     const navigate = useNavigate();
@@ -33,32 +34,46 @@ export const AuthCallback = () => {
                 return;
             }
 
-            // TODO: 呼叫後端 API 交換 token
-            // const response = await fetch('/api/auth/callback', {
-            //   method: 'POST',
-            //   body: JSON.stringify({ code, state })
-            // });
+            // Call Backend API
+            try {
+                const provider = state?.split('_')[0] as string;
 
-            // 暫時模擬成功
-            setTimeout(() => {
-                const provider = state?.split('_')[0] as 'google' | 'facebook' | 'zalo';
-
-                setUser({
-                    role: pendingRole,
-                    isAuthenticated: true,
-                    isGuest: false,
-                    provider,
-                    profile: {
-                        name: 'Demo User',
-                        email: 'demo@mosport.app',
-                    },
+                const response = await apiClient.handleOAuthCallback({
+                    code: code!,
+                    provider: provider || 'google', // fallback if parsing failed
+                    role: pendingRole
                 });
 
-                sessionStorage.removeItem('mosport_pending_role');
-                setStatus('success');
+                if (response.success && response.user) {
+                    const apiUser = response.user;
 
-                setTimeout(() => navigate('/dashboard'), 1000);
-            }, 2000);
+                    setUser({
+                        role: apiUser.role,
+                        isAuthenticated: true,
+                        isGuest: false,
+                        provider: apiUser.provider,
+                        profile: {
+                            name: apiUser.name,
+                            email: apiUser.email,
+                            picture: apiUser.picture,
+                        },
+                    });
+
+                    // Clear pending state
+                    sessionStorage.removeItem('mosport_pending_role');
+                    setStatus('success');
+
+                    // Redirect to dashboard
+                    setTimeout(() => navigate('/dashboard'), 500);
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+            } catch (err: any) {
+                console.error('Auth Callback Failed:', err);
+                setError(err.message || 'Authentication failed');
+                setStatus('error');
+                setTimeout(() => navigate('/'), 3000);
+            }
         };
 
         handleCallback();

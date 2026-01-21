@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
             'venue_id', v.id,
             'venue_name', v.name,
             'venue_city', v.city,
+            'venue_address', v.address,
             'verification_status', ve.verification_status,
             'qoe_score', v.qoe_score
           )
