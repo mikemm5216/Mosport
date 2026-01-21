@@ -33,6 +33,10 @@
 - **Local Persistence**: 凡是由 Antigravity (AI Agent) 執行的更改，必須記錄於本地檔案 `ANTIGRAVITY_LOG.md`，內容包含時間戳記與變更摘要。
 - **No Cloud Sync**: 該紀錄檔必須加入 `.gitignore`，嚴禁上傳至 GitHub 或任何雲端儲存空間。
 
+### 1.6 The "Monolingual" Doctrine (單一語言原則)
+- **English Only**: 為了保持開發速度與品牌一致性，全站 UI/UX 僅支援 **English (英文)**。
+- **No i18n**: 嚴禁安裝任何 i18n 函式庫 (e.g., `react-i18next`) 或建立多語系 JSON 檔案。
+
 ---
 
 ## 2. System Architecture Layers (系統分層架構)
