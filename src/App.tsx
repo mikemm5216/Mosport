@@ -4,11 +4,14 @@ import { Dashboard } from './pages/Dashboard';
 import { AuthCallback } from './pages/AuthCallback';
 import { useAuthStore } from './stores/useAuthStore';
 
+import { SEO } from './components/SEO';
+
 function App() {
     const { user } = useAuthStore();
 
     return (
         <BrowserRouter>
+            <SEO />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />

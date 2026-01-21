@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AuthModal } from '../components/AuthModal';
 import { UserRole } from '../types';
 import { useAuthStore } from '../stores/useAuthStore';
+import { SEO } from '../components/SEO';
 
 export const LandingPage = () => {
     const navigate = useNavigate();
@@ -22,6 +23,10 @@ export const LandingPage = () => {
 
     return (
         <>
+            <SEO
+                title="Home"
+                description="Find the best place to watch sports near you. Mosport connects fans with venues showing live matches."
+            />
             <LandingPageComponent onLoginClick={handleLoginClick} />
             <AuthModal
                 isOpen={isAuthOpen}
