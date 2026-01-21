@@ -6,10 +6,15 @@ from app.models.models import User
 from app.schemas.schemas import UserCreate, Token, UserInDB
 import uuid
 
+from starlette.requests import Request
+from app.core.limiter import limiter
+
 router = APIRouter()
 
 @router.post("/callback", response_model=Token)
+@limiter.limit("5/minute")
 async def login_access_token(
+    request: Request,
     user_in: UserCreate,
     db: AsyncSession = Depends(deps.get_db)
 ) -> Any:
