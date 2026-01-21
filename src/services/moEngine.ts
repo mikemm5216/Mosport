@@ -36,9 +36,9 @@ const determineVerificationStatus = (prob: number) => {
 export const getDecisionSignals = async (locationFilter?: string): Promise<DecisionSignal[]> => {
     try {
         // 嘗試從真實 API 取得資料
-        const [eventsData, venuesData] = await Promise.all([
-            apiClient.getEvents({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }),
-            apiClient.getVenues({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }),
+        const [eventsData] = await Promise.all([
+            apiClient.getEvents({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }) as Promise<any[]>,
+            // Venue fetching removed as it was unused and causing build error
         ]);
 
         // Transform API data to DecisionSignal structure

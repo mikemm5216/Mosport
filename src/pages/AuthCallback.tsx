@@ -42,7 +42,7 @@ export const AuthCallback = () => {
                     code: code!,
                     provider: provider || 'google', // fallback if parsing failed
                     role: pendingRole
-                });
+                }) as any;
 
                 if (response.success && response.user) {
                     const apiUser = response.user;
