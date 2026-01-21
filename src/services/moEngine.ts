@@ -1,5 +1,6 @@
 import { MOCK_EVENTS, MOCK_VENUES } from '../constants';
 import { DecisionSignal, QoETagType, SportEvent, Venue } from '../types';
+import { apiClient } from './api';
 
 const calculateMatchProbability = (event: SportEvent, venue: Venue) => {
     let score = 0.5;
@@ -28,7 +29,34 @@ const determineVerificationStatus = (prob: number) => {
     return 'UNVERIFIED';
 };
 
+/**
+ * 從後端 API 取得賽事與場館資料，並計算 Decision Signals
+ * Fallback 到 Mock 資料如果 API 失敗
+ */
 export const getDecisionSignals = async (locationFilter?: string): Promise<DecisionSignal[]> => {
+    try {
+        // 嘗試從真實 API 取得資料
+        const [eventsData, venuesData] = await Promise.all([
+            apiClient.getEvents({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }),
+            apiClient.getVenues({ city: locationFilter !== 'Near Current Loc' ? locationFilter : undefined }),
+        ]);
+
+        // TODO: 將 API 資料轉換為前端格式
+        // 目前先使用 Mock 資料進行計算
+        console.log('API Data:', { events: eventsData, venues: venuesData });
+
+        // 暫時 fallback 到 mock 資料
+        return getMockDecisionSignals(locationFilter);
+    } catch (error) {
+        console.warn('Failed to fetch from API, using mock data:', error);
+        return getMockDecisionSignals(locationFilter);
+    }
+};
+
+/**
+ * Mock 資料處理（原有邏輯）
+ */
+const getMockDecisionSignals = async (locationFilter?: string): Promise<DecisionSignal[]> => {
     await new Promise(resolve => setTimeout(resolve, 600));
     const venueUsageCounter: Record<string, number> = {};
 

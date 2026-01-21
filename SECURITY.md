@@ -12,6 +12,22 @@ Our security model is based on **Data Minimalism** and **Architectural Isolation
 2.  **Federated Identity:** We do not store user passwords. Authentication is handled exclusively via OAuth 2.0 / OIDC (Zalo, Google, Facebook).
 3.  **Compare-only Engine:** Our backend outputs decision signals, not raw data dumps.
 
+### Infrastructure & Data Isolation
+
+**Deployment Environment:**
+- **Region:** AWS Singapore (`ap-southeast-1`)
+- **Database:** Neon (Serverless PostgreSQL)
+
+**Three-Layer Data Segmentation:**
+- **Hot Zone:** Base data for `users` and `venues` (public profile info)
+- **Vault:** Encrypted `access_token` storage with **AES-256 field-level encryption**
+- **Dump:** Social index cache with `ON DELETE CASCADE` for automatic privacy compliance
+
+**Encryption Standards:**
+- OAuth tokens: AES-256-GCM with per-record unique IV
+- Database-level encryption: Neon managed encryption at rest
+- TLS 1.3 for all data in transit
+
 ## Supported Versions
 
 Mosport operates primarily as a SaaS (Software as a Service) platform. Therefore, only the most recent deployment is actively supported.
