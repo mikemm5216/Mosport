@@ -51,7 +51,12 @@ class Event(Base):
     team_a = Column(String)
     team_b = Column(String)
     start_time = Column(DateTime(timezone=True), index=True)
-    status = Column(String, default="scheduled") # scheduled, live, finished
+    status = Column(String, default="scheduled") # scheduled, live, finished, cancelled
+    
+    # DTSS / Constitutional Compliance Fields (Derivative data only)
+    confidence_score = Column(Float, default=0.0)  # T-1/T-24/T-7 verification score
+    last_verified = Column(DateTime(timezone=True))  # Last DTSS check timestamp
+    override_reason = Column(Text)  # If status=cancelled due to 'Private Event', 'Closed', etc.
     
     # Using VennueEvent association
     venues = relationship("VenueEvent", back_populates="event")

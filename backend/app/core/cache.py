@@ -6,6 +6,23 @@ import json
 
 logger = logging.getLogger(__name__)
 
+# Constitutional Compliance: Section 3.3 Smart Caching
+# TTL tiers for different data types
+class CacheTTL:
+    """
+    Cache TTL Constants (Section 3.3 - Cache as ATM)
+    
+    - STATIC: 30 days - Venue location, facilities, hotel lists
+    - SEMI_DYNAMIC: 7 days - Event fixtures, schedules
+    - RAW: 48 hours - Social media posts, scraping data
+    - SESSION: 1 hour - User session data
+    """
+    STATIC = 86400 * 30       # 30 days (2,592,000 seconds)
+    SEMI_DYNAMIC = 86400 * 7  # 7 days (604,800 seconds)
+    RAW = 86400 * 2           # 48 hours (172,800 seconds)
+    SESSION = 3600            # 1 hour
+
+
 class CacheService:
     _instance = None
     
@@ -39,7 +56,32 @@ class CacheService:
             logger.warning(f"Redis get failed: {e}")
             return None
 
-    async def set(self, key: str, value: Any, ttl: int = 3600) -> bool:
+    async def set(self, key: str, value: Any, ttl: int = CacheTTL.RAW) -> bool:
+        """
+        Set cache value with TTL.
+        
+        Args:
+            key: Cache key
+            value: Value to cache (dict/list will be JSON serialized)
+            ttl: Time-to-live in seconds. Use CacheTTL constants:
+                - CacheTTL.STATIC (30 days) - Venue info, locations
+                - CacheTTL.SEMI_DYNAMIC (7 days) - Event fixtures
+                - CacheTTL.RAW (48 hours) - Social media posts (default)
+                - CacheTTL.SESSION (1 hour) - User sessions
+        
+        Returns:
+            bool: Success status
+        
+        Example:
+            # Store venue location (static data)
+            await cache.set("venue:123:location", {...}, CacheTTL.STATIC)
+            
+            # Store event fixture (semi-dynamic)
+            await cache.set("event:456:fixture", {...}, CacheTTL.SEMI_DYNAMIC)
+            
+            # Store raw social post (default)
+            await cache.set("raw:post:789", {...})  # Uses CacheTTL.RAW
+        """
         if not self.redis:
             return False
         try:

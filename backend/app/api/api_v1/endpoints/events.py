@@ -8,12 +8,12 @@ from app.models.models import Event, VenueEvent
 from app.schemas.schemas import EventWithVenues
 
 from starlette.requests import Request
-from app.core.limiter import limiter
+from app.core.limiter import limiter, role_based_limit
 
 router = APIRouter()
 
 @router.get("/", response_model=List[EventWithVenues])
-@limiter.limit("60/minute")
+@limiter.limit(role_based_limit())  # Constitutional: Role-based rate limiting
 async def read_events(
     request: Request,
     db: AsyncSession = Depends(deps.get_db),
