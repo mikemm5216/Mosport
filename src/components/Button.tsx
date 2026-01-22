@@ -6,6 +6,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     roleVariant?: UserRole;
     fullWidth?: boolean;
     children?: React.ReactNode;
+    className?: string;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
+    type?: "button" | "submit" | "reset";
+    disabled?: boolean;
 }
 
 export const Button = ({ children, variant = 'primary', roleVariant, fullWidth = false, className = '', ...props }: ButtonProps) => {

@@ -90,7 +90,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                     src={match.venue.imageUrl}
                                     alt={match.venue.name}
                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                                    onError={(e) => { e.currentTarget.src = FALLBACK_VENUE_IMAGE; }}
+                                    onError={(e: any) => { e.currentTarget.src = FALLBACK_VENUE_IMAGE; }}
                                 />
                             </div>
                             <div className="flex-1">
@@ -137,7 +137,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                                 Prob: {(match.matchProbability * 100).toFixed(0)}%
                                             </div>
                                         ) : (
-                                            <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e) => handleBookTable(e, match.venue)}>
+                                            <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => handleBookTable(e, match.venue)}>
                                                 Book Table
                                             </ButtonComp>
                                         )}
