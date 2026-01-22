@@ -18,13 +18,12 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: api/package-lock.json
+        # Fix: package-lock.json is in root, not api/
+        cache-dependency-path: package-lock.json
 
     - name: Install Dependencies
       run: npm install
-      working-directory: ./  # Root directory where package.json is (assuming combined repo or adjusted path)
-      # Note: If package.json is in root, use ./, if in src, adjust accordingly.
-      # Based on file structure, package.json is in root.
+      working-directory: ./
     
     - name: Build Frontend
       run: npm run build
