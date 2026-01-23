@@ -12,15 +12,7 @@ interface DecisionCardProps {
 export const DecisionCard = ({ signal, userRole, onRequireLogin }: DecisionCardProps) => {
     const isVenueRole = userRole === UserRole.VENUE;
 
-    const handleBookTable = (e: MouseEvent, venue: any) => {
-        e.stopPropagation();
-        if (venue.googleMapUrl) {
-            window.open(venue.googleMapUrl, '_blank');
-            return;
-        }
-        const query = encodeURIComponent(`${venue.name} ${venue.location}`);
-        window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
-    };
+
 
     const handleBuyTicket = (e: MouseEvent) => {
         e.stopPropagation();

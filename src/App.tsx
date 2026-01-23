@@ -7,7 +7,7 @@ import { useAuthStore } from './stores/useAuthStore';
 import { SEO } from './components/SEO';
 
 function App() {
-    const { user } = useAuthStore();
+    // const { user } = useAuthStore(); // user param is currently unused in this simplified routing
 
     return (
         <BrowserRouter>
