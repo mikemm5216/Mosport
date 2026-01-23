@@ -7,3 +7,4 @@ apscheduler
 redis
 pipreqs
 requests
+slowapi
