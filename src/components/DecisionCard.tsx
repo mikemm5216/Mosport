@@ -6,9 +6,10 @@ import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
 interface DecisionCardProps {
     signal: DecisionSignal;
     userRole: UserRole;
+    onRequireLogin: () => void;
 }
 
-export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
+export const DecisionCard = ({ signal, userRole, onRequireLogin }: DecisionCardProps) => {
     const isVenueRole = userRole === UserRole.VENUE;
 
     const handleBookTable = (e: MouseEvent, venue: any) => {
@@ -137,7 +138,16 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                                 Prob: {(match.matchProbability * 100).toFixed(0)}%
                                             </div>
                                         ) : (
-                                            <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => handleBookTable(e, match.venue)}>
+                                            <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => {
+                                                e.stopPropagation();
+                                                // Trigger Login if Guest/Fan trying to book
+                                                // (Assuming Fan is default guest role from LandingPage)
+                                                // We can simply set "Action-based login" policy here
+                                                onRequireLogin();
+
+                                                // Note: Ideally we wait for login success before proceeding, 
+                                                // but for now we just show login modal.
+                                            }}>
                                                 Book Table
                                             </ButtonComp>
                                         )}

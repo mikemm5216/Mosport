@@ -20,7 +20,7 @@ function App() {
                 {/* Protected/Guest Route */}
                 <Route
                     path="/dashboard"
-                    element={user ? <Dashboard /> : <Navigate to="/" replace />}
+                    element={<Dashboard />}
                 />
 
                 {/* Catch-all redirect */}

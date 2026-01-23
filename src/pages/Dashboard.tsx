@@ -43,28 +43,22 @@ export const Dashboard = () => {
         navigate('/');
     };
 
-    // Smart Search Mapping
-    const getSearchKeywords = (term: string) => {
-        const t = term.toLowerCase();
-        if (t === 'soccer' || t === 'football' || t === 'bong da') return ['v.league', 'premier league', 'champions league', 'aff cup', 'vietnam', 'hanoi'];
-        if (t === 'baseball') return ['mlb', 'npb'];
-        if (t === 'basketball') return ['nba', 'vba'];
-        if (t === 'hanoi' || t === 'ha noi') return ['hanoi', 'ha noi'];
-        return [t];
-    };
+
 
     const filteredBySearch = signals.filter(s => {
-        // 1. Text Search
-        const lowerTerm = searchTerm.toLowerCase();
+        // 1. Fuzzy Text Search
+        const lowerTerm = searchTerm.toLowerCase().trim();
         let matchesSearch = true;
+
         if (lowerTerm) {
-            const keywords = getSearchKeywords(lowerTerm);
-            matchesSearch = keywords.some((k: string) =>
-                s.event.title.toLowerCase().includes(k) ||
-                s.event.league.toLowerCase().includes(k) ||
-                s.event.teamA.toLowerCase().includes(k) ||
-                s.event.teamB.toLowerCase().includes(k)
-            );
+            // Check if term matches ANY of the key fields
+            const searchableText = `
+                ${s.event.title.toLowerCase()} 
+                ${s.event.league.toLowerCase()} 
+                ${s.event.teamA.toLowerCase()} 
+                ${s.event.teamB.toLowerCase()}
+            `;
+            matchesSearch = searchableText.includes(lowerTerm);
         }
 
         // 2. Date Range Search
@@ -140,6 +134,7 @@ export const Dashboard = () => {
                                     key={signal.eventId}
                                     signal={signal}
                                     userRole={currentRole}
+                                    onRequireLogin={() => setIsAuthOpen(true)}
                                 />
                             ))
                         ) : (

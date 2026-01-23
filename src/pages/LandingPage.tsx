@@ -11,13 +11,9 @@ export const LandingPage = () => {
     const [isAuthOpen, setIsAuthOpen] = useState(false);
     const { setGuest } = useAuthStore();
 
-    const handleLoginClick = () => {
-        setIsAuthOpen(true);
-    };
-
-    const handleSkipLogin = (role: UserRole) => {
-        setGuest(role);
-        setIsAuthOpen(false);
+    const handleStartJourney = () => {
+        // Default to Fan Guest Mode
+        setGuest(UserRole.FAN);
         navigate('/dashboard');
     };
 
@@ -27,12 +23,8 @@ export const LandingPage = () => {
                 title="Home"
                 description="Find the best place to watch sports near you. Mosport connects fans with venues showing live matches."
             />
-            <LandingPageComponent onLoginClick={handleLoginClick} />
-            <AuthModal
-                isOpen={isAuthOpen}
-                onClose={() => setIsAuthOpen(false)}
-                onLoginAs={handleSkipLogin}
-            />
+            <LandingPageComponent onLoginClick={handleStartJourney} />
+
         </>
     );
 };
