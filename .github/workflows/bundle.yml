@@ -17,9 +17,9 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
+        # cache: 'npm'
         # Fix: package-lock.json is in root, not api/
-        cache-dependency-path: package-lock.json
+        # cache-dependency-path: package-lock.json
 
     - name: Install Dependencies
       run: npm install
