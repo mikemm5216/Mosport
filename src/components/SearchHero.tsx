@@ -50,13 +50,23 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
                 <div className="max-w-4xl mx-auto bg-mosport-dark border border-gray-700 rounded-xl p-2 flex flex-col md:flex-row gap-2 shadow-2xl">
                     <div className="flex-[1.5] px-4 py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">I want to watch</label>
-                        <input
-                            type="text"
+                        <select
                             value={term}
-                            onChange={handleInputChange}
-                            placeholder="Team or League?"
-                            className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600"
-                        />
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setTerm(val);
+                                onSearch(val);
+                            }}
+                            className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600 [&>option]:text-black"
+                        >
+                            <option value="">Select Team or League</option>
+                            <option value="Premier League">Premier League</option>
+                            <option value="Champions League">Champions League</option>
+                            <option value="Vietnam National Team">Vietnam National Team</option>
+                            <option value="Manchester United">Manchester United</option>
+                            <option value="Liverpool">Liverpool</option>
+                            <option value="Arsenal">Arsenal</option>
+                        </select>
                     </div>
                     <div className="flex-[1.8] px-4 py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Date Range (From - To)</label>
