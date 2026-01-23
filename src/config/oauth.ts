@@ -12,22 +12,22 @@ export interface OAuthConfig {
 
 export const oauthConfig = {
     google: {
-        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
-        redirectUri: import.meta.env.VITE_OAUTH_REDIRECT_URI || `${window.location.origin}/auth/callback`,
+        clientId: '395326060348-r3av2c3qijuuq2ibdgfkd928ss9vbdbc.apps.googleusercontent.com',
+        redirectUri: 'https://mosport.app/auth/callback',
         authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
         scope: 'openid email profile',
     } as OAuthConfig,
 
     facebook: {
-        clientId: import.meta.env.VITE_FACEBOOK_APP_ID || '',
-        redirectUri: import.meta.env.VITE_OAUTH_REDIRECT_URI || `${window.location.origin}/auth/callback`,
+        clientId: '1356000812963818',
+        redirectUri: 'https://mosport.app/auth/callback',
         authUrl: 'https://www.facebook.com/v18.0/dialog/oauth',
         scope: 'public_profile,email',
     } as OAuthConfig,
 
     zalo: {
-        clientId: import.meta.env.VITE_ZALO_APP_ID || '',
-        redirectUri: import.meta.env.VITE_OAUTH_REDIRECT_URI || `${window.location.origin}/auth/callback`,
+        clientId: '4270389622263061825',
+        redirectUri: 'https://mosport.app/auth/callback',
         authUrl: 'https://oauth.zaloapp.com/v4/permission',
         scope: 'id,name,picture',
     } as OAuthConfig,
