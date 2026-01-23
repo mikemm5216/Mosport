@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserRole } from '../types';
 import { Button } from './Button';
 import { generateOAuthUrl } from '../config/oauth';
+import { useAuthStore } from '../stores/useAuthStore';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -9,10 +10,17 @@ interface AuthModalProps {
     onLoginAs: (role: UserRole) => void;
 }
 
+declare global {
+    interface Window {
+        FB: any;
+    }
+}
+
 export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
     const [view, setView] = useState<UserRole>(UserRole.FAN);
     const [staffToken, setStaffToken] = useState('');
     const [error, setError] = useState('');
+    const { setUser } = useAuthStore();
 
     if (!isOpen) return null;
 
@@ -26,8 +34,45 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
         }
     };
 
-    const handleOAuthLogin = (provider: 'google' | 'facebook' | 'zalo') => {
+    const handleFacebookLogin = () => {
+        if (!window.FB) {
+            setError('Facebook SDK not loaded.');
+            return;
+        }
 
+        window.FB.login((response: any) => {
+            if (response.authResponse) {
+                console.log('Welcome! Fetching your information.... ');
+                window.FB.api('/me', { fields: 'name,email,picture' }, (profile: any) => {
+                    console.log('Good to see you, ' + profile.name + '.');
+
+                    // Directly verify user via client-side SDK for smoother UX
+                    setUser({
+                        role: view,
+                        isAuthenticated: true,
+                        isGuest: false,
+                        provider: 'facebook',
+                        profile: {
+                            name: profile.name,
+                            email: profile.email,
+                            picture: profile.picture?.data?.url
+                        }
+                    });
+                    onClose();
+                });
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+                setError('Facebook login cancelled.');
+            }
+        }, { scope: 'public_profile,email' });
+    };
+
+    const handleOAuthLogin = (provider: 'google' | 'facebook' | 'zalo') => {
+        // Special handling for Facebook SDK
+        if (provider === 'facebook') {
+            handleFacebookLogin();
+            return;
+        }
 
         // 產生 OAuth URL 並跳轉
         const oauthUrl = generateOAuthUrl(provider, `${provider}_${view}_${Date.now()}`);
