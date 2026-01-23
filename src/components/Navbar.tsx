@@ -25,9 +25,9 @@ export const Navbar = ({ currentRole, onHomeClick }: NavbarProps) => {
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-mosport-black/90 backdrop-blur-md border-b border-gray-800">
+        <nav className="sticky top-0 z-50 bg-mosport-black/90 backdrop-blur-md border-b border-gray-800 safe-top">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-14 sm:h-16">
                     <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onClick={onHomeClick}>
                         <div className="text-2xl font-black tracking-tighter italic">
                             <span className="text-mosport-fan">M</span>

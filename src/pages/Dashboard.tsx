@@ -102,7 +102,7 @@ export const Dashboard = () => {
                 />
             )}
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8 safe-bottom">
                 {currentRole === UserRole.VENUE && !loading && <VenueAnalytics />}
 
                 <div className="flex items-center justify-between mb-6">

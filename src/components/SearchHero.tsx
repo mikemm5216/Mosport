@@ -39,12 +39,12 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
     return (
         <div className="relative border-b border-gray-800 bg-mosport-card/50">
             <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none" />
-            <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 relative z-10">
-                <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-white tracking-tight">
+            <div className="max-w-7xl mx-auto px-4 py-4 md:py-8 sm:px-6 lg:px-8 relative z-10">
+                <h1 className="text-xl sm:text-3xl font-bold text-center mb-4 md:mb-6 text-white tracking-tight">
                     Find Your Game, <span className="text-gray-500">Anywhere.</span>
                 </h1>
-                <div className="max-w-4xl mx-auto bg-mosport-dark border border-gray-700 rounded-xl p-2 flex flex-col md:flex-row gap-2 shadow-2xl">
-                    <div className="flex-[1.5] px-4 py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                <div className="max-w-4xl mx-auto bg-mosport-dark border border-gray-700 rounded-xl p-1 md:p-2 flex flex-col md:flex-row gap-1 md:gap-2 shadow-2xl">
+                    <div className="flex-[1.5] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">I want to watch</label>
                         <input
                             type="text"
@@ -58,11 +58,10 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
                             className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600"
                         />
                     </div>
-                    <div className="flex-[1.8] px-4 py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                    <div className="flex-[1.8] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Date Range (From - To)</label>
                         <div className="flex items-center gap-2">
                             <span className="text-blue-500">📅</span>
-
                             {/* From Date */}
                             <div
                                 className="relative flex items-center cursor-pointer min-w-[80px]"
@@ -80,9 +79,7 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
                                     className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                                 />
                             </div>
-
                             <span className="text-gray-500">-</span>
-
                             {/* To Date */}
                             <div
                                 className="relative flex items-center cursor-pointer min-w-[80px]"
@@ -102,7 +99,7 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
                             </div>
                         </div>
                     </div>
-                    <div className="flex-1 px-4 py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                    <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Location</label>
                         <div className="flex items-center gap-2">
                             <span className="text-orange-500">📍</span>
@@ -115,8 +112,8 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
                             </select>
                         </div>
                     </div>
-                    <div className="p-1">
-                        <Button className="w-full md:w-auto h-full aspect-square" variant="primary">GO</Button>
+                    <div className="p-1 md:p-0">
+                        <Button className="w-full md:w-auto py-3 md:py-0 md:px-8 md:h-full md:aspect-square" variant="primary">GO</Button>
                     </div>
                 </div>
             </div>
