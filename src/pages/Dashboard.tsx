@@ -91,7 +91,6 @@ export const Dashboard = () => {
 
             <Navbar
                 currentRole={currentRole}
-                isGuestMode={isGuestMode}
                 onHomeClick={handleHomeClick}
             />
 

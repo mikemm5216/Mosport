@@ -2,11 +2,10 @@ import { UserRole } from '../types';
 
 interface NavbarProps {
     currentRole: UserRole;
-    isGuestMode?: boolean;
     onHomeClick: () => void;
 }
 
-export const Navbar = ({ currentRole, isGuestMode = false, onHomeClick }: NavbarProps) => {
+export const Navbar = ({ currentRole, onHomeClick }: NavbarProps) => {
     const getRoleColor = (role: UserRole) => {
         switch (role) {
             case UserRole.FAN: return 'text-mosport-fan';
