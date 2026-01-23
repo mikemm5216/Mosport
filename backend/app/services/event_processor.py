@@ -17,6 +17,7 @@ from sqlalchemy.future import select
 
 from app.models.models import Event, Venue, VenueEvent
 from app.services.dtss import dtss_service
+from app.services.scraper import scraper_service
 from app.services.qoe import qoe_calculator
 from app.core.slme import slme
 from app.core.cache import cache, CacheTTL
@@ -144,19 +145,38 @@ class EventProcessor:
         venue_events = result.scalars().all()
         
         for ve in venue_events:
-            # Call DTSS to analyze latest venue post (mock data for MVP)
-            # In production, this would fetch actual social media posts
-            analysis = await dtss_service.analyze_venue_post(
+            # 1. Acquire Data (Layer A)
+            # Fetch recent posts from Scraper Service (Abstracts Instagram/Facebook/Mock)
+            posts = await scraper_service.fetch_recent_posts(
                 venue_id=str(ve.venue_id),
-                post_id="latest",
-                text=f"Mock post for {event.title}",
-                image_url=None
+                limit=3
             )
             
-            # Update confidence
+            highest_confidence = 0.0
+            
+            # 2. Analyze Data (DTSS)
+            for post in posts:
+                analysis = await dtss_service.analyze_venue_post(
+                    venue_id=str(ve.venue_id),
+                    post_id=post["id"],
+                    text=post["text"],
+                    image_url=post["image_url"]
+                )
+                
+                # Keep the highest confidence found among recent posts
+                if analysis["event_confidence"] > highest_confidence:
+                    highest_confidence = analysis["event_confidence"]
+
+                # Trigger alert if ANY post says they are closed (Fail-Safe)
+                if analysis["override_status"]:
+                    await self.trigger_interventional_alert(str(event.id))
+                    # If overridden, we can stop checking this venue
+                    break
+            
+            # 3. Update Event State
             await self.update_event_confidence(
                 str(event.id), 
-                analysis["event_confidence"]
+                highest_confidence
             )
             
             # Calculate and update QoE Score (Constitutional: Section 3.2)
@@ -184,10 +204,30 @@ class EventProcessor:
                 await self.trigger_interventional_alert(str(event.id))
     
     async def _verify_social_posts(self, event: Event) -> None:
-        """T-24 Verification: Social media validation"""
+        """
+        T-24 Verification: Social media validation.
+        Checks if venues have mentioned the event in the last 24 hours.
+        """
         logger.info(f"[T-24] Social validation for: {event.title}")
-        # Implement social media scraping logic here
-        pass
+        
+        result = await self.db.execute(
+            select(VenueEvent).where(VenueEvent.event_id == event.id)
+        )
+        venue_events = result.scalars().all()
+        
+        for ve in venue_events:
+            posts = await scraper_service.fetch_recent_posts(str(ve.venue_id), limit=5)
+            
+            confirmed = False
+            for post in posts:
+                # Simple check: does post mention event title? (In reality use DTSS)
+                if event.title.lower() in post['text'].lower() or "match" in post['text'].lower():
+                    confirmed = True
+                    break
+            
+            if confirmed:
+                logger.info(f"Venue {ve.venue_id} confirmed event {event.title} via social")
+                # Could update a 'social_confirmed' flag on VenueEvent model if it existed
     
     async def _update_prediction_score(self, event: Event) -> None:
         """T-7 Verification: Historical prediction"""
