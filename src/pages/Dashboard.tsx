@@ -19,7 +19,6 @@ export const Dashboard = () => {
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
     const currentRole = user?.role || UserRole.FAN;
-    const isGuestMode = user?.isGuest || false;
 
     useEffect(() => {
         const fetchData = async () => {
