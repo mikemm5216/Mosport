@@ -178,6 +178,33 @@ export const MOCK_EVENTS = [
         teamA: 'Man Utd',
         teamB: 'Liverpool',
         isHot: true
+    },
+    {
+        id: 'e6',
+        title: 'Chiefs vs 49ers',
+        league: 'NFL',
+        startTime: new Date('2026-02-09T06:30:00'),
+        teamA: 'Kansas City Chiefs',
+        teamB: 'San Francisco 49ers',
+        isHot: true
+    },
+    {
+        id: 'e7',
+        title: 'Japan vs USA',
+        league: 'WBC',
+        startTime: new Date('2026-03-21T19:00:00'),
+        teamA: 'Japan',
+        teamB: 'USA',
+        isHot: true
+    },
+    {
+        id: 'e8',
+        title: 'Dominican Rep vs Venezuela',
+        league: 'WBC',
+        startTime: new Date('2026-03-14T12:00:00'),
+        teamA: 'Dominican Republic',
+        teamB: 'Venezuela',
+        isHot: false
     }
 ];
 
