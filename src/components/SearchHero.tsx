@@ -18,11 +18,7 @@ export const SearchHero = ({ onSearch, onLocationChange, dateRange, onDateChange
     const fromDateRef = useRef<HTMLInputElement>(null);
     const toDateRef = useRef<HTMLInputElement>(null);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value;
-        setTerm(val);
-        onSearch(val);
-    };
+
 
     const triggerPicker = (ref: React.RefObject<HTMLInputElement>) => {
         if (ref.current) {
