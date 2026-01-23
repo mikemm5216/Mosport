@@ -7,15 +7,13 @@ import { Navbar } from '../components/Navbar';
 import { SearchHero } from '../components/SearchHero';
 import { VenueAnalytics } from '../components/VenueAnalytics';
 import { DecisionCard } from '../components/DecisionCard';
-import { AuthModal } from '../components/AuthModal';
 import { useAuthStore } from '../stores/useAuthStore';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
-    const { user, setGuest, logout } = useAuthStore();
+    const { user, logout } = useAuthStore();
     const [signals, setSignals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isAuthOpen, setIsAuthOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [locationFilter, setLocationFilter] = useState('Ha Noi');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
@@ -32,11 +30,6 @@ export const Dashboard = () => {
         };
         fetchData();
     }, [locationFilter]);
-
-    const handleSkipLogin = (role: UserRole) => {
-        setGuest(role);
-        setIsAuthOpen(false);
-    };
 
     const handleHomeClick = () => {
         logout();
@@ -99,7 +92,6 @@ export const Dashboard = () => {
             <Navbar
                 currentRole={currentRole}
                 isGuestMode={isGuestMode}
-                onLoginClick={() => setIsAuthOpen(true)}
                 onHomeClick={handleHomeClick}
             />
 
@@ -134,7 +126,6 @@ export const Dashboard = () => {
                                     key={signal.eventId}
                                     signal={signal}
                                     userRole={currentRole}
-                                    onRequireLogin={() => setIsAuthOpen(true)}
                                 />
                             ))
                         ) : (
@@ -146,12 +137,6 @@ export const Dashboard = () => {
                     </div>
                 )}
             </main>
-
-            <AuthModal
-                isOpen={isAuthOpen}
-                onClose={() => setIsAuthOpen(false)}
-                onLoginAs={handleSkipLogin}
-            />
         </div>
     );
 };

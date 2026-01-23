@@ -6,10 +6,9 @@ import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
 interface DecisionCardProps {
     signal: DecisionSignal;
     userRole: UserRole;
-    onRequireLogin: () => void;
 }
 
-export const DecisionCard = ({ signal, userRole, onRequireLogin }: DecisionCardProps) => {
+export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const isVenueRole = userRole === UserRole.VENUE;
 
 
@@ -132,13 +131,14 @@ export const DecisionCard = ({ signal, userRole, onRequireLogin }: DecisionCardP
                                         ) : (
                                             <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => {
                                                 e.stopPropagation();
-                                                // Trigger Login if Guest/Fan trying to book
-                                                // (Assuming Fan is default guest role from LandingPage)
-                                                // We can simply set "Action-based login" policy here
-                                                onRequireLogin();
-
-                                                // Note: Ideally we wait for login success before proceeding, 
-                                                // but for now we just show login modal.
+                                                // Open Google Maps directly without login
+                                                const { googleMapUrl, name, location } = match.venue;
+                                                if (googleMapUrl) {
+                                                    window.open(googleMapUrl, '_blank');
+                                                } else {
+                                                    const query = encodeURIComponent(`${name} ${location}`);
+                                                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                                                }
                                             }}>
                                                 Book Table
                                             </ButtonComp>
