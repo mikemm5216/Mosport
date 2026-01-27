@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "bash migrate.sh && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+startCommand = "bash migrate.sh && bash seed.sh && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
