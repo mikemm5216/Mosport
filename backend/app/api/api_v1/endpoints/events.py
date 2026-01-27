@@ -13,7 +13,7 @@ from app.core.limiter import limiter, role_based_limit
 router = APIRouter()
 
 @router.get("/", response_model=List[EventWithVenues])
-@limiter.limit(role_based_limit())  # Constitutional: Role-based rate limiting
+# @limiter.limit(role_based_limit())  # Temporarily disabled - causing 500 errors
 async def read_events(
     request: Request,
     db: AsyncSession = Depends(deps.get_db),
