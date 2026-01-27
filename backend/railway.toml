@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "bash -c 'psql $DATABASE_URL << EOF\nCREATE EXTENSION IF NOT EXISTS pg_trgm;\nALTER TABLE venues ADD COLUMN IF NOT EXISTS tags TEXT[];\nALTER TABLE venues ADD COLUMN IF NOT EXISTS search_vector tsvector;\nALTER TABLE venues ADD COLUMN IF NOT EXISTS current_dtss_status VARCHAR(10) DEFAULT '\"'\"'NONE'\"'\"';\n\nCREATE OR REPLACE FUNCTION venues_search_trigger() RETURNS trigger AS \\$\\$\nBEGIN\n  new.search_vector := setweight(to_tsvector('\"'\"'english'\"'\"', coalesce(new.name, '\"'\"''\"'\"')), '\"'\"'A'\"'\"') || setweight(to_tsvector('\"'\"'english'\"'\"', coalesce(array_to_string(new.tags, '\"'\"' '\"'\"'), '\"'\"''\"'\"')), '\"'\"'B'\"'\"');\n  RETURN new;\nEND;\n\\$\\$ LANGUAGE plpgsql;\n\nDROP TRIGGER IF EXISTS tsvectorupdate ON venues;\nCREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON venues FOR EACH ROW EXECUTE FUNCTION venues_search_trigger();\n\nCREATE INDEX IF NOT EXISTS venues_search_idx ON venues USING GIN (search_vector);\nCREATE INDEX IF NOT EXISTS venues_name_trgm_idx ON venues USING GIN (name gin_trgm_ops);\nCREATE INDEX IF NOT EXISTS venues_tags_idx ON venues USING GIN (tags);\nCREATE INDEX IF NOT EXISTS venues_dtss_status_idx ON venues(current_dtss_status);\nEOF\nuvicorn app.main:app --host 0.0.0.0 --port \\$PORT'"
+startCommand = "bash migrate.sh && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
