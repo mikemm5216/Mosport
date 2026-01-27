@@ -48,6 +48,7 @@ export const getDecisionSignals = async (locationFilter?: string): Promise<Decis
                 id: e.id,
                 title: e.title,
                 league: e.league,
+                sport: e.sport || 'Football', // Default to Football if missing
                 startTime: new Date(e.start_time),
                 teamA: e.team_a,
                 teamB: e.team_b,

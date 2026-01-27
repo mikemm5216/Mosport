@@ -47,10 +47,21 @@ export const Dashboard = () => {
             const searchableText = `
                 ${s.event.title.toLowerCase()} 
                 ${s.event.league.toLowerCase()} 
+                ${s.event.sport.toLowerCase()}
                 ${s.event.teamA.toLowerCase()} 
                 ${s.event.teamB.toLowerCase()}
             `;
-            matchesSearch = searchableText.includes(lowerTerm);
+
+            // Synonym handling
+            const synonyms: Record<string, string> = {
+                'soccer': 'football',
+                'football': 'soccer'
+            };
+
+            const synonym = synonyms[lowerTerm];
+
+            matchesSearch = searchableText.includes(lowerTerm) ||
+                (!!synonym && searchableText.includes(synonym));
         }
 
         // 2. Date Range Search

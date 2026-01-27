@@ -36,6 +36,7 @@ export interface SportEvent {
     startTime: Date;
     teamA: string;
     teamB: string;
+    sport: string;
     isHot: boolean;
 }
 
