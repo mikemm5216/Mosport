@@ -1,9 +1,8 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "pip install -r requirements.txt"
 
 [deploy]
-startCommand = "bash ../start.sh"
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
@@ -11,6 +10,6 @@ restartPolicyMaxRetries = 10
 
 [env]
 # Railway will automatically inject these from project settings
-# DATABASE_URL - from Railway PostgreSQL plugin
+# DATABASE_URL - from Railway PostgreSQL plugin (or Neon)
 # REDIS_URL - from Railway Redis plugin
 # PORT - Railway auto-assigns this
