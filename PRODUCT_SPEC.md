@@ -1,7 +1,7 @@
-# Mosport Technical Specification V6.0 (Master Edition)
+# Mosport Technical Specification (Master Edition)
 
 **Project Name**: Mosport (Real-time Decision Intelligence Infrastructure)  
-**Version**: V6.0 (Strategic-Driven Architecture)  
+**Version**: Strategic-Driven Architecture  
 **Date**: 2026-01-20  
 **Status**: [APPROVED FOR IMPLEMENTATION]  
 **Target Audience**: Backend Engineers, Frontend Engineers, DevOps.

@@ -4,7 +4,7 @@ Thank you for your interest in the security of Mosport. As a platform built on a
 
 This document outlines our security philosophy, supported versions, and the process for reporting vulnerabilities.
 
-## Core Security Philosophy (V6 Constitution)
+## Core Security Philosophy
 
 Our security model is based on **Data Minimalism** and **Architectural Isolation**. Security researchers should be aware of the following architectural principles:
 
@@ -34,7 +34,7 @@ Mosport operates primarily as a SaaS (Software as a Service) platform. Therefore
 
 | Version | Status | Description |
 | :--- | :--- | :--- |
-| **v6.x (Current)** | :white_check_mark: | **Active Support.** The current production environment implementing the Compare-only Engine architecture. |
+| **Current** | :white_check_mark: | **Active Support.** The current production environment implementing the Compare-only Engine architecture. |
 | v5.x (Legacy) | :x: | **End of Life.** Previous architecture based on Affiliate-only logic. No longer maintained. |
 | < v5.0 | :x: | **End of Life.** Prototype versions. |
 

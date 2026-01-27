@@ -1,4 +1,4 @@
-# Mosport V6.1 Deployment Script (Windows PowerShell)
+# Mosport Deployment Script (Windows PowerShell)
 # Constitutional Compliance: 1.4 (Bundle & Ship), 1.5 (Shadow Log)
 #
 # --- ANTIGRAVITY_LOG ---
@@ -14,7 +14,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "`n🚀 Mosport V6.1 Deployment Script" -ForegroundColor Cyan
+Write-Host "`n🚀 Mosport Deployment Script" -ForegroundColor Cyan
 Write-Host "================================================`n" -ForegroundColor Cyan
 
 # Step 1: Backend Dependencies

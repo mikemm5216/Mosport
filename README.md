@@ -1,6 +1,6 @@
-# Mosport V6
+# Mosport
 
-Welcome to the Mosport V6 engineering repository. This project is a modern React application built with TypeScript, Vite, and Tailwind CSS.
+Welcome to the Mosport engineering repository. This project is a modern React application built with TypeScript, Vite, and Tailwind CSS.
 
 ## 🚀 Getting Started
 
