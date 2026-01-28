@@ -12,49 +12,25 @@ from app.models.models import Event
 
 router = APIRouter()
 
-def get_sport_icon(sport: str) -> str:
-    """Map sport name to emoji icon"""
-    icons = {
-        "football": "⚽",
-        "soccer": "⚽",
-        "basketball": "🏀",
-        "american-football": "🏈",
-        "nfl": "🏈",
-        "rugby": "🏉",
-        "cricket": "🏏",
-        "tennis": "🎾",
-        "volleyball": "🏐",
-        "baseball": "⚾",
-        "golf": "⛳",
-        "hockey": "🏒",
-        "boxing": "🥊",
-        "mma": "🥋",
-        "esports": "🎮"
-    }
-    sport_lower = sport.lower().replace(" ", "-")
-    return icons.get(sport_lower, "🏆")
 
-def get_sport_display_name(sport: str) -> str:
-    """Convert sport ID to display name"""
-    mapping = {
-        "football": "足球",
-        "soccer": "足球", 
-        "basketball": "籃球",
-        "american-football": "美式足球",
-        "nfl": "美式足球",
-        "rugby": "橄欖球",
-        "cricket": "板球",
-        "tennis": "網球",
-        "volleyball": "排球",
-        "baseball": "棒球",
-        "golf": "高爾夫",
-        "hockey": "冰球",
-        "boxing": "拳擊",
-        "mma": "綜合格鬥",
-        "esports": "電競"
-    }
-    sport_lower = sport.lower().replace(" ", "-")
-    return mapping.get(sport_lower, sport.title())
+# Static list of supported sports with metadata
+SUPPORTED_SPORTS = [
+    {"id": "football", "name": "足球", "name_en": "Football", "icon": "⚽"},
+    {"id": "basketball", "name": "籃球", "name_en": "Basketball", "icon": "🏀"},
+    {"id": "badminton", "name": "羽球", "name_en": "Badminton", "icon": "🏸"},
+    {"id": "tennis", "name": "網球", "name_en": "Tennis", "icon": "🎾"},
+    {"id": "baseball", "name": "棒球", "name_en": "Baseball", "icon": "⚾"},
+    {"id": "table-tennis", "name": "桌球", "name_en": "Table Tennis", "icon": "🏓"},
+    {"id": "volleyball", "name": "排球", "name_en": "Volleyball", "icon": "🏐"},
+    {"id": "cricket", "name": "板球", "name_en": "Cricket", "icon": "🏏"},
+    {"id": "muay-thai", "name": "泰拳", "name_en": "Muay Thai", "icon": "🥊"},
+    {"id": "martial-arts", "name": "格鬥", "name_en": "MMA", "icon": "🥋"},
+    {"id": "f1", "name": "F1 賽車", "name_en": "Formula 1", "icon": "🏎️"},
+    {"id": "rugby", "name": "橄欖球", "name_en": "Rugby", "icon": "🏉"},
+    {"id": "esports", "name": "電競", "name_en": "Esports", "icon": "🎮"},
+    {"id": "golf", "name": "高爾夫", "name_en": "Golf", "icon": "⛳"},
+    {"id": "billiards", "name": "撞球", "name_en": "Billiards", "icon": "🎱"}
+]
 
 @router.get("/sports")
 async def get_sports(
@@ -62,31 +38,34 @@ async def get_sports(
 ):
     """
     Get all available sports with event counts.
-    Returns list sorted by event count (most popular first).
+    Returns comprehensive list of sports, prioritizing those with active events.
     """
     
     # Query events grouped by sport
     query = db.query(
         Event.sport,
         func.count().label('event_count')
-    ).group_by(Event.sport).order_by(func.count().desc())
+    ).group_by(Event.sport)
     
-    sports_data = query.all()
+    db_counts = {row.sport.lower(): row.event_count for row in query.all()}
     
-    # Build response
+    # Build final list
     sports = []
-    for sport in sports_data:
-        sport_id = sport.sport.lower().replace(" ", "-")
+    for s in SUPPORTED_SPORTS:
+        # Match DB count or default to 0
+        # Check both id and name_en for matches in DB
+        count = db_counts.get(s["id"], 0) or db_counts.get(s["name_en"].lower(), 0)
         
         sports.append({
-            "id": sport_id,
-            "name": get_sport_display_name(sport.sport),
-            "name_en": sport.sport,
-            "icon": get_sport_icon(sport.sport),
-            "event_count": sport.event_count
+            **s,
+            "event_count": count
         })
+    
+    # Sort: First by count (desc), then by standard order in SUPPORTED_SPORTS
+    sports.sort(key=lambda x: x["event_count"], reverse=True)
     
     return {
         "total_sports": len(sports),
         "sports": sports
     }
+
