@@ -15,7 +15,8 @@ export const Dashboard = () => {
     const [signals, setSignals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [locationFilter, setLocationFilter] = useState('Ha Noi');
+    const [sportFilter, setSportFilter] = useState('');
+    const [locationFilter, setLocationFilter] = useState('');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
     const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
@@ -28,7 +29,8 @@ export const Dashboard = () => {
             setLoading(false);
         };
         fetchData();
-    }, [locationFilter]);
+    }, [locationFilter, sportFilter, searchTerm]);
+
 
     const handleHomeClick = () => {
         logout();
@@ -107,6 +109,7 @@ export const Dashboard = () => {
             {currentRole === UserRole.FAN && (
                 <SearchHero
                     onSearch={setSearchTerm}
+                    onSportChange={setSportFilter}
                     onLocationChange={setLocationFilter}
                     dateRange={dateRange}
                     onDateChange={setDateRange}
