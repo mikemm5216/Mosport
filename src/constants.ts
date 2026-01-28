@@ -42,7 +42,8 @@ export const MOCK_VENUES = [
         tags: [
             { id: 't1', type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.98 },
             { id: 't2', type: QoETagType.VIBE, label: 'Sound ON', confidence: 0.95 }
-        ]
+        ],
+        features: { broadcast_capabilities: { supported_leagues: ['nba'], special_hours: { open_early_for_nba: true }, amenities: { breakfast_available: true } } }
     },
     {
         id: 'v2',
@@ -55,7 +56,8 @@ export const MOCK_VENUES = [
         tags: [
             { id: 't3', type: QoETagType.BROADCAST, label: 'Multi-Screen', confidence: 0.92 },
             { id: 't4', type: QoETagType.VIBE, label: 'Rowdy', confidence: 0.85 }
-        ]
+        ],
+        features: {}
     },
     {
         id: 'v3',
@@ -67,7 +69,8 @@ export const MOCK_VENUES = [
         lastVerified: new Date(Date.now() - 86400000),
         tags: [
             { id: 't5', type: QoETagType.SURVIVAL, label: 'Open Late', confidence: 0.99 }
-        ]
+        ],
+        features: {}
     },
     {
         id: 'v4',
@@ -77,7 +80,8 @@ export const MOCK_VENUES = [
         rating: 4.2,
         imageUrl: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80',
         lastVerified: new Date(Date.now() - 3600000),
-        tags: []
+        tags: [],
+        features: {}
     },
     {
         id: 'v5',
@@ -90,7 +94,8 @@ export const MOCK_VENUES = [
         tags: [
             { id: 't6', type: QoETagType.BROADCAST, label: 'Giant LED', confidence: 0.99 },
             { id: 't7', type: QoETagType.VIBE, label: 'Premium', confidence: 0.90 }
-        ]
+        ],
+        features: {}
     },
     {
         id: 'v6',
@@ -103,7 +108,8 @@ export const MOCK_VENUES = [
         tags: [
             { id: 't8', type: QoETagType.VIBE, label: 'Chill', confidence: 0.88 },
             { id: 't9', type: QoETagType.SURVIVAL, label: 'Great Food', confidence: 0.95 }
-        ]
+        ],
+        features: {}
     },
     {
         id: 'v7',
@@ -116,7 +122,8 @@ export const MOCK_VENUES = [
         tags: [
             { id: 't10', type: QoETagType.VIBE, label: 'Craft Beer', confidence: 0.97 },
             { id: 't11', type: QoETagType.BROADCAST, label: 'Projector', confidence: 0.85 }
-        ]
+        ],
+        features: {}
     },
     {
         id: 'v8',
@@ -128,9 +135,10 @@ export const MOCK_VENUES = [
         lastVerified: new Date(Date.now() - 12000000),
         tags: [
             { id: 't12', type: QoETagType.VIBE, label: 'Rooftop', confidence: 0.94 }
-        ]
+        ],
+        features: {}
     },
-    ...generateBacNinhVenues()
+    ...generateBacNinhVenues().map(v => ({ ...v, features: {} }))
 ];
 
 export const MOCK_EVENTS = [

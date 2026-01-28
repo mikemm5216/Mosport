@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
 import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
-import { MapPin, Star, Shield, Clock, Coffee } from 'lucide-react';
+import { MapPin, Coffee } from 'lucide-react';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
