@@ -1,4 +1,4 @@
-import { QoETagType, UserRole } from './types';
+import { QoETagType, UserRole, Venue } from './types';
 
 export const APP_NAME = "MOSPORT";
 export const APP_VERSION = "V7.0 Beta (Standalone)";
@@ -29,7 +29,7 @@ const generateBacNinhVenues = () => {
     }));
 };
 
-export const MOCK_VENUES = [
+export const MOCK_VENUES: Venue[] = [
     {
         id: 'v1',
         name: 'Puku Cafe & Bar',
@@ -43,7 +43,20 @@ export const MOCK_VENUES = [
             { id: 't1', type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.98 },
             { id: 't2', type: QoETagType.VIBE, label: 'Sound ON', confidence: 0.95 }
         ],
-        features: { broadcast_capabilities: { supported_leagues: ['nba'], special_hours: { open_early_for_nba: true }, amenities: { breakfast_available: true } } }
+        features: {
+            broadcast_capabilities: {
+                supported_leagues: ['nba'],
+                special_hours: {
+                    open_early_for_nba: true,
+                    open_early_for_nfl: false,
+                    open_late_for_ucl: false
+                },
+                amenities: {
+                    breakfast_available: true,
+                    audio_priority: 'main'
+                }
+            }
+        }
     },
     {
         id: 'v2',
