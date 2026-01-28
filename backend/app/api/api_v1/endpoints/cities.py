@@ -3,12 +3,12 @@ Cities API endpoint
 Provides list of cities with venue counts and GPS-based distance calculations
 """
 from fastapi import APIRouter, Query, Depends
-from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional, List
 import math
 
-from app.database import get_db
+from app.api import deps
 from app.models.models import Venue
 
 router = APIRouter()
@@ -61,7 +61,7 @@ def get_flag_emoji(country: str) -> str:
 async def get_cities(
     lat: Optional[float] = Query(None, description="User latitude for distance calculation"),
     lng: Optional[float] = Query(None, description="User longitude for distance calculation"),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(deps.get_db)
 ):
     """
     Get all available cities with venue counts and optional distance calculations.
@@ -76,7 +76,7 @@ async def get_cities(
     """
     
     # Query venues grouped by city/country with average coordinates
-    query = db.query(
+    stmt = select(
         Venue.city,
         Venue.country,
         func.avg(Venue.latitude).label('latitude'),
@@ -84,7 +84,8 @@ async def get_cities(
         func.count().label('venue_count')
     ).group_by(Venue.city, Venue.country)
     
-    cities_data = query.all()
+    result = await db.execute(stmt)
+    cities_data = result.all()
     
     # Build response
     cities = []

@@ -81,6 +81,18 @@ def root():
         "docs": "/docs"
     }
 
+from sqlalchemy.sql import text
+from app.db.session import engine
+
 @app.get("/health")
-def health_check():
-    return {"status": "ok", "phase": "migration_complete"}
+async def health_check():
+    try:
+        # Simple query to check database connection
+        async with engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+        return {"status": "ok", "db": "connected", "phase": "migration_complete"}
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        # Return 503 Service Unavailable if DB is down
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")

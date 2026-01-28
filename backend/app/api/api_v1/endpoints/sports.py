@@ -3,11 +3,11 @@ Sports API endpoint
 Provides list of available sports with event counts
 """
 from fastapi import APIRouter, Depends
-from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from app.database import get_db
+from app.api import deps
 from app.models.models import Event
 
 router = APIRouter()
@@ -34,7 +34,7 @@ SUPPORTED_SPORTS = [
 
 @router.get("/sports")
 async def get_sports(
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(deps.get_db)
 ):
     """
     Get all available sports with event counts.
@@ -42,12 +42,13 @@ async def get_sports(
     """
     
     # Query events grouped by sport
-    query = db.query(
+    stmt = select(
         Event.sport,
         func.count().label('event_count')
     ).group_by(Event.sport)
     
-    db_counts = {row.sport.lower(): row.event_count for row in query.all()}
+    result = await db.execute(stmt)
+    db_counts = {row.sport.lower(): row.event_count for row in result.all()}
     
     # Build final list
     sports = []
