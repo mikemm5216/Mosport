@@ -71,16 +71,22 @@ export const getDecisionSignals = async (locationFilter?: string): Promise<Decis
                     status = 'UNVERIFIED'; // or ON_REQUEST depending on logic
                 }
 
+                // Map backend VenueEvent structure to frontend Venue
+                // Backend Schema: properties are inside 'venue' object due to VenueEvent nesting
+                // But simplified if needed. "v" is VenueEventSchema
+                const venueData = v.venue || {};
+
                 return {
                     venue: {
-                        id: v.venue_id,
-                        name: v.venue_name,
-                        location: v.venue_city,
-                        distance: '2.5 km',
-                        rating: parseFloat(v.qoe_score || '0'),
+                        id: venueData.id || v.venue_id,
+                        name: venueData.name || 'Unknown Venue',
+                        location: venueData.city || 'Unknown City',
+                        distance: '2.5 km', // Placeholder/Calc
+                        rating: venueData.qoe_score || 0,
                         imageUrl: 'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&q=80',
                         lastVerified: new Date(),
-                        tags: []
+                        tags: [],
+                        features: venueData.features || {}
                     },
                     matchProbability: prob,
                     verificationStatus: status

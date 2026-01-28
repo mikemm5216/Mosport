@@ -48,8 +48,12 @@ def main():
     sql_files = [
         # base_path / "schema.sql",
         # migrations_path / "002_v6_1_schema_update.sql",
-        migrations_path / "003_pan_asia_expansion.sql",
-        seeds_path / "002_asian_cities_data.sql"
+        # migrations_path / "003_pan_asia_expansion.sql",
+        # seeds_path / "002_asian_cities_data.sql",
+        # migrations_path / "004_update_venue_features.sql",
+        # migrations_path / "005_add_event_confidence_score.sql",
+        migrations_path / "006_update_events_sport_check.sql",
+        seeds_path / "003_asian_events_data.sql"
     ]
     
     # Execute each file

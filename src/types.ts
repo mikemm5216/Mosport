@@ -27,6 +27,22 @@ export interface Venue {
     lastVerified: Date;
     googleMapUrl?: string; // Optional direct map link
     tags: QoETag[];
+    features: VenueFeatures; // V6.5 Data Architecture
+}
+
+export interface VenueFeatures {
+    broadcast_capabilities?: {
+        supported_leagues: string[];
+        special_hours: {
+            open_early_for_nba: boolean;
+            open_early_for_nfl: boolean;
+            open_late_for_ucl: boolean;
+        };
+        amenities: {
+            breakfast_available: boolean;
+            audio_priority: string;
+        };
+    };
 }
 
 export interface SportEvent {

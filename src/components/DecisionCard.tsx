@@ -2,10 +2,14 @@ import { MouseEvent } from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
 import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
+import { MapPin, Star, Shield, Clock, Coffee } from 'lucide-react';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
     userRole: UserRole;
+    compact?: boolean;
+    // Add active sport filter prop to check context
+    activeSport?: string;
 }
 
 export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
@@ -103,6 +107,22 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                                     <span>⏳</span> PENDING CHECK
                                                 </span>
                                             )}
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex items-center text-xs text-gray-400">
+                                                    <MapPin className="w-3 h-3 mr-1" />
+                                                    {match.venue.location} • {match.venue.distance}
+                                                </div>
+
+                                                {/* V6.5 Feature: Breakfast Indicator */}
+                                                {/* Logic: Show if venue opens early for NBA/NFL and breakfast is available */}
+                                                {match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nba &&
+                                                    match.venue.features?.broadcast_capabilities?.amenities?.breakfast_available && (
+                                                        <div className="flex items-center gap-1 text-[10px] bg-amber-900/40 text-amber-200 px-1.5 py-0.5 rounded border border-amber-800/50">
+                                                            <Coffee className="w-3 h-3" />
+                                                            <span>Breakfast</span>
+                                                        </div>
+                                                    )}
+                                            </div>
                                             <div className="flex gap-1 ml-2 flex-wrap">
                                                 {match.venue.tags.map(tag => {
                                                     let colorClass = "border-gray-700 text-gray-400";

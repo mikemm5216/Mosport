@@ -56,5 +56,16 @@ class EventBase(BaseModel):
     
     model_config = ConfigDict(from_attributes=True)
 
+
+class VenueEventSchema(BaseModel):
+    id: UUID
+    venue_id: UUID
+    event_id: UUID
+    verification_status: str = "predicted"
+    venue: Optional[VenueBase] = None
+    
+    model_config = ConfigDict(from_attributes=True)
+
 class EventWithVenues(EventBase):
-    venues: List[VenueBase] = []
+    venues: List[VenueEventSchema] = []
+

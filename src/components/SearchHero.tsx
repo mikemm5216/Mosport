@@ -80,6 +80,37 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
         return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
+
+    // Tier 0 Strategy: Dynamic Sport Priority based on City
+    const getPrioritySports = (city: string) => {
+        const c = city.toLowerCase();
+        if (c.includes('tokyo') || c.includes('japan')) return ['npb', 'mlb', 'j1_league', 'epl'];
+        if (c.includes('seoul') || c.includes('korea')) return ['kbo', 'epl', 'mlb', 'esports']; // LCK is usually under esports
+        if (c.includes('hanoi') || c.includes('ho chi minh') || c.includes('bangkok') || c.includes('thai') || c.includes('vietnam')) return ['epl', 'nba', 'f1'];
+        if (c.includes('taipei') || c.includes('taiwan')) return ['cpbl', 'mlb', 'npb', 'nba'];
+        return ['epl', 'nba', 'f1']; // Default Global Priority
+    };
+
+    const prioritizedSports = [...sports].sort((a, b) => {
+        // Use selectedLocation or fallback to detected location city if available (simplified here to selectedLocation)
+        // In a real app, we'd map GPS lat/lng to city name if selectedLocation is empty
+        const currentCity = selectedLocation || 'Global';
+        const priorities = getPrioritySports(currentCity);
+
+        const indexA = priorities.indexOf(a.id);
+        const indexB = priorities.indexOf(b.id);
+
+        // If both are in priority list, sort by index
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        // If only A is in list, it comes first
+        if (indexA !== -1) return -1;
+        // If only B is in list, it comes first
+        if (indexB !== -1) return 1;
+
+        // Default sort by event count (already sorted from backend, so keep order)
+        return 0;
+    });
+
     // Group cities by country
     const groupedCities = cities.reduce((acc, city) => {
         if (!acc[city.country]) {
@@ -142,7 +173,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         )}
                     </div>
 
-                    {/* 2. 運動類型（動態） */}
+                    {/* 2. 運動類型（動態 + Tier 0 Strategy） */}
                     <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">運動類型</label>
                         <div className="flex items-center gap-2">
@@ -156,7 +187,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 disabled={sportsLoading}
                             >
                                 <option value="">所有運動</option>
-                                {sports.map(sport => (
+                                {prioritizedSports.map(sport => (
                                     <option key={sport.id} value={sport.id}>
                                         {sport.icon} {sport.name} ({sport.event_count})
                                     </option>
