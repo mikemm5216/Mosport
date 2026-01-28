@@ -18,7 +18,7 @@ export const Dashboard = () => {
     const [locationFilter, setLocationFilter] = useState('Ha Noi');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
-    const currentRole = user?.role || UserRole.FAN;
+    const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
 
     useEffect(() => {
         const fetchData = async () => {
