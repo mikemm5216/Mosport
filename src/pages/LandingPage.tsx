@@ -34,12 +34,14 @@ export const LandingPage = () => {
 
             setUser({
                 id: guestId,
-                email: `${guestId}@mosport.local`,
-                name: 'Guest User',
                 role: 'FAN',
                 isAuthenticated: true,
                 isGuest: true,
-                picture: `https://api.dicebear.com/7.x/shapes/svg?seed=${guestId}`
+                profile: {
+                    email: `${guestId}@mosport.local`,
+                    name: 'Guest User',
+                    picture: `https://api.dicebear.com/7.x/shapes/svg?seed=${guestId}`
+                }
             });
 
             // Use local token
