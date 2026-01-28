@@ -101,7 +101,7 @@ export const Dashboard = () => {
                 (!!synonym && searchableText.includes(synonym)) ||
                 fields.some(f => {
                     // Split field into words for better fuzzy matching against single-word query
-                    return f.split(' ').some(word => {
+                    return f.split(' ').some((word: string) => {
                         if (Math.abs(word.length - lowerTerm.length) > 2) return false;
                         return levenshtein(word, lowerTerm) <= 2;
                     });
