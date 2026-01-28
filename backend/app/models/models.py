@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, Float, Index, Text, PickleType
+from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, Float, Integer, Index, Text
 from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -14,8 +14,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     name = Column(String)
     picture_url = Column(Text)
-    provider = Column(String) # Legacy field
-    oauth_provider = Column(String) # V6.1 Standard
+    provider = Column(String)  # Legacy: will be deprecated, use oauth_provider
+    oauth_provider = Column(String)  # V6.1 Standard: 'google', 'facebook', 'zalo'
     is_guest = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -36,8 +36,8 @@ class Venue(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     qoe_score = Column(Float, default=0.0)
-    is_verified = Column(Boolean, default=False) # Legacy field
-    verified_status = Column(Boolean, default=False) # V6.1 Standard (Internal Verification)
+    is_verified = Column(Boolean, default=False)  # Legacy: User-submitted verification
+    verified_status = Column(Boolean, default=False)  # V6.1: Internal staff verification (for B2B)
     
     # V6.1 New Columns
     features = Column(JSONB, default={})

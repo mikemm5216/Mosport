@@ -22,12 +22,16 @@ ADD COLUMN IF NOT EXISTS oauth_provider VARCHAR(20);
 -- For B2B Data License logic and internal audit
 CREATE TABLE IF NOT EXISTS verification_logs (
   id SERIAL PRIMARY KEY,
-  venue_id INTEGER,
+  venue_id UUID,  -- Changed from INTEGER to UUID for consistency
   action VARCHAR(50), -- approve / revoke / suspend
-  operator_id INTEGER, -- Refers to a User with 'staff' role
+  operator_id UUID,  -- Changed from INTEGER to UUID, refers to a User with 'staff' role
   reason TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Add indexes for performance
+CREATE INDEX IF NOT EXISTS idx_verification_logs_venue ON verification_logs(venue_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_verification_logs_operator ON verification_logs(operator_id);
 
 -- Indexing for performance (Mo Engine V2.1)
 -- "Live Status (dtss_status = T-1)" and "Verified Venue" are top ranking factors

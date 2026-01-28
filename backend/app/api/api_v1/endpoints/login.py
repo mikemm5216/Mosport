@@ -42,7 +42,8 @@ async def login_access_token(
             name=mock_name,
             picture_url=mock_picture,
             role=user_in.role,
-            provider=user_in.provider,
+            provider=user_in.provider,  # Keep for backward compatibility
+            oauth_provider=user_in.provider,  # V6.1: Use standardized field
             is_guest=False
         )
         db.add(user)
@@ -51,6 +52,7 @@ async def login_access_token(
         user.name = mock_name
         user.picture_url = mock_picture
         user.provider = user_in.provider
+        user.oauth_provider = user_in.provider  # V6.1: Update both fields
     
     await db.commit()
     await db.refresh(user)
@@ -78,9 +80,9 @@ async def login_guest_access_token(
         email=guest_email,
         name="Guest User",
         picture_url=f"https://api.dicebear.com/7.x/shapes/svg?seed={guest_uuid}",
-        role="guest",
+        role="FAN",  # V6.1: Guest users are FAN role (no 'guest' role exists in schema)
         provider=None,
-        oauth_provider=None,
+        oauth_provider=None,  # V6.1: No OAuth for guests
         is_guest=True
     )
     db.add(user)
