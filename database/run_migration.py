@@ -1,13 +1,15 @@
 """
 Database Migration and Seed Executor
-Executes SQL files to Neon production database
+Executes SQL files to Railway/Neon production database
 """
 import os
 import psycopg2
 from pathlib import Path
 
-# Database connection
-DATABASE_URL = "postgresql://neondb_owner:npg_wfxz0KhOGiDA@ep-fragrant-lake-a1rcb40r-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+# Database connection - 從環境變數讀取或手動設定
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    DATABASE_URL = input("請貼上 Railway DATABASE_URL: ").strip()
 
 def execute_sql_file(cursor, filepath):
     """Execute a SQL file"""
@@ -44,6 +46,8 @@ def main():
     seeds_path = base_path / "seeds"
     
     sql_files = [
+        # base_path / "schema.sql",
+        # migrations_path / "002_v6_1_schema_update.sql",
         migrations_path / "003_pan_asia_expansion.sql",
         seeds_path / "002_asian_cities_data.sql"
     ]
@@ -60,7 +64,7 @@ def main():
             success_count += 1
         else:
             conn.rollback()
-            print(f"🔄 Rolled back {sql_file.name}")
+            print(f"[ROLLBACK] Rolled back {sql_file.name}")
             break  # Stop on first error
     
     # Summary

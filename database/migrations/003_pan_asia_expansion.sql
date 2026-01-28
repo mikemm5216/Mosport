@@ -12,7 +12,8 @@ ADD COLUMN IF NOT EXISTS city_tier INTEGER DEFAULT 0,            -- 0: Crawl, 1:
 
 -- Data Source & Localization
 ADD COLUMN IF NOT EXISTS source_type VARCHAR(20) DEFAULT 'manual',    -- 'manual', 'ai_scraped', 'partner_api'
-ADD COLUMN IF NOT EXISTS english_friendly BOOLEAN DEFAULT FALSE;      -- Critical for JP/KR/TW non-English venues
+ADD COLUMN IF NOT EXISTS english_friendly BOOLEAN DEFAULT FALSE,      -- Critical for JP/KR/TW non-English venues
+ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';                    -- Array of string tags
 
 -- ═══════════════════════════════════════════════════
 -- STEP 2: Create indexes for new fields
