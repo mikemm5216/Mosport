@@ -61,3 +61,34 @@ async def login_access_token(
         "token_type": "bearer",
         "user": user
     }
+
+@router.post("/guest", response_model=Token)
+@limiter.limit("10/minute")
+async def login_guest_access_token(
+    request: Request,
+    db: AsyncSession = Depends(deps.get_db)
+) -> Any:
+    """
+    Guest Mode Entry (V6.1) - Create ephemeral shadow user
+    """
+    guest_uuid = str(uuid.uuid4())
+    guest_email = f"guest_{guest_uuid[:8]}@mosport.anon"
+    
+    user = User(
+        email=guest_email,
+        name="Guest User",
+        picture_url=f"https://api.dicebear.com/7.x/shapes/svg?seed={guest_uuid}",
+        role="guest",
+        provider=None,
+        oauth_provider=None,
+        is_guest=True
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    
+    return {
+        "access_token": f"guest_jwt_{user.id}",
+        "token_type": "bearer",
+        "user": user
+    }

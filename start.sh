@@ -14,6 +14,7 @@ fi
 # Run migrations (from backend directory, migration is in ../database/)
 echo "📦 Running database migrations..."
 psql $DATABASE_URL -f ../database/migrations/001_search_engine.sql
+psql $DATABASE_URL -f ../database/migrations/002_v6_1_schema_update.sql
 
 if [ $? -eq 0 ]; then
     echo "✅ Migrations completed successfully"

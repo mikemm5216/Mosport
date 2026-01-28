@@ -17,7 +17,8 @@ class UserCreate(BaseModel):
 class UserInDB(UserBase):
     id: UUID
     role: str
-    provider: str
+    provider: Optional[str] = None
+    oauth_provider: Optional[str] = None
     is_guest: bool
     
     model_config = ConfigDict(from_attributes=True)
@@ -34,6 +35,12 @@ class VenueBase(BaseModel):
     city: str
     qoe_score: float
     is_verified: bool
+    verified_status: bool = False
+    
+    # V6.1 Data
+    features: dict = {}
+    vibes: list = []
+    social_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 

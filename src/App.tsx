@@ -6,9 +6,20 @@ import { AuthCallback } from './pages/AuthCallback';
 
 import { SEO } from './components/SEO';
 
-function App() {
-    // const { user } = useAuthStore(); // user param is currently unused in this simplified routing
+import { useAuthStore } from './stores/useAuthStore';
 
+// Protected Route Wrapper
+const RequireAuth = ({ children }: { children: JSX.Element }) => {
+    const { user } = useAuthStore();
+
+    // Check if user is authenticated (including Guest)
+    if (!user || !user.isAuthenticated) {
+        return <Navigate to="/" replace />;
+    }
+    return children;
+};
+
+function App() {
     return (
         <BrowserRouter>
             <SEO />
@@ -20,7 +31,11 @@ function App() {
                 {/* Protected/Guest Route */}
                 <Route
                     path="/dashboard"
-                    element={<Dashboard />}
+                    element={
+                        <RequireAuth>
+                            <Dashboard />
+                        </RequireAuth>
+                    }
                 />
 
                 {/* Catch-all redirect */}

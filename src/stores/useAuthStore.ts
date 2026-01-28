@@ -3,10 +3,11 @@ import { persist } from 'zustand/middleware';
 import { UserRole } from '../types';
 
 interface User {
-  role: UserRole;
+  id?: string;
+  role: string; // 'fan' | 'venue' | 'staff' | 'guest'
   isAuthenticated: boolean;
   isGuest: boolean;
-  provider?: 'google' | 'facebook' | 'zalo';
+  provider?: string | null;
   profile?: {
     name?: string;
     email?: string;
@@ -18,7 +19,7 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setUser: (user: User) => void;
   setGuest: (role: UserRole) => void;
@@ -35,21 +36,21 @@ export const useAuthStore = create<AuthState>()(
       error: null,
 
       setUser: (user) => set({ user, isLoading: false, error: null }),
-      
-      setGuest: (role) => set({ 
-        user: { 
-          role, 
-          isAuthenticated: false, 
-          isGuest: true 
-        }, 
-        isLoading: false, 
-        error: null 
+
+      setGuest: (role) => set({
+        user: {
+          role,
+          isAuthenticated: false,
+          isGuest: true
+        },
+        isLoading: false,
+        error: null
       }),
-      
+
       logout: () => set({ user: null, error: null }),
-      
+
       setLoading: (loading) => set({ isLoading: loading }),
-      
+
       setError: (error) => set({ error, isLoading: false }),
     }),
     {

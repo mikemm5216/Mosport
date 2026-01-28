@@ -14,7 +14,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     name = Column(String)
     picture_url = Column(Text)
-    provider = Column(String) # google, facebook, zalo
+    provider = Column(String) # Legacy field
+    oauth_provider = Column(String) # V6.1 Standard
     is_guest = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -35,7 +36,13 @@ class Venue(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     qoe_score = Column(Float, default=0.0)
-    is_verified = Column(Boolean, default=False)
+    is_verified = Column(Boolean, default=False) # Legacy field
+    verified_status = Column(Boolean, default=False) # V6.1 Standard (Internal Verification)
+    
+    # V6.1 New Columns
+    features = Column(JSONB, default={})
+    vibes = Column(JSONB, default=[])
+    social_count = Column(Integer, default=0)
     
     owner = relationship("User", back_populates="venues")
     # Using VennueEvent association
