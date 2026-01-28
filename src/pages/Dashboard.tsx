@@ -57,13 +57,55 @@ export const Dashboard = () => {
             // Synonym handling
             const synonyms: Record<string, string> = {
                 'soccer': 'football',
-                'football': 'soccer'
+                'football': 'soccer',
+                'basketbal': 'basketball', // Common typo
+                'b-ball': 'basketball'
             };
 
             const synonym = synonyms[lowerTerm];
 
+            // Basic Levenshtein Distance for fuzzy match
+            const levenshtein = (a: string, b: string): number => {
+                if (a.length === 0) return b.length;
+                if (b.length === 0) return a.length;
+
+                const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+
+                for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+                for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+                for (let j = 1; j <= b.length; j++) {
+                    for (let i = 1; i <= a.length; i++) {
+                        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+                        matrix[j][i] = Math.min(
+                            matrix[j][i - 1] + 1,
+                            matrix[j - 1][i] + 1,
+                            matrix[j - 1][i - 1] + indicator
+                        );
+                    }
+                }
+                return matrix[b.length][a.length];
+            };
+
+            // Check if any searchable field fuzzy matches the term (allow 2 typos for words > 4 chars)
+            // Or strict includes
+            const fields = [
+                s.event.title.toLowerCase(),
+                s.event.league.toLowerCase(),
+                s.event.sport.toLowerCase(),
+                s.event.teamA.toLowerCase(),
+                s.event.teamB.toLowerCase()
+            ];
+
             matchesSearch = searchableText.includes(lowerTerm) ||
-                (!!synonym && searchableText.includes(synonym));
+                (!!synonym && searchableText.includes(synonym)) ||
+                fields.some(f => {
+                    // Split field into words for better fuzzy matching against single-word query
+                    return f.split(' ').some(word => {
+                        if (Math.abs(word.length - lowerTerm.length) > 2) return false;
+                        return levenshtein(word, lowerTerm) <= 2;
+                    });
+                });
         }
 
         // 2. Date Range Search

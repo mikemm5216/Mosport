@@ -234,6 +234,36 @@ export const MOCK_EVENTS = [
         teamA: 'Dominican Republic',
         teamB: 'Venezuela',
         isHot: false
+    },
+    {
+        id: 'e9',
+        title: 'Lakers vs Warriors',
+        league: 'NBA',
+        sport: 'Basketball',
+        startTime: new Date(new Date().setHours(10, 0, 0, 0)),
+        teamA: 'Lakers',
+        teamB: 'Warriors',
+        isHot: true
+    },
+    {
+        id: 'e10',
+        title: 'Djokovic vs Alcaraz',
+        league: 'Wimbledon',
+        sport: 'Tennis',
+        startTime: new Date(new Date().setHours(20, 0, 0, 0)),
+        teamA: 'Djokovic',
+        teamB: 'Alcaraz',
+        isHot: true
+    },
+    {
+        id: 'e11',
+        title: 'Bahrain Grand Prix',
+        league: 'F1',
+        sport: 'F1 Racing',
+        startTime: new Date('2026-03-02T22:00:00'),
+        teamA: 'Red Bull',
+        teamB: 'Ferrari',
+        isHot: true
     }
 ];
 
