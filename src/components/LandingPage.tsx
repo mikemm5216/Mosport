@@ -3,9 +3,10 @@ import { Button } from './Button';
 
 interface LandingPageProps {
     onLoginClick: () => void;
+    isLoading?: boolean;
 }
 
-export const LandingPage = ({ onLoginClick }: LandingPageProps) => {
+export const LandingPage = ({ onLoginClick, isLoading = false }: LandingPageProps) => {
     return (
         <div className="min-h-screen bg-mosport-black flex flex-col relative overflow-hidden">
             {/* Background Effects */}
@@ -35,10 +36,11 @@ export const LandingPage = ({ onLoginClick }: LandingPageProps) => {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button
                             variant="primary"
-                            className="px-12 py-4 text-lg bg-gradient-to-r from-blue-600 to-pink-600 hover:from-blue-700 hover:to-pink-700 border-none shadow-2xl shadow-blue-900/40"
+                            className="px-12 py-4 text-lg bg-gradient-to-r from-blue-600 to-pink-600 hover:from-blue-700 hover:to-pink-700 border-none shadow-2xl shadow-blue-900/40 disabled:opacity-50 disabled:cursor-not-allowed"
                             onClick={onLoginClick}
+                            disabled={isLoading}
                         >
-                            Start Your Journey
+                            {isLoading ? 'Loading...' : 'Start Your Journey'}
                         </Button>
                     </div>
                 </div>
