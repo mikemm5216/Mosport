@@ -152,10 +152,16 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                             <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => {
                                                 e.stopPropagation();
                                                 // Open Google Maps directly without login
-                                                const { googleMapUrl, name, location } = match.venue;
+                                                const { googleMapUrl, name, location, latitude, longitude } = match.venue;
+
                                                 if (googleMapUrl) {
                                                     window.open(googleMapUrl, '_blank');
+                                                } else if (latitude && longitude) {
+                                                    // Use coordinates for exact pin
+                                                    const query = `${latitude},${longitude}`;
+                                                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
                                                 } else {
+                                                    // Fallback to name search
                                                     const query = encodeURIComponent(`${name} ${location}`);
                                                     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
                                                 }

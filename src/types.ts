@@ -22,6 +22,8 @@ export interface Venue {
     name: string;
     location: string;
     distance: string;
+    latitude?: number;
+    longitude?: number;
     rating: number;
     imageUrl: string;
     lastVerified: Date;
