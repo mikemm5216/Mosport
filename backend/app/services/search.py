@@ -119,15 +119,19 @@ async def search_venues(
 
 async def get_trending_tags(
     db: AsyncSession,
-    limit: int = 10
+    limit: int = 10,
+    user_lat: Optional[float] = None,
+    user_lon: Optional[float] = None
 ) -> List[str]:
     """
     Get trending tags for Zero State display
     
     Logic: Most common tags from venues with upcoming events (next 7 days)
+    If lat/lon provided, filter by venues within 50km
     """
     
-    sql = text("""
+    # Base query
+    query_str = """
         SELECT 
             unnest(v.tags) as tag,
             COUNT(*) as frequency
@@ -138,12 +142,25 @@ async def get_trending_tags(
             e.start_time BETWEEN NOW() AND NOW() + INTERVAL '7 days'
             AND e.status != 'cancelled'
             AND v.tags IS NOT NULL
-        GROUP BY tag
-        ORDER BY frequency DESC
-        LIMIT :limit;
-    """)
+    """
     
-    result = await db.execute(sql, {"limit": limit})
+    params = {"limit": limit}
+    
+    # Add distance filter if coordinates provided
+    if user_lat is not None and user_lon is not None:
+        query_str += """
+            AND (point(v.longitude, v.latitude) <@> point(:lon, :lat)) * 1.60934 <= 50
+        """
+        params["lat"] = user_lat
+        params["lon"] = user_lon
+        
+    query_str += """
+        GROUP BY tag
+        ORDER BY frequency DESC, RANDOM()
+        LIMIT :limit;
+    """
+    
+    result = await db.execute(text(query_str), params)
     rows = result.fetchall()
     
     return [row.tag for row in rows]

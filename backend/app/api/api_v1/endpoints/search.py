@@ -44,14 +44,22 @@ async def search_venues(
 
 @router.get("/trending")
 async def get_trending(
+    lat: Optional[float] = Query(None, description="User latitude"),
+    lon: Optional[float] = Query(None, description="User longitude"),
     db: AsyncSession = Depends(deps.get_db)
 ):
     """
     Get trending tags and events for Zero State
     
     Used when user clicks search box but hasn't typed anything yet
+    If lat/lon provided, returns localized trending tags
     """
-    tags = await search_service.get_trending_tags(db=db, limit=10)
+    tags = await search_service.get_trending_tags(
+        db=db, 
+        limit=10,
+        user_lat=lat,
+        user_lon=lon
+    )
     events = await search_service.get_trending_events(db=db, limit=5)
     
     return {

@@ -59,19 +59,26 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
     useEffect(() => {
         const fetchTrending = async () => {
             try {
-                const res = await fetch(`${apiUrl}/api/v1/search/trending`);
+                const params = new URLSearchParams();
+                if (location.lat) params.append('lat', location.lat.toString());
+                if (location.lon) params.append('lon', location.lon.toString());
+
+                const res = await fetch(`${apiUrl}/api/v1/search/trending?${params.toString()}`);
                 const data = await res.json();
                 setTrending(data);
             } catch (err) {
                 console.error('Failed to fetch trending:', err);
+                const allTags = ['football', 'basketball', 'sports bar', 'live events', 'mlb', 'nba', 'premier league', 'ufc'];
+                // Randomize fallback
+                const shuffled = allTags.sort(() => 0.5 - Math.random());
                 setTrending({
-                    tags: ['football', 'basketball', 'sports bar', 'live events'],
+                    tags: shuffled.slice(0, 4),
                     events: []
                 });
             }
         };
         fetchTrending();
-    }, [apiUrl]);
+    }, [apiUrl, location.lat, location.lon]); // Re-fetch when location changes
 
     const triggerPicker = (ref: React.RefObject<HTMLInputElement>) => {
         if (ref.current) {
@@ -209,7 +216,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                     </SelectItem>
                                     {prioritizedSports.map(sport => (
                                         <SelectItem key={sport.id} value={sport.id} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
-                                            {sport.icon} {sport.name}
+                                            {sport.icon} {sport.name.replace(/\s*\(\d+\)$/, '')}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
