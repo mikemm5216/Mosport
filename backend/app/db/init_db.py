@@ -93,6 +93,103 @@ async def init_db():
             link.verification_status = "confirmed"
             print("Link already exists, updated status.")
 
+        # ==========================================
+        # 5. Seed Additional Regions (Bangkok, Taipei, Singapore, Tokyo, Osaka)
+        # ==========================================
+        
+        venues_data = [
+            {
+                "name": "The Sportsman Sports Bar",
+                "slug": "the-sportsman-bangkok",
+                "address": "Unit 10/22 Sukhumvit Soi 13",
+                "city": "Bangkok",
+                "country": "Thailand",
+                "qoe_score": 4.5,
+                "lat": 13.740,
+                "lon": 100.557,
+                "tags": ["sports bar", "pool", "american football", "premier league"]
+            },
+            {
+                "name": "The Brass Monkey",
+                "slug": "brass-monkey-taipei",
+                "address": "166 Fuxing North Road",
+                "city": "Taipei",
+                "country": "Taiwan",
+                "qoe_score": 4.6,
+                "lat": 25.052,
+                "lon": 121.544,
+                "tags": ["sports bar", "salsa", "rugby", "cricket"]
+            },
+            {
+                "name": "Harry's Boat Quay",
+                "slug": "harrys-boat-quay-sg",
+                "address": "28 Boat Quay",
+                "city": "Singapore",
+                "country": "Singapore",
+                "qoe_score": 4.4,
+                "lat": 1.286,
+                "lon": 103.849,
+                "tags": ["sports bar", "river view", "f1", "football"]
+            },
+            {
+                "name": "HUB Shibuya",
+                "slug": "hub-shibuya-tokyo",
+                "address": "3-10 Udagawacho, Shibuya",
+                "city": "Tokyo",
+                "country": "Japan",
+                "qoe_score": 4.3,
+                "lat": 35.660,
+                "lon": 139.698,
+                "tags": ["pub", "british", "football", "baseball"]
+            },
+            {
+                "name": "The Blarney Stone",
+                "slug": "blarney-stone-osaka",
+                "address": "Shinsaibashi",
+                "city": "Osaka",
+                "country": "Japan",
+                "qoe_score": 4.7,
+                "lat": 34.671,
+                "lon": 135.501,
+                "tags": ["irish pub", "live music", "rugby", "gaelic"]
+            }
+        ]
+
+        for v_data in venues_data:
+            # Check if venue exists
+            result = await session.execute(select(Venue).where(Venue.slug == v_data["slug"]))
+            existing_venue = result.scalars().first()
+            
+            if not existing_venue:
+                new_venue = Venue(
+                    id=uuid.uuid4(),
+                    owner_id=user.id,
+                    name=v_data["name"],
+                    slug=v_data["slug"],
+                    address=v_data["address"],
+                    city=v_data["city"],
+                    country=v_data["country"],
+                    qoe_score=v_data["qoe_score"],
+                    is_verified=True,
+                    latitude=v_data["lat"],
+                    longitude=v_data["lon"],
+                    tags=v_data["tags"]
+                )
+                session.add(new_venue)
+                # Link to Event
+                await session.flush()
+                
+                link = VenueEvent(
+                    id=uuid.uuid4(),
+                    venue_id=new_venue.id,
+                    event_id=event.id,
+                    verification_status="confirmed"
+                )
+                session.add(link)
+                print(f"Created Venue & Linked: {v_data['name']}")
+            else:
+                print(f"Venue exists: {v_data['name']}")
+
         await session.commit()
         print("Data Initialization Complete.")
 

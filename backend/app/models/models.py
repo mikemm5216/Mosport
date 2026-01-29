@@ -38,6 +38,7 @@ class Venue(Base):
     qoe_score = Column(Float, default=0.0)
     is_verified = Column(Boolean, default=False)  # Legacy: User-submitted verification
     verified_status = Column(Boolean, default=False)  # V6.1: Internal staff verification (for B2B)
+    tags = Column(ARRAY(String), default=[])
     
     # V6.1 New Columns
     features = Column(JSONB, default={})
