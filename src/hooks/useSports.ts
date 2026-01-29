@@ -50,25 +50,43 @@ function getStaticSports(): Sport[] {
     return [
         {
             id: 'football',
-            name: '足球',
+            name: 'Football',
             icon: '⚽',
             event_count: 25
         },
         {
             id: 'basketball',
-            name: '籃球',
+            name: 'Basketball',
             icon: '🏀',
             event_count: 8
         },
         {
+            id: 'baseball',
+            name: 'Baseball',
+            icon: '⚾',
+            event_count: 6
+        },
+        {
+            id: 'f1',
+            name: 'F1 Racing',
+            icon: '🏎️',
+            event_count: 4
+        },
+        {
+            id: 'tennis',
+            name: 'Tennis',
+            icon: '🎾',
+            event_count: 3
+        },
+        {
             id: 'american-football',
-            name: '美式足球',
+            name: 'American Football',
             icon: '🏈',
             event_count: 5
         },
         {
             id: 'rugby',
-            name: '橄欖球',
+            name: 'Rugby',
             icon: '🏉',
             event_count: 3
         }

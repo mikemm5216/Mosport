@@ -139,12 +139,12 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     Find Your Game, <span className="text-gray-500">Anywhere.</span>
                 </h1>
 
-                {/* 4 個篩選器 */}
+                {/* 4 Filters */}
                 <div className="max-w-6xl mx-auto bg-mosport-dark border border-gray-700 rounded-xl p-1 md:p-2 flex flex-col md:flex-row gap-1 md:gap-2 shadow-2xl">
 
-                    {/* 1. 搜尋框 */}
+                    {/* 1. Search Box */}
                     <div className="flex-[1.5] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700 relative">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">搜尋</label>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Search</label>
                         <input
                             type="text"
                             value={term}
@@ -155,14 +155,14 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 setTerm(val);
                                 onSearch(val);
                             }}
-                            placeholder="球隊、聯賽或賽事"
+                            placeholder="Teams, Leagues or Events"
                             className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600"
                         />
 
                         {/* Trending dropdown */}
                         {isFocused && !term && trending && (
                             <div className="absolute top-full left-0 right-0 mt-2 bg-mosport-dark border border-gray-700 rounded-lg p-4 shadow-xl z-50 max-w-md">
-                                <div className="text-xs text-gray-500 uppercase font-bold mb-2">🔥 熱門搜尋</div>
+                                <div className="text-xs text-gray-500 uppercase font-bold mb-2">🔥 Trending</div>
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {trending.tags.slice(0, 8).map((tag, idx) => (
                                         <button
@@ -182,9 +182,9 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         )}
                     </div>
 
-                    {/* 2. 運動類型（動態 + Tier 0 Strategy） */}
+                    {/* 2. Sport Type */}
                     <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">運動類型</label>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Sport Type</label>
                         <div className="flex items-center gap-2 w-full">
                             <Select
                                 value={selectedSport}
@@ -195,11 +195,11 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 disabled={sportsLoading}
                             >
                                 <SelectTrigger className="w-full bg-[#1a1a1a] border-blue-500/30 text-gray-200 hover:border-blue-400 focus:ring-blue-500 rounded-md h-auto py-2">
-                                    <SelectValue placeholder="所有運動" />
+                                    <SelectValue placeholder="All Sports" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
                                     <SelectItem value="all" className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
-                                        所有運動
+                                        All Sports
                                     </SelectItem>
                                     {prioritizedSports.map(sport => (
                                         <SelectItem key={sport.id} value={sport.id} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
@@ -211,9 +211,9 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         </div>
                     </div>
 
-                    {/* 3. 日期範圍（保留） */}
+                    {/* 3. Date Range */}
                     <div className="flex-[1.8] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">日期範圍</label>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Date Range</label>
                         <div className="flex items-center gap-2">
                             <span className="text-blue-500">📅</span>
                             <div
@@ -221,7 +221,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 onClick={() => triggerPicker(fromDateRef)}
                             >
                                 <div className={`text-xs font-medium ${dateRange.from ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
-                                    {dateRange.from ? formatDate(dateRange.from) : '開始'}
+                                    {dateRange.from ? formatDate(dateRange.from) : 'Start'}
                                 </div>
                                 <input
                                     ref={fromDateRef}
@@ -238,7 +238,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 onClick={() => triggerPicker(toDateRef)}
                             >
                                 <div className={`text-xs font-medium ${dateRange.to ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
-                                    {dateRange.to ? formatDate(dateRange.to) : '結束'}
+                                    {dateRange.to ? formatDate(dateRange.to) : 'End'}
                                 </div>
                                 <input
                                     ref={toDateRef}
@@ -252,9 +252,9 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         </div>
                     </div>
 
-                    {/* 4. 地點（GPS 動態） */}
+                    {/* 4. Location */}
                     <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">地點</label>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Location</label>
                         <div className="flex items-center gap-2 w-full">
                             <span className="text-orange-500 whitespace-nowrap">📍</span>
                             <Select
@@ -266,17 +266,17 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 disabled={citiesLoading}
                             >
                                 <SelectTrigger className="w-full bg-transparent border-none text-white font-medium focus:ring-0 focus:ring-offset-0 px-0 h-auto py-0 shadow-none hover:bg-transparent data-[placeholder]:text-white">
-                                    <SelectValue placeholder={locationLoading ? '偵測位置中...' : '所有地點'} />
+                                    <SelectValue placeholder={locationLoading ? 'Locating...' : 'All Locations'} />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
                                     <SelectItem value="all" className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
-                                        {locationLoading ? '偵測位置中...' : '所有地點'}
+                                        {locationLoading ? 'Locating...' : 'All Locations'}
                                     </SelectItem>
 
-                                    {/* 附近城市 */}
+                                    {/* Nearby Cities */}
                                     {nearbyCities.length > 0 && (
                                         <SelectGroup>
-                                            <SelectLabel className="text-gray-500 text-xs px-2 py-1">📍 附近</SelectLabel>
+                                            <SelectLabel className="text-gray-500 text-xs px-2 py-1">📍 Nearby</SelectLabel>
                                             {nearbyCities.map(city => (
                                                 <SelectItem key={city.name} value={city.name} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
                                                     {city.flag_emoji} {city.name} ({city.distance_km}km)
@@ -285,7 +285,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                         </SelectGroup>
                                     )}
 
-                                    {/* 按國家分組 */}
+                                    {/* Group by Country */}
                                     {Object.entries(groupedCities).map(([country, citiesList]) => (
                                         <SelectGroup key={country}>
                                             <SelectLabel className="text-gray-500 text-xs px-2 py-1">{citiesList[0].flag_emoji} {country}</SelectLabel>
