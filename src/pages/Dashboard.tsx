@@ -45,13 +45,24 @@ export const Dashboard = () => {
         let matchesSearch = true;
 
         if (lowerTerm) {
-            // Check if term matches ANY of the key fields
+            // Special case for "live events" tag
+            if (lowerTerm === 'live events' || lowerTerm === 'live') {
+                // If searching for live events, only show hot/live events
+                if (!s.event.isHot) return false;
+            }
+
+            // Build searchable text including Event AND Venue data
+            const venueText = s.matchedVenues.map(mv =>
+                `${mv.venue.name} ${mv.venue.tags.map(t => t.label).join(' ')}`
+            ).join(' ');
+
             const searchableText = `
                 ${s.event.title.toLowerCase()} 
                 ${s.event.league.toLowerCase()} 
                 ${s.event.sport.toLowerCase()}
                 ${s.event.teamA.toLowerCase()} 
                 ${s.event.teamB.toLowerCase()}
+                ${venueText.toLowerCase()}
             `;
 
             // Synonym handling
