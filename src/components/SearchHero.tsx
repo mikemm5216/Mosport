@@ -60,8 +60,8 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
         const fetchTrending = async () => {
             try {
                 const params = new URLSearchParams();
-                if (location.lat) params.append('lat', location.lat.toString());
-                if (location.lon) params.append('lon', location.lon.toString());
+                if (location?.latitude) params.append('lat', location.latitude.toString());
+                if (location?.longitude) params.append('lon', location.longitude.toString());
 
                 const res = await fetch(`${apiUrl}/api/v1/search/trending?${params.toString()}`);
                 const data = await res.json();
@@ -78,7 +78,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
             }
         };
         fetchTrending();
-    }, [apiUrl, location.lat, location.lon]); // Re-fetch when location changes
+    }, [apiUrl, location?.latitude, location?.longitude]); // Re-fetch when location changes
 
     const triggerPicker = (ref: React.RefObject<HTMLInputElement>) => {
         if (ref.current) {
