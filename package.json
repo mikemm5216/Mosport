@@ -15,7 +15,13 @@
     "react-router-dom": "^6.21.0",
     "react-helmet-async": "^2.0.4",
     "lucide-react": "^0.300.0",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-icons": "^1.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

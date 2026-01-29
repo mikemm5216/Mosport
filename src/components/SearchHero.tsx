@@ -188,7 +188,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         <div className="flex items-center gap-2 w-full">
                             <Select
                                 value={selectedSport}
-                                onValueChange={(val) => {
+                                onValueChange={(val: string) => {
                                     setSelectedSport(val);
                                     onSportChange(val);
                                 }}
@@ -259,7 +259,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                             <span className="text-orange-500 whitespace-nowrap">📍</span>
                             <Select
                                 value={selectedLocation}
-                                onValueChange={(val) => {
+                                onValueChange={(val: string) => {
                                     setSelectedLocation(val);
                                     onLocationChange(val);
                                 }}
