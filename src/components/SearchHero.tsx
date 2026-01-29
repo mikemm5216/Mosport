@@ -3,6 +3,15 @@ import { Button } from './Button';
 import { useUserLocation } from '../hooks/useUserLocation';
 import { useCities } from '../hooks/useCities';
 import { useSports } from '../hooks/useSports';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    SelectGroup,
+    SelectLabel
+} from "@/components/ui/select";
 
 interface DateRange {
     from: string;
@@ -176,23 +185,29 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     {/* 2. 運動類型（動態 + Tier 0 Strategy） */}
                     <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">運動類型</label>
-                        <div className="flex items-center gap-2">
-                            <select
+                        <div className="flex items-center gap-2 w-full">
+                            <Select
                                 value={selectedSport}
-                                onChange={(e) => {
-                                    setSelectedSport(e.target.value);
-                                    onSportChange(e.target.value);
+                                onValueChange={(val) => {
+                                    setSelectedSport(val);
+                                    onSportChange(val);
                                 }}
-                                className="bg-transparent text-white font-medium focus:outline-none w-full"
                                 disabled={sportsLoading}
                             >
-                                <option value="">所有運動</option>
-                                {prioritizedSports.map(sport => (
-                                    <option key={sport.id} value={sport.id}>
-                                        {sport.icon} {sport.name} ({sport.event_count})
-                                    </option>
-                                ))}
-                            </select>
+                                <SelectTrigger className="w-full bg-[#1a1a1a] border-blue-500/30 text-gray-200 hover:border-blue-400 focus:ring-blue-500 rounded-md h-auto py-2">
+                                    <SelectValue placeholder="所有運動" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
+                                    <SelectItem value="all" className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                        所有運動
+                                    </SelectItem>
+                                    {prioritizedSports.map(sport => (
+                                        <SelectItem key={sport.id} value={sport.id} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                            {sport.icon} {sport.name} ({sport.event_count})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
@@ -240,43 +255,49 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     {/* 4. 地點（GPS 動態） */}
                     <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
                         <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">地點</label>
-                        <div className="flex items-center gap-2">
-                            <span className="text-orange-500">📍</span>
-                            <select
+                        <div className="flex items-center gap-2 w-full">
+                            <span className="text-orange-500 whitespace-nowrap">📍</span>
+                            <Select
                                 value={selectedLocation}
-                                onChange={(e) => {
-                                    setSelectedLocation(e.target.value);
-                                    onLocationChange(e.target.value);
+                                onValueChange={(val) => {
+                                    setSelectedLocation(val);
+                                    onLocationChange(val);
                                 }}
-                                className="bg-transparent text-white font-medium focus:outline-none w-full text-sm"
                                 disabled={citiesLoading}
                             >
-                                <option value="">
-                                    {locationLoading ? '偵測位置中...' : '所有地點'}
-                                </option>
+                                <SelectTrigger className="w-full bg-transparent border-none text-white font-medium focus:ring-0 focus:ring-offset-0 px-0 h-auto py-0 shadow-none hover:bg-transparent data-[placeholder]:text-white">
+                                    <SelectValue placeholder={locationLoading ? '偵測位置中...' : '所有地點'} />
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
+                                    <SelectItem value="all" className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                        {locationLoading ? '偵測位置中...' : '所有地點'}
+                                    </SelectItem>
 
-                                {/* 附近城市 */}
-                                {nearbyCities.length > 0 && (
-                                    <optgroup label="📍 附近">
-                                        {nearbyCities.map(city => (
-                                            <option key={city.name} value={city.name}>
-                                                {city.flag_emoji} {city.name} ({city.distance_km}km)
-                                            </option>
-                                        ))}
-                                    </optgroup>
-                                )}
+                                    {/* 附近城市 */}
+                                    {nearbyCities.length > 0 && (
+                                        <SelectGroup>
+                                            <SelectLabel className="text-gray-500 text-xs px-2 py-1">📍 附近</SelectLabel>
+                                            {nearbyCities.map(city => (
+                                                <SelectItem key={city.name} value={city.name} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                                    {city.flag_emoji} {city.name} ({city.distance_km}km)
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    )}
 
-                                {/* 按國家分組 */}
-                                {Object.entries(groupedCities).map(([country, citiesList]) => (
-                                    <optgroup key={country} label={`${citiesList[0].flag_emoji} ${country}`}>
-                                        {citiesList.filter(c => !c.is_nearby).map(city => (
-                                            <option key={city.name} value={city.name}>
-                                                {city.name} {city.distance_km && `(${city.distance_km}km)`}
-                                            </option>
-                                        ))}
-                                    </optgroup>
-                                ))}
-                            </select>
+                                    {/* 按國家分組 */}
+                                    {Object.entries(groupedCities).map(([country, citiesList]) => (
+                                        <SelectGroup key={country}>
+                                            <SelectLabel className="text-gray-500 text-xs px-2 py-1">{citiesList[0].flag_emoji} {country}</SelectLabel>
+                                            {citiesList.filter(c => !c.is_nearby).map(city => (
+                                                <SelectItem key={city.name} value={city.name} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                                    {city.name} {city.distance_km && `(${city.distance_km}km)`}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
