@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../constants';
-import { UserRole } from '../types';
+import { DecisionSignal, UserRole } from '../types';
 import { getDecisionSignals } from '../services/moEngine';
 import { Navbar } from '../components/Navbar';
 import { SearchHero } from '../components/SearchHero';
@@ -12,7 +12,7 @@ import { useAuthStore } from '../stores/useAuthStore';
 export const Dashboard = () => {
     const navigate = useNavigate();
     const { user, logout } = useAuthStore();
-    const [signals, setSignals] = useState<any[]>([]);
+    const [signals, setSignals] = useState<DecisionSignal[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [sportFilter, setSportFilter] = useState('');
