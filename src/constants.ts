@@ -151,6 +151,64 @@ export const MOCK_VENUES: Venue[] = [
         ],
         features: {}
     },
+    // Tokyo Venues
+    {
+        id: 'v_tokyo_1',
+        name: 'HUB British Pub',
+        location: 'Tokyo',
+        distance: '0.2 km',
+        rating: 4.2,
+        imageUrl: 'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'tt1', type: QoETagType.BROADCAST, label: 'Live Sports', confidence: 0.9 },
+            { id: 'tt2', type: QoETagType.VIBE, label: 'Social', confidence: 0.85 }
+        ],
+        features: {}
+    },
+    {
+        id: 'v_tokyo_2',
+        name: 'FootNik Ebisu',
+        location: 'Tokyo',
+        distance: '1.5 km',
+        rating: 4.6,
+        imageUrl: 'https://images.unsplash.com/photo-1552332386-f8dd00d59143?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'tt3', type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.95 },
+            { id: 'tt4', type: QoETagType.SURVIVAL, label: 'Great Food', confidence: 0.9 }
+        ],
+        features: {}
+    },
+    // Osaka Venues
+    {
+        id: 'v_osaka_1',
+        name: 'Coolabah Sports Bar',
+        location: 'Osaka',
+        distance: '0.8 km',
+        rating: 4.4,
+        imageUrl: 'https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'to1', type: QoETagType.BROADCAST, label: 'Live Rugby', confidence: 0.92 },
+            { id: 'to2', type: QoETagType.VIBE, label: 'Friendly', confidence: 0.88 }
+        ],
+        features: {}
+    },
+    {
+        id: 'v_osaka_2',
+        name: 'Balabushka',
+        location: 'Osaka',
+        distance: '1.2 km',
+        rating: 4.3,
+        imageUrl: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'to3', type: QoETagType.VIBE, label: 'Pool Table', confidence: 0.9 },
+            { id: 'to4', type: QoETagType.SURVIVAL, label: 'Late Night', confidence: 0.95 }
+        ],
+        features: {}
+    },
     ...generateBacNinhVenues().map(v => ({ ...v, features: {} }))
 ];
 
@@ -263,6 +321,77 @@ export const MOCK_EVENTS = [
         startTime: new Date('2026-03-02T22:00:00'),
         teamA: 'Red Bull',
         teamB: 'Ferrari',
+        isHot: true
+    },
+    // New Matches
+    {
+        id: 'e12',
+        title: 'Saudi Arabian Grand Prix',
+        league: 'F1',
+        sport: 'F1 Racing',
+        startTime: new Date('2026-03-09T22:00:00'),
+        teamA: 'Mercedes',
+        teamB: 'McLaren',
+        isHot: true
+    },
+    {
+        id: 'e13',
+        title: 'Hanshin Tigers vs Yomiuri Giants',
+        league: 'NPB',
+        sport: 'Baseball',
+        startTime: new Date(new Date().setHours(18, 0, 0, 0)),
+        teamA: 'Hanshin Tigers',
+        teamB: 'Yomiuri Giants',
+        isHot: true
+    },
+    {
+        id: 'e14',
+        title: 'UFC 300: McGregor vs Chandler',
+        league: 'UFC',
+        sport: 'MMA',
+        startTime: new Date('2026-04-13T22:00:00'),
+        teamA: 'McGregor',
+        teamB: 'Chandler',
+        isHot: true
+    },
+    {
+        id: 'e15',
+        title: 'The Masters: Final Round',
+        league: 'PGA Tour',
+        sport: 'Golf',
+        startTime: new Date('2026-04-12T14:00:00'),
+        teamA: 'Scheffler',
+        teamB: 'McIlroy',
+        isHot: true
+    },
+    {
+        id: 'e16',
+        title: 'India vs Australia',
+        league: 'Test Cricket',
+        sport: 'Cricket',
+        startTime: new Date('2026-03-01T09:30:00'),
+        teamA: 'India',
+        teamB: 'Australia',
+        isHot: true
+    },
+    {
+        id: 'e17',
+        title: 'T1 vs Gen.G',
+        league: 'LCK',
+        sport: 'Esports',
+        startTime: new Date(new Date().setHours(17, 0, 0, 0)),
+        teamA: 'T1',
+        teamB: 'Gen.G',
+        isHot: true
+    },
+    {
+        id: 'e18',
+        title: 'All Blacks vs Springboks',
+        league: 'Rugby Championship',
+        sport: 'Rugby',
+        startTime: new Date('2026-08-08T19:00:00'),
+        teamA: 'New Zealand',
+        teamB: 'South Africa',
         isHot: true
     }
 ];

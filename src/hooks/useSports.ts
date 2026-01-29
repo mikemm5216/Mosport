@@ -88,7 +88,31 @@ function getStaticSports(): Sport[] {
             id: 'rugby',
             name: 'Rugby',
             icon: '🏉',
-            event_count: 3
+            event_count: 5
+        },
+        {
+            id: 'mma',
+            name: 'MMA / UFC',
+            icon: '🥊',
+            event_count: 4
+        },
+        {
+            id: 'golf',
+            name: 'Golf',
+            icon: '⛳',
+            event_count: 2
+        },
+        {
+            id: 'cricket',
+            name: 'Cricket',
+            icon: '🏏',
+            event_count: 6
+        },
+        {
+            id: 'esports',
+            name: 'Esports',
+            icon: '🎮',
+            event_count: 10
         }
     ];
 }

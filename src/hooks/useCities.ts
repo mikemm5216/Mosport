@@ -110,6 +110,15 @@ function getStaticCities(): City[] {
             venue_count: 15,
             latitude: 35.6762,
             longitude: 139.6503
+        },
+        {
+            name: 'Osaka',
+            country: 'Japan',
+            country_code: 'JP',
+            flag_emoji: '🇯🇵',
+            venue_count: 10,
+            latitude: 34.6937,
+            longitude: 135.5023
         }
     ];
 }

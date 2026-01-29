@@ -91,13 +91,19 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
 
 
     // Tier 0 Strategy: Dynamic Sport Priority based on City
+    // Tier 0 Strategy: Dynamic Sport Priority based on City
     const getPrioritySports = (city: string) => {
         const c = city.toLowerCase();
-        if (c.includes('tokyo') || c.includes('japan')) return ['npb', 'mlb', 'j1_league', 'epl'];
-        if (c.includes('seoul') || c.includes('korea')) return ['kbo', 'epl', 'mlb', 'esports']; // LCK is usually under esports
-        if (c.includes('hanoi') || c.includes('ho chi minh') || c.includes('bangkok') || c.includes('thai') || c.includes('vietnam')) return ['epl', 'nba', 'f1'];
-        if (c.includes('taipei') || c.includes('taiwan')) return ['cpbl', 'mlb', 'npb', 'nba'];
-        return ['epl', 'nba', 'f1']; // Default Global Priority
+        // Japan: Baseball (NPB/MLB), Football (J1/EPL)
+        if (c.includes('tokyo') || c.includes('osaka') || c.includes('japan')) return ['baseball', 'football', 'f1', 'tennis'];
+        // Korea: Baseball (KBO), Esports (LCK), Football
+        if (c.includes('seoul') || c.includes('korea')) return ['baseball', 'esports', 'football', 'mma'];
+        // SEA (Vietnam/Thailand): Football (EPL/V-League), MMA, F1
+        if (c.includes('hanoi') || c.includes('ho chi minh') || c.includes('bangkok') || c.includes('thai') || c.includes('vietnam')) return ['football', 'mma', 'f1', 'nba'];
+        // Taiwan: Baseball (CPBL), Basketball (NBA/P-League)
+        if (c.includes('taipei') || c.includes('taiwan')) return ['baseball', 'basketball', 'f1', 'tennis'];
+        // US/Global Default
+        return ['football', 'nba', 'f1', 'mma', 'cricket'];
     };
 
     const prioritizedSports = [...sports].sort((a, b) => {
