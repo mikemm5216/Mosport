@@ -209,7 +209,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                     </SelectItem>
                                     {prioritizedSports.map(sport => (
                                         <SelectItem key={sport.id} value={sport.id} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
-                                            {sport.icon} {sport.name} ({sport.event_count})
+                                            {sport.icon} {sport.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
