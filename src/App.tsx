@@ -5,6 +5,7 @@ import { AuthCallback } from './pages/AuthCallback';
 
 
 import { SEO } from './components/SEO';
+import { Analytics } from '@vercel/analytics/react';
 
 import { useAuthStore } from './stores/useAuthStore';
 
@@ -23,6 +24,7 @@ function App() {
     return (
         <BrowserRouter>
             <SEO />
+            <Analytics />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />
