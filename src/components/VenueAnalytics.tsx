@@ -1,7 +1,19 @@
+import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+const data = [
+    { name: 'Mon', value: 4000 },
+    { name: 'Tue', value: 3000 },
+    { name: 'Wed', value: 2000 },
+    { name: 'Thu', value: 2780 },
+    { name: 'Fri', value: 1890 },
+    { name: 'Sat', value: 2390 },
+    { name: 'Sun', value: 3490 },
+];
 
 export const VenueAnalytics = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fadeIn">
+            {/* Metric 1 */}
             <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl shadow-lg relative overflow-hidden group">
                 <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Live Audience</h3>
@@ -15,6 +27,8 @@ export const VenueAnalytics = () => {
                     <span className="text-xs font-medium text-green-500 flex items-center">+12%</span>
                 </div>
             </div>
+
+            {/* Metric 2 */}
             <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl shadow-lg relative group">
                 <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Signal Strength</h3>
@@ -27,6 +41,31 @@ export const VenueAnalytics = () => {
                     <div>
                         <div className="text-sm text-white font-bold">Excellent Coverage</div>
                     </div>
+                </div>
+            </div>
+
+            {/* Chart */}
+            <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl shadow-lg relative group overflow-hidden">
+                <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Weekly Trends</h3>
+                </div>
+                <div className="h-16 w-full -ml-2">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={data}>
+                            <defs>
+                                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#D62470" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#D62470" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#111', border: 'none', borderRadius: '8px', fontSize: '12px' }}
+                                itemStyle={{ color: '#fff' }}
+                                labelStyle={{ display: 'none' }}
+                            />
+                            <Area type="monotone" dataKey="value" stroke="#D62470" fillOpacity={1} fill="url(#colorValue)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </div>
