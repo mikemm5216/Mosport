@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.api_v1.endpoints import (
-    login, users, events, venues, search, cities, sports, admin
+    login, users_recovery as users, events, venues, search, cities, sports, admin
 )
 
 api_router = APIRouter()
