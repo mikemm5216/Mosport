@@ -10,6 +10,7 @@ from app.core.config import settings
 from app.api.api_v1.api import api_router
 from app.core.limiter import limiter
 from app.core.scheduler import scheduler_manager
+from app.db.init_db import init_db
 
 # Setup logging
 logging.basicConfig(
@@ -27,6 +28,14 @@ async def lifespan(app: FastAPI):
     """
     # --- Startup ---
     logger.info("🚀 Mosport Backend Starting...")
+
+    # Auto-seeding
+    try:
+        logger.info("🌱 Executing auto-seeding...")
+        await init_db()
+        logger.info("✅ Auto-seeding complete")
+    except Exception as e:
+        logger.error(f"❌ Auto-seeding failed: {e}")
     
     if settings.ENABLE_SCHEDULER:
         logger.info(f"Initializing Scheduler System ({settings.SCHEDULER_TYPE})...")
