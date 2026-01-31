@@ -209,7 +209,64 @@ export const MOCK_VENUES: Venue[] = [
         ],
         features: {}
     },
-    ...generateBacNinhVenues().map(v => ({ ...v, features: {} }))
+    ...generateBacNinhVenues().map(v => ({ ...v, features: {} })),
+    // Bangkok Venues
+    {
+        id: 'v_bkk_1',
+        name: 'The Sportsman',
+        location: 'Bangkok',
+        distance: '1.2 km',
+        rating: 4.5,
+        imageUrl: 'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'tb1', type: QoETagType.BROADCAST, label: 'Live PL', confidence: 0.95 },
+            { id: 'tb2', type: QoETagType.SURVIVAL, label: 'Pool', confidence: 0.90 }
+        ],
+        features: {}
+    },
+    // Taipei Venues
+    {
+        id: 'v_tpe_1',
+        name: 'The Brass Monkey',
+        location: 'Taipei',
+        distance: '0.5 km',
+        rating: 4.6,
+        imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'ttpe1', type: QoETagType.BROADCAST, label: 'Rugby', confidence: 0.95 },
+            { id: 'ttpe2', type: QoETagType.VIBE, label: 'Expats', confidence: 0.88 }
+        ],
+        features: {}
+    },
+    {
+        id: 'v_tpe_2',
+        name: 'On Tap',
+        location: 'Taipei',
+        distance: '2.0 km',
+        rating: 4.3,
+        imageUrl: 'https://images.unsplash.com/photo-1574602305307-b3b3a602319e?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'ttpe3', type: QoETagType.BROADCAST, label: 'Live Football', confidence: 0.92 }
+        ],
+        features: {}
+    },
+    // Singapore Venues
+    {
+        id: 'v_sg_1',
+        name: "Harry's Boat Quay",
+        location: 'Singapore',
+        distance: '1.0 km',
+        rating: 4.4,
+        imageUrl: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80',
+        lastVerified: new Date(),
+        tags: [
+            { id: 'tsg1', type: QoETagType.VIBE, label: 'River View', confidence: 0.90 }
+        ],
+        features: {}
+    }
 ];
 
 export const MOCK_EVENTS = [
