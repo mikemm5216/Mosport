@@ -176,19 +176,46 @@ async def init_db():
                     tags=v_data["tags"]
                 )
                 session.add(new_venue)
-                # Link to Event
                 await session.flush()
                 
-                link = VenueEvent(
-                    id=uuid.uuid4(),
-                    venue_id=new_venue.id,
-                    event_id=event.id,
-                    verification_status="confirmed"
-                )
-                session.add(link)
-                print(f"Created Venue & Linked: {v_data['name']}")
+                # Fetch ALL events to link
+                all_events_result = await session.execute(select(Event))
+                all_events = all_events_result.scalars().all()
+                
+                for ev in all_events:
+                    link = VenueEvent(
+                        id=uuid.uuid4(),
+                        venue_id=new_venue.id,
+                        event_id=ev.id,
+                        verification_status="confirmed"
+                    )
+                    session.add(link)
+                
+                print(f"Created Venue & Linked to {len(all_events)} Events: {v_data['name']}")
             else:
+                # If venue exists, ensure it's linked to all events too (idempotent check)
                 print(f"Venue exists: {v_data['name']}")
+                
+                all_events_result = await session.execute(select(Event))
+                all_events = all_events_result.scalars().all()
+                
+                for ev in all_events:
+                    # Check if link exists
+                    link_result = await session.execute(select(VenueEvent).where(
+                        VenueEvent.venue_id == existing_venue.id,
+                        VenueEvent.event_id == ev.id
+                    ))
+                    existing_link = link_result.scalars().first()
+                    
+                    if not existing_link:
+                        link = VenueEvent(
+                            id=uuid.uuid4(),
+                            venue_id=existing_venue.id,
+                            event_id=ev.id,
+                            verification_status="confirmed"
+                        )
+                        session.add(link)
+                        print(f"  -> Linked to additional event: {ev.title}")
 
         await session.commit()
         print("Data Initialization Complete.")
