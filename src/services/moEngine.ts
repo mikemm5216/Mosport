@@ -144,5 +144,15 @@ const getMockDecisionSignals = async (locationFilter?: string): Promise<Decision
         };
     });
 
+    // ===== 新增：根據地區關聯性排序，而非時間 =====
+    const { calculateEventRelevanceScore } = await import('../utils/locationMapping');
+
+    signals.sort((a, b) => {
+        const scoreA = calculateEventRelevanceScore(a.event.league, locationFilter, a.event.isHot);
+        const scoreB = calculateEventRelevanceScore(b.event.league, locationFilter, b.event.isHot);
+        return scoreB - scoreA; // 分數高的排前面
+    });
+
     return signals;
 };
+
