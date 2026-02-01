@@ -29,19 +29,13 @@ const generateBacNinhVenues = () => {
     }));
 };
 
-// Curated Image Pool for realistic feeling
-const BAR_IMAGES = [
-    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80', // Classic Bar
-    'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&w=400&q=80', // Sports TV
-    'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=400&q=80', // Pub Crowd
-    'https://images.unsplash.com/photo-1552332386-f8dd00d59143?auto=format&fit=crop&w=400&q=80', // Beer & Food
-    'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80', // Pool Table
-    'https://images.unsplash.com/photo-1575444758702-4a6b9222336e?auto=format&fit=crop&w=400&q=80', // Dark Vibe
-    'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=400&q=80', // Outdoor
-    'https://images.unsplash.com/photo-1584225064785-c62a8b43d148?auto=format&fit=crop&w=400&q=80', // Taps
-    'https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=400&q=80', // Generic Sports
-    'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80', // Club vibe
-];
+// Helper to generate consistent logo-style avatars
+const getVenueLogo = (name: string, seed: number) => {
+    // Curated brand colors for a "premium" feel
+    const colors = ['1e40af', 'b91c1c', '15803d', 'a16207', '7e22ce', 'be123c', '0f766e', '1d4ed8'];
+    const bg = colors[seed % colors.length];
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bg}&color=fff&size=200&font-size=0.4&length=2&rounded=true&bold=true&uppercase=true`;
+};
 
 const generateBangkokVenues = () => {
     const names = [
@@ -55,10 +49,7 @@ const generateBangkokVenues = () => {
         location: 'Bangkok',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.2 + (Math.random() * 0.7),
-        // Use Logo-style avatar for "The Sportsman" (example) or curated images
-        imageUrl: idx === 0
-            ? 'https://ui-avatars.com/api/?name=The+Sportsman&background=0D8ABC&color=fff&size=200' // Logo style
-            : BAR_IMAGES[idx % BAR_IMAGES.length],
+        imageUrl: getVenueLogo(name, idx),
         lastVerified: new Date(),
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Bangkok'),
         tags: [
@@ -79,8 +70,7 @@ const generateSingaporeVenues = () => {
         location: 'Singapore',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.1 + (Math.random() * 0.8),
-        // Singapore: Rotate images with offset to ensure different from Bangkok
-        imageUrl: BAR_IMAGES[(idx + 3) % BAR_IMAGES.length],
+        imageUrl: getVenueLogo(name, idx + 3),
         lastVerified: new Date(),
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Singapore'),
         tags: [
@@ -101,10 +91,7 @@ const generateTaipeiVenues = () => {
         location: 'Taipei',
         distance: `${(Math.random() * 5 + 0.2).toFixed(1)} km`,
         rating: 4.3 + (Math.random() * 0.6),
-        // Taipei: Different offset. For Brass Monkey, try a logo?
-        imageUrl: name.includes("Brass Monkey")
-            ? 'https://ui-avatars.com/api/?name=Brass+Monkey&background=FBbf24&color=000&size=200'
-            : BAR_IMAGES[(idx + 6) % BAR_IMAGES.length],
+        imageUrl: getVenueLogo(name, idx + 6),
         lastVerified: new Date(),
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Taipei'),
         tags: [
