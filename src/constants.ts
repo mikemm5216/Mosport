@@ -29,6 +29,69 @@ const generateBacNinhVenues = () => {
     }));
 };
 
+const generateBangkokVenues = () => {
+    const names = [
+        "The Sportsman", "The Londoner Brew Pub", "Robin Hood Pub", "Scruffy Murphy's", "Roadhouse BBQ",
+        "Mulligans Irish Bar", "The Pickled Liver", "O'Shea's Irish Pub", "The Royal Oak", "Buddy's Bar & Grill"
+    ];
+
+    return names.map((name, idx) => ({
+        id: `v_bkk_${idx}`,
+        name: name,
+        location: 'Bangkok',
+        distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
+        rating: 4.2 + (Math.random() * 0.7),
+        imageUrl: `https://images.unsplash.com/photo-${1540000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        lastVerified: new Date(),
+        googleMapUrl: 'https://maps.google.com/?q=Bangkok',
+        tags: [
+            { id: `tb${idx}a`, type: QoETagType.BROADCAST, label: 'Live Sports', confidence: 0.9 + (Math.random() * 0.1) }
+        ].concat(Math.random() > 0.5 ? [{ id: `tb${idx}b`, type: QoETagType.VIBE, label: 'Pool Table', confidence: 0.85 }] : [])
+    }));
+};
+
+const generateSingaporeVenues = () => {
+    const names = [
+        "Harry's Boat Quay", "Boomarang Bistro & Bar", "Muddy Murphy's", "Brewerkz Riverside", "The Penny Black",
+        "Hero's", "Molly Malone's", "Dallas Cafe & Bar", "Cafe Melba", "BQ Bar"
+    ];
+
+    return names.map((name, idx) => ({
+        id: `v_sg_${idx}`,
+        name: name,
+        location: 'Singapore',
+        distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
+        rating: 4.1 + (Math.random() * 0.8),
+        imageUrl: `https://images.unsplash.com/photo-${1560000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        lastVerified: new Date(),
+        googleMapUrl: 'https://maps.google.com/?q=Singapore',
+        tags: [
+            { id: `tsg${idx}a`, type: QoETagType.VIBE, label: 'River View', confidence: 0.92 }
+        ].concat(Math.random() > 0.5 ? [{ id: `tsg${idx}b`, type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.88 }] : [])
+    }));
+};
+
+const generateTaipeiVenues = () => {
+    const names = [
+        "The Brass Monkey", "On Tap", "Hooters Taipei", "Carnegie's Taipei", "Gordon Biersch",
+        "GB Brewery Restaurant", "Charlie's Sports Bar", "Another Brick", "The Hammer", "Revolver"
+    ];
+
+    return names.map((name, idx) => ({
+        id: `v_tpe_${idx}`,
+        name: name,
+        location: 'Taipei',
+        distance: `${(Math.random() * 5 + 0.2).toFixed(1)} km`,
+        rating: 4.3 + (Math.random() * 0.6),
+        imageUrl: `https://images.unsplash.com/photo-${1520000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        lastVerified: new Date(),
+        googleMapUrl: 'https://maps.google.com/?q=Taipei',
+        tags: [
+            { id: `ttpe${idx}a`, type: QoETagType.BROADCAST, label: 'Live Match', confidence: 0.94 }
+        ].concat(Math.random() > 0.5 ? [{ id: `ttpe${idx}b`, type: QoETagType.SURVIVAL, label: 'Great Food', confidence: 0.89 }] : [])
+    }));
+};
+
 export const MOCK_VENUES: Venue[] = [
     {
         id: 'v1',
@@ -58,6 +121,7 @@ export const MOCK_VENUES: Venue[] = [
             }
         }
     },
+    // ... Existing static venues ...
     {
         id: 'v2',
         name: 'The Republic',
@@ -210,63 +274,9 @@ export const MOCK_VENUES: Venue[] = [
         features: {}
     },
     ...generateBacNinhVenues().map(v => ({ ...v, features: {} })),
-    // Bangkok Venues
-    {
-        id: 'v_bkk_1',
-        name: 'The Sportsman',
-        location: 'Bangkok',
-        distance: '1.2 km',
-        rating: 4.5,
-        imageUrl: 'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&w=400&q=80',
-        lastVerified: new Date(),
-        tags: [
-            { id: 'tb1', type: QoETagType.BROADCAST, label: 'Live PL', confidence: 0.95 },
-            { id: 'tb2', type: QoETagType.SURVIVAL, label: 'Pool', confidence: 0.90 }
-        ],
-        features: {}
-    },
-    // Taipei Venues
-    {
-        id: 'v_tpe_1',
-        name: 'The Brass Monkey',
-        location: 'Taipei',
-        distance: '0.5 km',
-        rating: 4.6,
-        imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80',
-        lastVerified: new Date(),
-        tags: [
-            { id: 'ttpe1', type: QoETagType.BROADCAST, label: 'Rugby', confidence: 0.95 },
-            { id: 'ttpe2', type: QoETagType.VIBE, label: 'Expats', confidence: 0.88 }
-        ],
-        features: {}
-    },
-    {
-        id: 'v_tpe_2',
-        name: 'On Tap',
-        location: 'Taipei',
-        distance: '2.0 km',
-        rating: 4.3,
-        imageUrl: 'https://images.unsplash.com/photo-1574602305307-b3b3a602319e?auto=format&fit=crop&w=400&q=80',
-        lastVerified: new Date(),
-        tags: [
-            { id: 'ttpe3', type: QoETagType.BROADCAST, label: 'Live Football', confidence: 0.92 }
-        ],
-        features: {}
-    },
-    // Singapore Venues
-    {
-        id: 'v_sg_1',
-        name: "Harry's Boat Quay",
-        location: 'Singapore',
-        distance: '1.0 km',
-        rating: 4.4,
-        imageUrl: 'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80',
-        lastVerified: new Date(),
-        tags: [
-            { id: 'tsg1', type: QoETagType.VIBE, label: 'River View', confidence: 0.90 }
-        ],
-        features: {}
-    }
+    ...generateBangkokVenues().map(v => ({ ...v, features: {} })),
+    ...generateSingaporeVenues().map(v => ({ ...v, features: {} })),
+    ...generateTaipeiVenues().map(v => ({ ...v, features: {} }))
 ];
 
 export const MOCK_EVENTS = [
