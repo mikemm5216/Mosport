@@ -5,8 +5,8 @@ import { DecisionSignal, UserRole } from '../types';
 import { VLEAGUE_TEAM_LINKS, JLEAGUE_TEAM_LINKS, NPB_TEAM_LINKS, CPBL_TEAM_LINKS, NHL_TEAM_LINKS, MLB_TEAM_LINKS } from '../constants';
 import { MapPin, Coffee, ChevronDown, TrendingUp, History, Flame, ExternalLink, Heart } from 'lucide-react';
 import { VenueImage } from './venue/VenueImage';
-import { useAuthStore } from '../stores/authStore';
-import { useLoginModal } from '../hooks/useLoginModal';
+import { useAuthStore } from '../stores/useAuthStore';
+import { useLoginModal } from '../stores/useLoginModal';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
@@ -139,8 +139,8 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                         <Heart
                             size={18}
                             className={`transition-all duration-300 ${isEventSaved
-                                    ? "fill-red-500 text-red-500 scale-110"
-                                    : "text-gray-400 group-hover/heart:text-red-400 group-hover/heart:scale-110"
+                                ? "fill-red-500 text-red-500 scale-110"
+                                : "text-gray-400 group-hover/heart:text-red-400 group-hover/heart:scale-110"
                                 }`}
                         />
                     </button>
