@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Trophy } from 'lucide-react';
-import { Button } from '../Button';
+import { Button } from './Button';
 
 interface MajorEventBannerProps {
     eventName: string;
