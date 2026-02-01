@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
-import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
+import { VLEAGUE_TEAM_LINKS } from '../constants';
 import { MapPin, Coffee } from 'lucide-react';
 import { VenueImage } from './venue/VenueImage';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from '../Button';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
-import { Badge } from '../ui/Badge';
+import { Button } from './Button';
+import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
+import { Badge } from './ui/Badge';
 
 interface Event {
     id: string;

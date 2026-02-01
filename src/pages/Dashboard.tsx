@@ -23,6 +23,19 @@ export const Dashboard = () => {
 
     const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
 
+    // Fetch data only for FAN users
+    useEffect(() => {
+        if (currentRole === UserRole.FAN) {
+            const fetchData = async () => {
+                setLoading(true);
+                const data = await getDecisionSignals(locationFilter);
+                setSignals(data);
+                setLoading(false);
+            };
+            fetchData();
+        }
+    }, [locationFilter, sportFilter, searchTerm, currentRole]);
+
     // === ROLE-BASED ROUTING LOGIC ===
     // If user is STAFF, show StaffDashboard
     if (currentRole === UserRole.STAFF) {
@@ -36,16 +49,6 @@ export const Dashboard = () => {
 
     // Otherwise, show FAN view (default)
     // === END ROLE-BASED ROUTING ===
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            const data = await getDecisionSignals(locationFilter);
-            setSignals(data);
-            setLoading(false);
-        };
-        fetchData();
-    }, [locationFilter, sportFilter, searchTerm]);
 
 
     const handleHomeClick = () => {
