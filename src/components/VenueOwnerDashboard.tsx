@@ -3,6 +3,8 @@ import { VenueAnalyticsCharts } from './VenueAnalyticsCharts';
 import { Button } from './Button';
 import { Switch } from './ui/Switch';
 import { EditVenueProfile } from './EditVenueProfile';
+import { Navbar } from './Navbar';
+import { UserRole } from '../types';
 import {
     Select,
     SelectContent,
@@ -17,8 +19,9 @@ export const VenueOwnerDashboard = () => {
     const [showEditModal, setShowEditModal] = useState(false);
 
     return (
-        <div className="min-h-screen bg-mosport-black pb-20">
-            <div className="p-6 max-w-6xl mx-auto space-y-8">
+        <div className="min-h-screen bg-mosport-black">
+            <Navbar currentRole={UserRole.VENUE} onHomeClick={() => window.location.href = '/'} />
+            <div className="p-6 max-w-6xl mx-auto space-y-8 pb-20">
 
                 {/* HEADER: MY VENUE PROFILE */}
                 <div className="flex flex-col md:flex-row gap-6">
