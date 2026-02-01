@@ -29,12 +29,34 @@ const generateBacNinhVenues = () => {
     }));
 };
 
-// Helper to generate consistent logo-style avatars
-const getVenueLogo = (name: string, seed: number) => {
-    // Curated brand colors for a "premium" feel
-    const colors = ['1e40af', 'b91c1c', '15803d', 'a16207', '7e22ce', 'be123c', '0f766e', '1d4ed8'];
-    const bg = colors[seed % colors.length];
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bg}&color=fff&size=200&font-size=0.4&length=2&rounded=true&bold=true&uppercase=true`;
+// Curated Image Pools per City for "Local Vibe"
+const CITY_IMAGES = {
+    Bangkok: [
+        'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80', // Party vibe
+        'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=400&q=80', // Crowded pub
+        'https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=400&q=80', // Sports focus
+        'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&w=400&q=80', // Screens
+        'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=400&q=80', // Neon
+    ],
+    Singapore: [
+        'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=400&q=80', // Rooftop/High end
+        'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80', // Lounge
+        'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=400&q=80', // Outdoor classy
+        'https://images.unsplash.com/photo-1584225064785-c62a8b43d148?auto=format&fit=crop&w=400&q=80', // Craft beer
+        'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&w=400&q=80', // Modern
+    ],
+    Taipei: [
+        'https://images.unsplash.com/photo-1552332386-f8dd00d59143?auto=format&fit=crop&w=400&q=80', // Cozy classic
+        'https://images.unsplash.com/photo-1575444758702-4a6b9222336e?auto=format&fit=crop&w=400&q=80', // Dark moody
+        'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80', // Pool table
+        'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80', // Bar counter
+        'https://images.unsplash.com/photo-1574602305307-b3b3a602319e?auto=format&fit=crop&w=400&q=80', // Warm light
+    ]
+};
+
+const getCityVibeImage = (city: keyof typeof CITY_IMAGES, seed: number) => {
+    const pool = CITY_IMAGES[city] || CITY_IMAGES['Bangkok'];
+    return pool[seed % pool.length];
 };
 
 const generateBangkokVenues = () => {
@@ -49,8 +71,9 @@ const generateBangkokVenues = () => {
         location: 'Bangkok',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.2 + (Math.random() * 0.7),
-        imageUrl: getVenueLogo(name, idx),
+        imageUrl: getCityVibeImage('Bangkok', idx),
         lastVerified: new Date(),
+        // Direct venue search
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Bangkok'),
         tags: [
             { id: `tb${idx}a`, type: QoETagType.BROADCAST, label: 'Live Sports', confidence: 0.9 + (Math.random() * 0.1) }
@@ -70,7 +93,7 @@ const generateSingaporeVenues = () => {
         location: 'Singapore',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.1 + (Math.random() * 0.8),
-        imageUrl: getVenueLogo(name, idx + 3),
+        imageUrl: getCityVibeImage('Singapore', idx),
         lastVerified: new Date(),
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Singapore'),
         tags: [
@@ -91,7 +114,7 @@ const generateTaipeiVenues = () => {
         location: 'Taipei',
         distance: `${(Math.random() * 5 + 0.2).toFixed(1)} km`,
         rating: 4.3 + (Math.random() * 0.6),
-        imageUrl: getVenueLogo(name, idx + 6),
+        imageUrl: getCityVibeImage('Taipei', idx),
         lastVerified: new Date(),
         googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Taipei'),
         tags: [
