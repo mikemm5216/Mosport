@@ -54,7 +54,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role, children
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl font-bold cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/dashboard')}>
                                 <span className="text-mosport-fan">M</span>
-                                <span className="text-white">/</span>
                                 <span className="text-mosport-venue">S</span>
                                 <span className="text-gray-400 ml-2">MOSPORT</span>
                             </h1>
