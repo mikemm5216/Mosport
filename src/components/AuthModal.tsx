@@ -124,8 +124,9 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
             password: 'Mikemm26@'
         };
 
-        if (venueEmail !== MOCK_CREDENTIALS.email) {
-            setError('Email not found');
+        // Case-insensitive email comparison
+        if (venueEmail.toLowerCase().trim() !== MOCK_CREDENTIALS.email.toLowerCase()) {
+            setError(`Email not found. Try: ${MOCK_CREDENTIALS.email}`);
             return;
         }
 

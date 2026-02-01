@@ -25,54 +25,47 @@ export const AuthCallback = () => {
                 return;
             }
 
-            // 取得儲存的角色
-            const pendingRole = sessionStorage.getItem('mosport_pending_role') as any;
-            if (!pendingRole) {
-                setError('Missing role information');
+            if (!code) {
+                setError('No authorization code received');
                 setStatus('error');
                 setTimeout(() => navigate('/'), 3000);
                 return;
             }
 
-            // Call Backend API
+            // Parse provider and role from state
+            const provider = state?.split('_')[0] || 'google';
+            const role = state?.split('_')[1] || 'FAN';
+
             try {
-                const provider = state?.split('_')[0] as string;
+                // TODO: Replace with real backend authentication later
+                // For now, use client-side mock authentication
+                console.log('OAuth callback received:', { provider, role, code });
 
-                const response = await apiClient.handleOAuthCallback({
-                    code: code!,
-                    provider: provider || 'google', // fallback if parsing failed
-                    role: pendingRole
-                }) as any;
+                // Create user session
+                setUser({
+                    id: `${provider}_${Date.now()}`,
+                    role: role as any,
+                    isAuthenticated: true,
+                    isGuest: false,
+                    provider: provider,
+                    profile: {
+                        name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
+                        email: 'user@example.com',
+                        picture: `https://api.dicebear.com/7.x/avatars/svg?seed=${Date.now()}`
+                    }
+                });
 
-                if (response.success && response.user) {
-                    const apiUser = response.user;
+                setStatus('success');
 
-                    setUser({
-                        role: apiUser.role,
-                        isAuthenticated: true,
-                        isGuest: false,
-                        provider: apiUser.provider,
-                        profile: {
-                            name: apiUser.name,
-                            email: apiUser.email,
-                            picture: apiUser.picture,
-                        },
-                    });
-
-                    // Clear pending state
-                    sessionStorage.removeItem('mosport_pending_role');
-                    setStatus('success');
-
-                    // Redirect to dashboard
-                    setTimeout(() => navigate('/dashboard'), 500);
-                } else {
-                    throw new Error('Invalid response from server');
-                }
+                // Redirect to dashboard
+                setTimeout(() => navigate('/dashboard'), 500);
             } catch (err: any) {
                 console.error('Auth Callback Failed:', err);
                 setError(err.message || 'Authentication failed');
                 setStatus('error');
                 setTimeout(() => navigate('/'), 3000);
+            } finally {
+                setLoading(false);
             }
         };
 
