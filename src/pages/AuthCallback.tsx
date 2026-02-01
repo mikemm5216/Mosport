@@ -47,23 +47,23 @@ export const AuthCallback = () => {
                 // For now, use client-side mock authentication
                 console.log('OAuth callback received:', { provider, role, code });
 
-                // 🛡️ SECURITY: Admin Whitelist Check
-                // In production, this email comes from the verified OAuth ID Token
-                // For this mock, we simulate that ONLY this email can be admin.
-                const ALLOWED_ADMINS = ['mikemm5216@gmail.com'];
+                // 🛡️ SECURITY: Strict Admin Lock
                 let userEmail = 'user@example.com';
+                let userName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`;
 
                 // If attempting to login as ADMIN, we strictly enforce/simulate the specific email
                 if (role === 'ADMIN') {
-                    // For the purpose of this demo/mock, if they came via the Admin path, 
-                    // we assume they ARE the admin (since we don't have real Google Auth returning the email yet).
-                    // But to satisfy the "lock" requirement visually:
-                    userEmail = 'mikemm5216@gmail.com';
+                    // 🚨 CRITICAL: Mocking strictly requires "Proof"
+                    // In real life, Google/FB gives us this verified email.
+                    // Here, we force the user to type it to "Simulate" they are that person.
+                    const mockInputEmail = prompt("🔐 SECURITY CHECK\n\nSimulating Google Verification.\nPlease enter your authorized Admin email:");
 
-                    // In a real app, we would do:
-                    // if (!ALLOWED_ADMINS.includes(verifiedEmailFromProvider)) {
-                    //    role = 'FAN'; // Demote intruders
-                    // }
+                    if (mockInputEmail !== 'mikemm5216@gmail.com') {
+                        const failedAttempt = mockInputEmail || 'No input';
+                        throw new Error(`⛔ ACCESS DENIED: '${failedAttempt}' is not authorized.`);
+                    }
+                    userEmail = mockInputEmail;
+                    userName = 'Mike MM';
                 }
 
                 // Create user session
@@ -74,7 +74,7 @@ export const AuthCallback = () => {
                     isGuest: false,
                     provider: provider,
                     profile: {
-                        name: role === 'ADMIN' ? 'Mike MM' : `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
+                        name: userName,
                         email: userEmail,
                         picture: `https://api.dicebear.com/7.x/avatars/svg?seed=${Date.now()}`
                     }
