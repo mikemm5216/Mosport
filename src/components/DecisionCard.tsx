@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 import * as React from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
-import { VLEAGUE_TEAM_LINKS } from '../constants';
+import { VLEAGUE_TEAM_LINKS, JLEAGUE_TEAM_LINKS, NPB_TEAM_LINKS, CPBL_TEAM_LINKS, NHL_TEAM_LINKS, MLB_TEAM_LINKS } from '../constants';
 import { MapPin, Coffee, ChevronDown, TrendingUp, History, Flame, ExternalLink } from 'lucide-react';
 import { VenueImage } from './venue/VenueImage';
 
@@ -27,6 +27,21 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
         if (league.includes('V.League')) {
             const homeTeamUrl = VLEAGUE_TEAM_LINKS[teamA];
             url = homeTeamUrl || 'https://www.facebook.com/VPFProfessionalFootball';
+        } else if (league.includes('J.League')) {
+            const homeTeamUrl = JLEAGUE_TEAM_LINKS[teamA];
+            url = homeTeamUrl || 'https://www.jleague.jp/en/';
+        } else if (league === 'NPB') {
+            const homeTeamUrl = NPB_TEAM_LINKS[teamA];
+            url = homeTeamUrl || 'https://npb.jp/eng/';
+        } else if (league === 'CPBL') {
+            const homeTeamUrl = CPBL_TEAM_LINKS[teamA];
+            url = homeTeamUrl || 'https://www.cpbl.com.tw/';
+        } else if (league === 'NHL') {
+            const homeTeamUrl = NHL_TEAM_LINKS[teamA];
+            url = homeTeamUrl || 'https://www.nhl.com/';
+        } else if (league === 'MLB') {
+            const homeTeamUrl = MLB_TEAM_LINKS[teamA];
+            url = homeTeamUrl || 'https://www.mlb.com/';
         } else {
             url = `https://www.google.com/search?q=${encodeURIComponent(title + ' official tickets')}`;
         }
