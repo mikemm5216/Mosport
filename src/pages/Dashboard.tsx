@@ -12,6 +12,8 @@ import { useLoginModal } from '../stores/useLoginModal';
 import { StaffDashboard } from '../components/StaffDashboard';
 import { VenueOwnerDashboard } from '../components/VenueOwnerDashboard';
 
+import { AdminDashboard } from './dashboard/AdminDashboard';
+
 export const Dashboard = () => {
     const navigate = useNavigate();
     const { user, logout, setUser } = useAuthStore();
@@ -37,6 +39,11 @@ export const Dashboard = () => {
             fetchData();
         }
     }, [locationFilter, sportFilter, searchTerm, currentRole]);
+
+    // If user is ADMIN, show AdminDashboard
+    if (currentRole === UserRole.ADMIN) {
+        return <AdminDashboard />;
+    }
 
     // If user is STAFF, show StaffDashboard
     if (currentRole === UserRole.STAFF) {

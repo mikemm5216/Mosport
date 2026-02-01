@@ -21,6 +21,16 @@ type TabMode = 'fan' | 'venue' | 'admin';
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     // Tab State: 'fan' (User), 'venue' (Business), or 'admin' (Platform Admin)
     const [activeTab, setActiveTab] = useState<TabMode>('fan');
+    const [secretCount, setSecretCount] = useState(0);
+    const [isAdminVisible, setIsAdminVisible] = useState(false);
+
+    // Check for admin URL parameter on mount
+    useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('admin') === 'true') {
+            setIsAdminVisible(true);
+        }
+    });
 
     const [inviteCode, setInviteCode] = useState('');
     const [error, setError] = useState('');
@@ -28,6 +38,15 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     const { setUser } = useAuthStore();
 
     if (!isOpen) return null;
+
+    const handleSecretClick = () => {
+        const newCount = secretCount + 1;
+        setSecretCount(newCount);
+        if (newCount >= 5) {
+            setIsAdminVisible(true);
+            setActiveTab('admin');
+        }
+    };
 
     const handleFacebookLogin = () => {
         if (!window.FB) {
@@ -131,15 +150,17 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                         {activeTab === 'venue' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />}
                     </button>
 
-                    <button
-                        onClick={() => setActiveTab('admin')}
-                        className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative
-                            ${activeTab === 'admin' ? 'text-purple-400 bg-purple-950/20' : 'text-gray-500 hover:text-gray-300'}
-                        `}
-                    >
-                        <Lock size={16} /> ADMIN
-                        {activeTab === 'admin' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500" />}
-                    </button>
+                    {isAdminVisible && (
+                        <button
+                            onClick={() => setActiveTab('admin')}
+                            className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative animate-in fade-in zoom-in
+                                ${activeTab === 'admin' ? 'text-purple-400 bg-purple-950/20' : 'text-gray-500 hover:text-gray-300'}
+                            `}
+                        >
+                            <Lock size={16} /> ADMIN
+                            {activeTab === 'admin' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500" />}
+                        </button>
+                    )}
                 </div>
 
                 {/* === 2. CONTENT AREA === */}
@@ -239,7 +260,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 </div>
 
                 {/* Footer */}
-                <div className="p-3 bg-black/40 text-center border-t border-white/5">
+                <div
+                    onClick={handleSecretClick}
+                    className="p-3 bg-black/40 text-center border-t border-white/5 cursor-default select-none transition-colors hover:text-gray-500"
+                >
                     <p className="text-[10px] text-gray-600">
                         By continuing, you agree to Mosport's Terms & Vibe Policy.
                     </p>
