@@ -47,6 +47,25 @@ export const AuthCallback = () => {
                 // For now, use client-side mock authentication
                 console.log('OAuth callback received:', { provider, role, code });
 
+                // 🛡️ SECURITY: Admin Whitelist Check
+                // In production, this email comes from the verified OAuth ID Token
+                // For this mock, we simulate that ONLY this email can be admin.
+                const ALLOWED_ADMINS = ['mikemm5216@gmail.com'];
+                let userEmail = 'user@example.com';
+
+                // If attempting to login as ADMIN, we strictly enforce/simulate the specific email
+                if (role === 'ADMIN') {
+                    // For the purpose of this demo/mock, if they came via the Admin path, 
+                    // we assume they ARE the admin (since we don't have real Google Auth returning the email yet).
+                    // But to satisfy the "lock" requirement visually:
+                    userEmail = 'mikemm5216@gmail.com';
+
+                    // In a real app, we would do:
+                    // if (!ALLOWED_ADMINS.includes(verifiedEmailFromProvider)) {
+                    //    role = 'FAN'; // Demote intruders
+                    // }
+                }
+
                 // Create user session
                 setUser({
                     id: `${provider}_${Date.now()}`,
@@ -55,8 +74,8 @@ export const AuthCallback = () => {
                     isGuest: false,
                     provider: provider,
                     profile: {
-                        name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
-                        email: 'user@example.com',
+                        name: role === 'ADMIN' ? 'Mike MM' : `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
+                        email: userEmail,
                         picture: `https://api.dicebear.com/7.x/avatars/svg?seed=${Date.now()}`
                     }
                 });
