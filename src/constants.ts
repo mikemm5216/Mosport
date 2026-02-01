@@ -29,6 +29,20 @@ const generateBacNinhVenues = () => {
     }));
 };
 
+// Curated Image Pool for realistic feeling
+const BAR_IMAGES = [
+    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=400&q=80', // Classic Bar
+    'https://images.unsplash.com/photo-1542396601-dca920ea2807?auto=format&fit=crop&w=400&q=80', // Sports TV
+    'https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=400&q=80', // Pub Crowd
+    'https://images.unsplash.com/photo-1552332386-f8dd00d59143?auto=format&fit=crop&w=400&q=80', // Beer & Food
+    'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80', // Pool Table
+    'https://images.unsplash.com/photo-1575444758702-4a6b9222336e?auto=format&fit=crop&w=400&q=80', // Dark Vibe
+    'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=400&q=80', // Outdoor
+    'https://images.unsplash.com/photo-1584225064785-c62a8b43d148?auto=format&fit=crop&w=400&q=80', // Taps
+    'https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=400&q=80', // Generic Sports
+    'https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?auto=format&fit=crop&w=400&q=80', // Club vibe
+];
+
 const generateBangkokVenues = () => {
     const names = [
         "The Sportsman", "The Londoner Brew Pub", "Robin Hood Pub", "Scruffy Murphy's", "Roadhouse BBQ",
@@ -41,9 +55,12 @@ const generateBangkokVenues = () => {
         location: 'Bangkok',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.2 + (Math.random() * 0.7),
-        imageUrl: `https://images.unsplash.com/photo-${1540000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        // Use Logo-style avatar for "The Sportsman" (example) or curated images
+        imageUrl: idx === 0
+            ? 'https://ui-avatars.com/api/?name=The+Sportsman&background=0D8ABC&color=fff&size=200' // Logo style
+            : BAR_IMAGES[idx % BAR_IMAGES.length],
         lastVerified: new Date(),
-        googleMapUrl: 'https://maps.google.com/?q=Bangkok',
+        googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Bangkok'),
         tags: [
             { id: `tb${idx}a`, type: QoETagType.BROADCAST, label: 'Live Sports', confidence: 0.9 + (Math.random() * 0.1) }
         ].concat(Math.random() > 0.5 ? [{ id: `tb${idx}b`, type: QoETagType.VIBE, label: 'Pool Table', confidence: 0.85 }] : [])
@@ -62,9 +79,10 @@ const generateSingaporeVenues = () => {
         location: 'Singapore',
         distance: `${(Math.random() * 5 + 0.5).toFixed(1)} km`,
         rating: 4.1 + (Math.random() * 0.8),
-        imageUrl: `https://images.unsplash.com/photo-${1560000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        // Singapore: Rotate images with offset to ensure different from Bangkok
+        imageUrl: BAR_IMAGES[(idx + 3) % BAR_IMAGES.length],
         lastVerified: new Date(),
-        googleMapUrl: 'https://maps.google.com/?q=Singapore',
+        googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Singapore'),
         tags: [
             { id: `tsg${idx}a`, type: QoETagType.VIBE, label: 'River View', confidence: 0.92 }
         ].concat(Math.random() > 0.5 ? [{ id: `tsg${idx}b`, type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.88 }] : [])
@@ -83,9 +101,12 @@ const generateTaipeiVenues = () => {
         location: 'Taipei',
         distance: `${(Math.random() * 5 + 0.2).toFixed(1)} km`,
         rating: 4.3 + (Math.random() * 0.6),
-        imageUrl: `https://images.unsplash.com/photo-${1520000000000 + idx}?auto=format&fit=crop&w=400&q=80`,
+        // Taipei: Different offset. For Brass Monkey, try a logo?
+        imageUrl: name.includes("Brass Monkey")
+            ? 'https://ui-avatars.com/api/?name=Brass+Monkey&background=FBbf24&color=000&size=200'
+            : BAR_IMAGES[(idx + 6) % BAR_IMAGES.length],
         lastVerified: new Date(),
-        googleMapUrl: 'https://maps.google.com/?q=Taipei',
+        googleMapUrl: 'https://maps.google.com/?q=' + encodeURIComponent(name + ' Taipei'),
         tags: [
             { id: `ttpe${idx}a`, type: QoETagType.BROADCAST, label: 'Live Match', confidence: 0.94 }
         ].concat(Math.random() > 0.5 ? [{ id: `ttpe${idx}b`, type: QoETagType.SURVIVAL, label: 'Great Food', confidence: 0.89 }] : [])
