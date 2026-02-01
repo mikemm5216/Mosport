@@ -71,7 +71,10 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
             return;
         }
 
+        // Save the intended role to sessionStorage
         const role = activeTab === 'fan' ? UserRole.FAN : UserRole.VENUE;
+        sessionStorage.setItem('mosport_pending_role', role);
+
         const oauthUrl = generateOAuthUrl(provider, `${provider}_${role}_${Date.now()}`);
 
         if (oauthUrl === '#') {

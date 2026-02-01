@@ -3,6 +3,7 @@ import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { AuthCallback } from './pages/AuthCallback';
 import { VenueListDemo } from './pages/VenueListDemo';
+import { DataDeletionRequest } from './pages/DataDeletionRequest';
 
 
 import { SEO } from './components/SEO';
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/venue-list-demo" element={<VenueListDemo />} />
+                <Route path="/data-deletion" element={<DataDeletionRequest />} />
 
                 {/* Protected/Guest Route */}
                 <Route
