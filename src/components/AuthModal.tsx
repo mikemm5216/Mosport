@@ -29,7 +29,6 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
     const [inviteCode, setInviteCode] = useState('');
     const [venueEmail, setVenueEmail] = useState('');
     const [venuePassword, setVenuePassword] = useState('');
-    const [fanEmail, setFanEmail] = useState('');
     const [error, setError] = useState('');
 
     const { setUser } = useAuthStore();
@@ -131,29 +130,6 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
         onClose();
     };
 
-    const handleFanEmailSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-
-        if (!fanEmail) {
-            setError('Please enter your email');
-            return;
-        }
-
-        // TODO: Email login with backend
-        console.log('Fan email login:', fanEmail);
-
-        // Mock success
-        setUser({
-            id: 'fan_user',
-            email: fanEmail,
-            role: UserRole.FAN,
-            isAuthenticated: true,
-            isGuest: false,
-        });
-        onLoginAs(UserRole.FAN);
-        onClose();
-    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">

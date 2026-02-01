@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuthStore } from '../stores/useAuthStore';
 import { SEO } from '../components/SEO';
-import { UserRole } from '../types';
+
 
 export const LandingPage = () => {
     const navigate = useNavigate();
