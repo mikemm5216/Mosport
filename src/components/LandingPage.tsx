@@ -42,6 +42,14 @@ export const LandingPage = ({ onLoginClick, isLoading = false }: LandingPageProp
                         >
                             {isLoading ? 'Loading...' : 'Start Your Journey'}
                         </Button>
+                        <Button
+                            variant="ghost"
+                            className="px-8 py-4 text-lg text-gray-400 hover:text-white"
+                            onClick={onLoginClick}
+                            disabled={isLoading}
+                        >
+                            Skip (Browse as Guest)
+                        </Button>
                     </div>
                 </div>
             </div>
