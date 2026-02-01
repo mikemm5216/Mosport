@@ -16,11 +16,11 @@ declare global {
     }
 }
 
-type TabMode = 'fan' | 'venue';
+type TabMode = 'fan' | 'venue' | 'admin';
 type VenueSubMode = 'claim' | 'login';
 
 export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
-    // Tab State: 'fan' (User) or 'venue' (Business)
+    // Tab State: 'fan' (User), 'venue' (Business), or 'admin' (Platform Admin)
     const [activeTab, setActiveTab] = useState<TabMode>('fan');
 
     // Venue Sub-State: 'login' or 'claim' (for invite codes)
@@ -72,7 +72,7 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
         }
 
         // Save the intended role to sessionStorage
-        const role = activeTab === 'fan' ? UserRole.FAN : UserRole.VENUE;
+        const role = activeTab === 'fan' ? UserRole.FAN : activeTab === 'admin' ? UserRole.ADMIN : UserRole.VENUE;
         sessionStorage.setItem('mosport_pending_role', role);
 
         const oauthUrl = generateOAuthUrl(provider, `${provider}_${role}_${Date.now()}`);
@@ -160,7 +160,7 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className={`
                 w-full max-w-[400px] bg-neutral-900 border rounded-xl shadow-2xl overflow-hidden transition-all duration-300
-                ${activeTab === 'fan' ? 'border-blue-500/30 shadow-blue-500/20' : 'border-red-500/30 shadow-red-500/20'}
+                ${activeTab === 'fan' ? 'border-blue-500/30 shadow-blue-500/20' : activeTab === 'admin' ? 'border-purple-500/30 shadow-purple-500/20' : 'border-red-500/30 shadow-red-500/20'}
             `}>
 
                 {/* === 1. TOP TOGGLE (The Identity Switcher) === */}
@@ -178,11 +178,21 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                     <button
                         onClick={() => setActiveTab('venue')}
                         className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative
-                            ${activeTab === 'venue' ? 'text-red-500 bg-red-950/20' : 'text-gray-500 hover:text-gray-300'}
+                            ${activeTab === 'venue' ? 'text-red-400 bg-red-950/20' : 'text-gray-500 hover:text-gray-300'}
                         `}
                     >
                         <ShieldCheck size={16} /> VENUE PARTNER
                         {activeTab === 'venue' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />}
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('admin')}
+                        className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative
+                            ${activeTab === 'admin' ? 'text-purple-400 bg-purple-950/20' : 'text-gray-500 hover:text-gray-300'}
+                        `}
+                    >
+                        <Lock size={16} /> ADMIN
+                        {activeTab === 'admin' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-purple-500" />}
                     </button>
                 </div>
 
@@ -218,6 +228,48 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                             >
                                 <span className="text-lg">f</span>
                                 Continue with Facebook
+                            </button>
+
+                            <button
+                                onClick={() => handleOAuthLogin('zalo')}
+                                className="w-full bg-[#0068FF] text-white hover:bg-[#0058E0] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">Z</span>
+                                Continue with Zalo
+                            </button>
+                        </div>
+                    )}
+
+                    {/* --- SCENARIO B: ADMIN LOGIN --- */}
+                    {activeTab === 'admin' && (
+                        <div className="space-y-4 animate-in fade-in duration-300">
+                            <div className="text-center mb-4">
+                                <h3 className="text-xl font-bold text-purple-400">👑 Platform Admin</h3>
+                                <p className="text-sm text-gray-400">Manage venues, users, and analytics</p>
+                            </div>
+
+                            <button
+                                onClick={() => handleOAuthLogin('google')}
+                                className="w-full bg-purple-600 text-white hover:bg-purple-700 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <Lock size={18} />
+                                Admin Login with Google
+                            </button>
+
+                            <button
+                                onClick={() => handleOAuthLogin('facebook')}
+                                className="w-full bg-purple-700 text-white hover:bg-purple-800 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <Lock size={18} />
+                                Admin Login with Facebook
+                            </button>
+
+                            <button
+                                onClick={() => handleOAuthLogin('zalo')}
+                                className="w-full bg-purple-800 text-white hover:bg-purple-900 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <Lock size={18} />
+                                Admin Login with Zalo
                             </button>
                         </div>
                     )}

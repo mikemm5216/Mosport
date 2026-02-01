@@ -34,7 +34,13 @@ export const AuthCallback = () => {
 
             // Parse provider and role from state
             const provider = state?.split('_')[0] || 'google';
-            const role = state?.split('_')[1] || 'FAN';
+            let role = state?.split('_')[1] || 'FAN';
+
+            // 🔧 DEV MODE: Allow admin testing via URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('admin') === 'true') {
+                role = 'ADMIN';
+            }
 
             try {
                 // TODO: Replace with real backend authentication later
