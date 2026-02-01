@@ -3,7 +3,6 @@ import { AuthModal } from '../components/AuthModal';
 import { useLoginModal } from '../stores/useLoginModal';
 import { useAuthStore } from '../stores/useAuthStore';
 import { UserRole } from '../types';
-import { useNavigate } from 'react-router-dom';
 
 // Mock data with AI Match Intelligence
 const mockVenues = [
@@ -57,8 +56,7 @@ const mockVenues = [
 
 export const VenueListDemo = () => {
     const { isOpen, closeLoginModal, onSuccessCallback } = useLoginModal();
-    const { setUser, setGuest } = useAuthStore();
-    const navigate = useNavigate();
+    const { setGuest } = useAuthStore();
 
     const handleLoginAs = (role: UserRole) => {
         setGuest(role);
