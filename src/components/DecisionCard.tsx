@@ -3,8 +3,10 @@ import * as React from 'react';
 import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
 import { VLEAGUE_TEAM_LINKS, JLEAGUE_TEAM_LINKS, NPB_TEAM_LINKS, CPBL_TEAM_LINKS, NHL_TEAM_LINKS, MLB_TEAM_LINKS } from '../constants';
-import { MapPin, Coffee, ChevronDown, TrendingUp, History, Flame, ExternalLink } from 'lucide-react';
+import { MapPin, Coffee, ChevronDown, TrendingUp, History, Flame, ExternalLink, Heart } from 'lucide-react';
 import { VenueImage } from './venue/VenueImage';
+import { useAuthStore } from '../stores/authStore';
+import { useLoginModal } from '../hooks/useLoginModal';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
@@ -17,8 +19,27 @@ interface DecisionCardProps {
 export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const isVenueRole = userRole === UserRole.VENUE;
     const [isMatchExpanded, setIsMatchExpanded] = React.useState(false);
+    const [isEventSaved, setIsEventSaved] = React.useState(false);
+    const { user } = useAuthStore();
+    const { openLoginModal } = useLoginModal();
 
 
+
+    const handleToggleSaveEvent = (e: MouseEvent) => {
+        e.stopPropagation();
+
+        if (!user || !user.isAuthenticated) {
+            openLoginModal({
+                onSuccess: () => {
+                    setIsEventSaved(true);
+                }
+            });
+            return;
+        }
+
+        setIsEventSaved(!isEventSaved);
+        // TODO: Call API to save/unsave event
+    };
 
     const handleBuyTicket = (e: MouseEvent) => {
         e.stopPropagation();
@@ -110,6 +131,19 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleToggleSaveEvent}
+                        className="p-2 rounded-full hover:bg-black/40 transition-colors group/heart"
+                        aria-label={isEventSaved ? "Unsave event" : "Save event"}
+                    >
+                        <Heart
+                            size={18}
+                            className={`transition-all duration-300 ${isEventSaved
+                                    ? "fill-red-500 text-red-500 scale-110"
+                                    : "text-gray-400 group-hover/heart:text-red-400 group-hover/heart:scale-110"
+                                }`}
+                        />
+                    </button>
                     <ButtonComp
                         variant="outline"
                         className="text-xs h-8 px-3 border-gray-600 hover:border-yellow-500 hover:text-yellow-500"
