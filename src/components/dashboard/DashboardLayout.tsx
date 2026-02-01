@@ -52,7 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role, children
                     <div className="flex h-16 items-center justify-between">
                         {/* Logo */}
                         <div className="flex items-center gap-3">
-                            <h1 className="text-xl font-bold">
+                            <h1 className="text-xl font-bold cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/dashboard')}>
                                 <span className="text-mosport-fan">M</span>
                                 <span className="text-white">/</span>
                                 <span className="text-mosport-venue">S</span>
