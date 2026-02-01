@@ -267,7 +267,7 @@ export const MOCK_VENUES: Venue[] = [
         location: 'Tokyo',
         distance: '1.5 km',
         rating: 4.6,
-        imageUrl: 'https://images.unsplash.com/photo-1552332386-f8dd00d59143?auto=format&fit=crop&w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1518176258769-f227c798150e?auto=format&fit=crop&w=400&q=80', // Fixed: using working Tokyo vibe image
         lastVerified: new Date(),
         tags: [
             { id: 'tt3', type: QoETagType.BROADCAST, label: 'Big Screen', confidence: 0.95 },

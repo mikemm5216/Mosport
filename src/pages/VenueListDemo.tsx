@@ -1,8 +1,10 @@
 import { VenueListRow } from '../components/venue/VenueListRow';
+import { MajorEventBanner } from '../components/MajorEventBanner';
 import { AuthModal } from '../components/AuthModal';
 import { useLoginModal } from '../stores/useLoginModal';
 import { useAuthStore } from '../stores/useAuthStore';
 import { UserRole } from '../types';
+import { Trophy } from 'lucide-react';
 
 // Mock data with AI Match Intelligence
 const mockVenues = [
@@ -72,7 +74,19 @@ export const VenueListDemo = () => {
         <div className="min-h-screen bg-mosport-black p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold text-white mb-2">Mosport Venue List</h1>
-                <p className="text-gray-400 mb-8">RemoteOK-style list with AI Match Intelligence</p>
+                <p className="text-gray-400 mb-8">RemoteOK-style expandable list with AI Match Intelligence</p>
+
+                {/* Major Event Banner */}
+                <MajorEventBanner
+                    eventName="🏆 UEFA Champions League Final"
+                    hypeText="The biggest night in club football! Real Madrid vs Manchester City - witness history at the best venues."
+                    ctaText="Find Your Spot"
+                    icon={<Trophy size={32} className="text-white" />}
+                    onCtaClick={() => {
+                        // TODO: Scroll to venues or filter
+                        window.scrollTo({ top: 400, behavior: 'smooth' });
+                    }}
+                />
 
                 <div className="space-y-0">
                     {mockVenues.map(venue => (
