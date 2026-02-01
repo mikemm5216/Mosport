@@ -118,20 +118,40 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
             return;
         }
 
-        // TODO: Login with backend
-        console.log('Venue login:', venueEmail);
+        // Mock login validation (for testing only)
+        const MOCK_CREDENTIALS = {
+            email: 'mikemm521@gmail.com',
+            password: 'Mikemm26@'
+        };
 
-        // Mock success
+        if (venueEmail !== MOCK_CREDENTIALS.email) {
+            setError('Email not found');
+            return;
+        }
+
+        if (venuePassword !== MOCK_CREDENTIALS.password) {
+            setError('Incorrect password');
+            return;
+        }
+
+        // TODO: Replace with real backend authentication
+        console.log('Venue login successful:', venueEmail);
+
         setUser({
-            id: 'venue_owner',
+            id: 'venue_owner_001',
             email: venueEmail,
             role: UserRole.VENUE,
             isAuthenticated: true,
             isGuest: false,
+            profile: {
+                name: 'Venue Owner',
+                email: venueEmail,
+            }
         });
         onLoginAs(UserRole.VENUE);
         onClose();
     };
+
 
 
     return (
