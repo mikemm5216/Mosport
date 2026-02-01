@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { UserRole } from '../types';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
-import { User, ShieldCheck, Lock } from 'lucide-react';
+import { User, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -22,6 +22,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     // Tab State: 'fan' (User), 'venue' (Business), or 'admin' (Platform Admin)
     const [activeTab, setActiveTab] = useState<TabMode>('fan');
 
+    const [inviteCode, setInviteCode] = useState('');
     const [error, setError] = useState('');
 
     const { setUser } = useAuthStore();
@@ -76,6 +77,29 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         }
 
         window.location.href = oauthUrl;
+    };
+
+    const handleVenueClaimSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!inviteCode) {
+            setError('Please enter your invite code');
+            return;
+        }
+
+        // Mock success for now
+        setUser({
+            id: `venue_${Date.now()}`,
+            role: UserRole.VENUE,
+            isAuthenticated: true,
+            isGuest: false,
+            provider: 'invite',
+            profile: {
+                name: `Venue ${inviteCode}`
+            }
+        });
+        onClose();
     };
 
     return (
@@ -151,14 +175,6 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                                 <span className="text-lg">f</span>
                                 Continue with Facebook
                             </button>
-
-                            <button
-                                onClick={() => handleOAuthLogin('zalo')}
-                                className="w-full bg-[#0068FF] text-white hover:bg-[#0058E0] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
-                            >
-                                <span className="text-lg">Z</span>
-                                Continue with Zalo
-                            </button>
                         </div>
                     )}
 
@@ -185,49 +201,39 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                                 <Lock size={18} />
                                 Admin Login with Facebook
                             </button>
-
-                            <button
-                                onClick={() => handleOAuthLogin('zalo')}
-                                className="w-full bg-purple-800 text-white hover:bg-purple-900 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
-                            >
-                                <Lock size={18} />
-                                Admin Login with Zalo
-                            </button>
                         </div>
                     )}
 
-                    {/* --- SCENARIO C: VENUE PARTNER --- */}
+                    {/* --- SCENARIO C: VENUE PARTNER (Invite Code) --- */}
                     {activeTab === 'venue' && (
-                        <div className="space-y-4 animate-in fade-in duration-300">
+                        <form onSubmit={handleVenueClaimSubmit} className="space-y-4 animate-in fade-in duration-300">
                             <div className="text-center mb-4">
-                                <h3 className="text-xl font-bold text-red-400">🏪 Venue Partner</h3>
-                                <p className="text-sm text-gray-400">Connect your venue and start broadcasting</p>
+                                <h3 className="text-xl font-bold text-red-500">Venue Partner Program</h3>
+                                <p className="text-sm text-gray-400">Enter your exclusive invite code to join.</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <input
+                                    type="text"
+                                    placeholder="MOSPORT-XXXX-XXXX"
+                                    value={inviteCode}
+                                    onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                    className="w-full h-12 px-4 rounded-lg bg-neutral-800 border border-gray-700 text-white focus:border-red-500 focus:outline-none text-center tracking-widest font-mono text-lg uppercase placeholder:text-gray-600"
+                                    maxLength={20}
+                                />
                             </div>
 
                             <button
-                                onClick={() => handleOAuthLogin('google')}
-                                className="w-full bg-white text-black hover:bg-gray-200 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                                type="submit"
+                                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold h-11 rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
-                                <span className="text-lg">G</span>
-                                Continue with Google
+                                Verify & Claim Venue <ArrowRight size={18} />
                             </button>
 
-                            <button
-                                onClick={() => handleOAuthLogin('facebook')}
-                                className="w-full bg-[#1877F2] text-white hover:bg-[#166FE5] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
-                            >
-                                <span className="text-lg">f</span>
-                                Continue with Facebook
-                            </button>
-
-                            <button
-                                onClick={() => handleOAuthLogin('zalo')}
-                                className="w-full bg-[#0068FF] text-white hover:bg-[#0058E0] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
-                            >
-                                <span className="text-lg">Z</span>
-                                Continue with Zalo
-                            </button>
-                        </div>
+                            <p className="text-xs text-center text-gray-500 mt-4">
+                                Don't have a code? <a href="#" className="text-red-400 hover:underline">Contact Sales</a>
+                            </p>
+                        </form>
                     )}
 
                 </div>
