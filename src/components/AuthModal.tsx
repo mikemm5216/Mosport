@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UserRole } from '../types';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
-import { User, ShieldCheck, ArrowRight, Lock } from 'lucide-react';
+import { User, ShieldCheck, Lock } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -17,18 +17,11 @@ declare global {
 }
 
 type TabMode = 'fan' | 'venue' | 'admin';
-type VenueSubMode = 'claim' | 'login';
 
 export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
     // Tab State: 'fan' (User), 'venue' (Business), or 'admin' (Platform Admin)
     const [activeTab, setActiveTab] = useState<TabMode>('fan');
 
-    // Venue Sub-State: 'login' or 'claim' (for invite codes)
-    const [venueMode, setVenueMode] = useState<VenueSubMode>('claim');
-
-    const [inviteCode, setInviteCode] = useState('');
-    const [venueEmail, setVenueEmail] = useState('');
-    const [venuePassword, setVenuePassword] = useState('');
     const [error, setError] = useState('');
 
     const { setUser } = useAuthStore();
@@ -47,7 +40,7 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                     setUser({
                         id: profile.id,
                         email: profile.email,
-                        role: activeTab === 'fan' ? UserRole.FAN : UserRole.VENUE,
+                        role: activeTab === 'fan' ? UserRole.FAN : activeTab === 'admin' ? UserRole.ADMIN : UserRole.VENUE,
                         isAuthenticated: true,
                         isGuest: false,
                         provider: 'facebook',
@@ -84,77 +77,6 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
 
         window.location.href = oauthUrl;
     };
-
-    const handleVenueClaimSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-
-        if (!inviteCode) {
-            setError('Please enter your invite code');
-            return;
-        }
-
-        // TODO: Verify invite code with backend
-        console.log('Claiming venue with code:', inviteCode);
-
-        // Mock success
-        setUser({
-            id: 'venue_claimed',
-            email: 'claimed@venue.com',
-            role: UserRole.VENUE,
-            isAuthenticated: true,
-            isGuest: false,
-        });
-        onLoginAs(UserRole.VENUE);
-        onClose();
-    };
-
-    const handleVenueLoginSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-
-        if (!venueEmail || !venuePassword) {
-            setError('Please enter email and password');
-            return;
-        }
-
-        // Mock login validation (for testing only)
-        const MOCK_CREDENTIALS = {
-            email: 'mikemm5216@gmail.com',
-            password: 'Mikemm26@'
-        };
-
-
-        // Case-insensitive email comparison
-        if (venueEmail.toLowerCase().trim() !== MOCK_CREDENTIALS.email.toLowerCase()) {
-            setError(`Email not found. Try: ${MOCK_CREDENTIALS.email}`);
-            return;
-        }
-
-        if (venuePassword !== MOCK_CREDENTIALS.password) {
-            setError('Incorrect password');
-            return;
-        }
-
-        // TODO: Replace with real backend authentication
-        console.log('Venue login successful:', venueEmail);
-
-        setUser({
-            id: 'venue_owner_001',
-            email: venueEmail,
-            role: UserRole.VENUE,
-            isAuthenticated: true,
-            isGuest: false,
-            profile: {
-                name: 'Venue Owner',
-                email: venueEmail,
-            }
-        });
-        onLoginAs(UserRole.VENUE);
-        onClose();
-    };
-
-
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -274,77 +196,37 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                         </div>
                     )}
 
-                    {/* --- SCENARIO B: VENUE PARTNER (Red Mode) --- */}
+                    {/* --- SCENARIO C: VENUE PARTNER --- */}
                     {activeTab === 'venue' && (
                         <div className="space-y-4 animate-in fade-in duration-300">
-
-                            {/* Toggle: Login vs Claim */}
-                            <div className="flex justify-center gap-4 text-xs mb-2">
-                                <button
-                                    onClick={() => setVenueMode('claim')}
-                                    className={`${venueMode === 'claim' ? 'text-white underline' : 'text-gray-500 hover:text-gray-300'} transition-colors`}
-                                >
-                                    Have an Invite Code?
-                                </button>
-                                <span className="text-gray-700">|</span>
-                                <button
-                                    onClick={() => setVenueMode('login')}
-                                    className={`${venueMode === 'login' ? 'text-white underline' : 'text-gray-500 hover:text-gray-300'} transition-colors`}
-                                >
-                                    Owner Login
-                                </button>
+                            <div className="text-center mb-4">
+                                <h3 className="text-xl font-bold text-red-400">🏪 Venue Partner</h3>
+                                <p className="text-sm text-gray-400">Connect your venue and start broadcasting</p>
                             </div>
 
-                            {venueMode === 'claim' ? (
-                                <form onSubmit={handleVenueClaimSubmit} className="space-y-4">
-                                    <div className="text-center">
-                                        <h3 className="text-xl font-bold text-red-500 flex items-center justify-center gap-2">
-                                            <Lock size={18} /> Claim Venue
-                                        </h3>
-                                        <p className="text-xs text-gray-400 mt-1">Enter the 6-digit code from your invitation card.</p>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. HAN-882"
-                                        value={inviteCode}
-                                        onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                                        className="w-full bg-red-950/30 border border-red-500/30 text-center text-xl tracking-widest font-mono h-12 text-white placeholder:text-red-900/50 focus:outline-none focus:border-red-500 rounded-md"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-red-600 hover:bg-red-500 text-white font-bold h-11 rounded-lg flex items-center justify-center gap-2 transition-colors"
-                                    >
-                                        Verify Code <ArrowRight size={16} />
-                                    </button>
-                                </form>
-                            ) : (
-                                <form onSubmit={handleVenueLoginSubmit} className="space-y-4">
-                                    <div className="text-center">
-                                        <h3 className="text-xl font-bold text-white">Owner Access</h3>
-                                        <p className="text-xs text-gray-400">Manage your live signals.</p>
-                                    </div>
-                                    <input
-                                        type="email"
-                                        placeholder="Venue Email"
-                                        value={venueEmail}
-                                        onChange={(e) => setVenueEmail(e.target.value)}
-                                        className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                    />
-                                    <input
-                                        type="password"
-                                        placeholder="Password"
-                                        value={venuePassword}
-                                        onChange={(e) => setVenuePassword(e.target.value)}
-                                        className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold h-11 rounded-lg transition-colors"
-                                    >
-                                        Enter Dashboard
-                                    </button>
-                                </form>
-                            )}
+                            <button
+                                onClick={() => handleOAuthLogin('google')}
+                                className="w-full bg-white text-black hover:bg-gray-200 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">G</span>
+                                Continue with Google
+                            </button>
+
+                            <button
+                                onClick={() => handleOAuthLogin('facebook')}
+                                className="w-full bg-[#1877F2] text-white hover:bg-[#166FE5] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">f</span>
+                                Continue with Facebook
+                            </button>
+
+                            <button
+                                onClick={() => handleOAuthLogin('zalo')}
+                                className="w-full bg-[#0068FF] text-white hover:bg-[#0058E0] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">Z</span>
+                                Continue with Zalo
+                            </button>
                         </div>
                     )}
 
