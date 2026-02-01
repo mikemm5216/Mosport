@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { LandingPage as LandingPageComponent } from '../components/LandingPage';
+import { AuthModal } from '../components/AuthModal';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthStore } from '../stores/useAuthStore';
 import { SEO } from '../components/SEO';
+import { UserRole } from '../types';
 
 export const LandingPage = () => {
     const navigate = useNavigate();
     const { setUser } = useAuthStore();
     const [isLoading, setIsLoading] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
-    const handleStartJourney = async () => {
+    const handleShowAuthModal = () => {
+        setShowAuthModal(true);
+    };
+
+    const handleSkipAsGuest = async () => {
         setIsLoading(true);
 
         try {
@@ -60,8 +67,26 @@ export const LandingPage = () => {
                 title="Home"
                 description="Find the best place to watch sports near you. Mosport connects fans with venues showing live matches."
             />
-            <LandingPageComponent onLoginClick={handleStartJourney} isLoading={isLoading} />
+            <LandingPageComponent
+                onLoginClick={handleShowAuthModal}
+                onSkipClick={handleSkipAsGuest}
+                isLoading={isLoading}
+            />
 
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onLoginAs={(role) => {
+                    setUser({
+                        id: 'oauth_user',
+                        role,
+                        isAuthenticated: true,
+                        isGuest: false,
+                    });
+                    setShowAuthModal(false);
+                    navigate('/dashboard');
+                }}
+            />
         </>
     );
 };

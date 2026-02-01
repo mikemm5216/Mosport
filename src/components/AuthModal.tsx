@@ -211,30 +211,13 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                                 Continue with Google
                             </button>
 
-                            <div className="relative py-2">
-                                <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t border-white/10"></span>
-                                </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-neutral-900 px-2 text-gray-500">Or with Email</span>
-                                </div>
-                            </div>
-
-                            <form onSubmit={handleFanEmailSubmit} className="space-y-3">
-                                <input
-                                    type="email"
-                                    placeholder="hello@example.com"
-                                    value={fanEmail}
-                                    onChange={(e) => setFanEmail(e.target.value)}
-                                    className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                                <button
-                                    type="submit"
-                                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg h-11 transition-colors"
-                                >
-                                    Sign In
-                                </button>
-                            </form>
+                            <button
+                                onClick={() => handleOAuthLogin('facebook')}
+                                className="w-full bg-[#1877F2] text-white hover:bg-[#166FE5] font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">f</span>
+                                Continue with Facebook
+                            </button>
                         </div>
                     )}
 

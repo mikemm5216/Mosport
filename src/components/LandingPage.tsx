@@ -3,10 +3,12 @@ import { Button } from './Button';
 
 interface LandingPageProps {
     onLoginClick: () => void;
+    onSkipClick: () => void;
     isLoading?: boolean;
 }
 
-export const LandingPage = ({ onLoginClick, isLoading = false }: LandingPageProps) => {
+
+export const LandingPage = ({ onLoginClick, onSkipClick, isLoading = false }: LandingPageProps) => {
     return (
         <div className="min-h-screen bg-mosport-black flex flex-col relative overflow-hidden">
             {/* Background Effects */}
@@ -45,7 +47,7 @@ export const LandingPage = ({ onLoginClick, isLoading = false }: LandingPageProp
                         <Button
                             variant="ghost"
                             className="px-8 py-4 text-lg text-gray-400 hover:text-white"
-                            onClick={onLoginClick}
+                            onClick={onSkipClick}
                             disabled={isLoading}
                         >
                             Skip (Browse as Guest)
