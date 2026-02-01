@@ -75,7 +75,7 @@ export const Navbar = ({ currentRole, onHomeClick }: NavbarProps) => {
                                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-800/50 border border-gray-700 hover:bg-gray-800 transition-colors"
                             >
                                 <User className="h-5 w-5 text-gray-400" />
-                                <span className="text-sm text-gray-300 hidden sm:block">{user?.name || 'User'}</span>
+                                <span className="text-sm text-gray-300 hidden sm:block">{user?.profile?.name || user?.id || 'User'}</span>
                             </button>
 
                             {showUserMenu && (
