@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.api.api_v1.endpoints import (
-    login, users_recovery as users, events, venues, search, cities, sports, admin
+    login, users_recovery as users, events, venues, search, cities, sports, admin,
+    favorites, checkins, analytics
 )
 
 api_router = APIRouter()
@@ -12,3 +13,7 @@ api_router.include_router(search.router, prefix="/search", tags=["search"])
 api_router.include_router(cities.router, prefix="/cities", tags=["cities"])
 api_router.include_router(sports.router, prefix="/sports", tags=["sports"])
 api_router.include_router(admin.router, prefix="/admin", tags=["admin"])
+api_router.include_router(favorites.router, prefix="/favorites", tags=["favorites"])
+api_router.include_router(checkins.router, prefix="/checkins", tags=["checkins"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+

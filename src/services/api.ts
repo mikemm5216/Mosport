@@ -73,6 +73,64 @@ class ApiClient {
     async getCurrentUser() {
         return this.request('/auth/me');
     }
+
+    // ==================== Dashboard Features ====================
+
+    // Favorites
+    async createFavorite(data: { target_type: string; target_id?: string; sport?: string }) {
+        return this.request('/favorites', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async deleteFavorite(favoriteId: string) {
+        return this.request(`/favorites/${favoriteId}`, {
+            method: 'DELETE',
+        });
+    }
+
+    async getMyFavorites() {
+        return this.request('/favorites/me');
+    }
+
+    async checkIsFavorited(targetType: string, targetId: string) {
+        return this.request(`/favorites/check/${targetType}/${targetId}`);
+    }
+
+    // Check-ins
+    async createCheckIn(data: { venue_id: string; latitude: number; longitude: number; event_id?: string }) {
+        return this.request('/checkins', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async getMyCheckIns(limit: number = 50) {
+        return this.request(`/checkins/me?limit=${limit}`);
+    }
+
+    async getCheckInStats() {
+        return this.request('/checkins/stats');
+    }
+
+    // Analytics (Admin)
+    async getPlatformKPI() {
+        return this.request('/analytics/platform-kpi');
+    }
+
+    async getEventRankings(limit: number = 10) {
+        return this.request(`/analytics/event-rankings?limit=${limit}`);
+    }
+
+    async getVenuePerformance(limit: number = 10) {
+        return this.request(`/analytics/venue-performance?limit=${limit}`);
+    }
+
+    async getSportDistribution() {
+        return this.request('/analytics/sport-distribution');
+    }
 }
 
 export const apiClient = new ApiClient();
+
