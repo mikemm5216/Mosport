@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
-import { apiClient } from '../services/api';
+
 
 export const AuthCallback = () => {
     const navigate = useNavigate();
