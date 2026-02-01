@@ -4,6 +4,7 @@ import { UserRole } from '../types';
 
 interface User {
   id?: string;
+  email?: string; // Add email for admin checking
   role: string; // 'fan' | 'venue' | 'staff' | 'guest'
   isAuthenticated: boolean;
   isGuest: boolean;
@@ -23,6 +24,7 @@ interface AuthState {
   // Actions
   setUser: (user: User) => void;
   setGuest: (role: UserRole) => void;
+  setRole: (role: UserRole) => void; // Add role switching
   logout: () => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -46,6 +48,10 @@ export const useAuthStore = create<AuthState>()(
         isLoading: false,
         error: null
       }),
+
+      setRole: (role) => set((state) => ({
+        user: state.user ? { ...state.user, role } : null
+      })),
 
       logout: () => set({ user: null, error: null }),
 
