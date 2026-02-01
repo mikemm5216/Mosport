@@ -5,7 +5,6 @@ import { DecisionSignal, UserRole } from '../types';
 import { getDecisionSignals } from '../services/moEngine';
 import { Navbar } from '../components/Navbar';
 import { SearchHero } from '../components/SearchHero';
-import { VenueAnalytics } from '../components/VenueAnalytics';
 import { DecisionCard } from '../components/DecisionCard';
 import { useAuthStore } from '../stores/useAuthStore';
 import { StaffDashboard } from '../components/StaffDashboard';
@@ -189,11 +188,10 @@ export const Dashboard = () => {
             )}
 
             <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8 safe-bottom">
-                {currentRole === UserRole.VENUE && !loading && <VenueAnalytics />}
 
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2 tracking-tight">
-                        {currentRole === UserRole.VENUE ? 'Matched Events (Your Schedule)' : 'Upcoming Matches'}
+                        Upcoming Matches
                     </h2>
                     {loading && <span className="text-[10px] font-mono text-mosport-venue animate-pulse">CONNECTING TO MO-ENGINE...</span>}
                 </div>
