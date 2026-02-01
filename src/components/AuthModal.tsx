@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { UserRole } from '../types';
-import { Button } from './Button';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
 import { User, ShieldCheck, ArrowRight, Lock } from 'lucide-react';
@@ -36,11 +35,6 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
     const { setUser } = useAuthStore();
 
     if (!isOpen) return null;
-
-    // Dynamic Theme Colors based on active tab
-    const themeColor = activeTab === 'fan' ? 'blue' : 'red';
-    const borderColor = activeTab === 'fan' ? 'border-blue-500/30' : 'border-red-500/30';
-    const glowColor = activeTab === 'fan' ? 'shadow-blue-500/20' : 'shadow-red-500/20';
 
     const handleFacebookLogin = () => {
         if (!window.FB) {
@@ -164,8 +158,8 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className={`
-                w-full max-w-[400px] bg-neutral-900 border ${borderColor} rounded-xl shadow-2xl ${glowColor} 
-                overflow-hidden transition-all duration-300
+                w-full max-w-[400px] bg-neutral-900 border rounded-xl shadow-2xl overflow-hidden transition-all duration-300
+                ${activeTab === 'fan' ? 'border-blue-500/30 shadow-blue-500/20' : 'border-red-500/30 shadow-red-500/20'}
             `}>
 
                 {/* === 1. TOP TOGGLE (The Identity Switcher) === */}
