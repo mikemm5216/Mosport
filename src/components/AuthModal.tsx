@@ -120,9 +120,10 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
 
         // Mock login validation (for testing only)
         const MOCK_CREDENTIALS = {
-            email: 'mikemm521@gmail.com',
+            email: 'mikemm5216@gmail.com',
             password: 'Mikemm26@'
         };
+
 
         // Case-insensitive email comparison
         if (venueEmail.toLowerCase().trim() !== MOCK_CREDENTIALS.email.toLowerCase()) {
