@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { VenueAnalyticsCharts } from './VenueAnalyticsCharts';
 import { Button } from './Button';
 import { Switch } from './ui/Switch';
+import { EditVenueProfile } from './EditVenueProfile';
 import {
     Select,
     SelectContent,
@@ -13,6 +14,7 @@ import {
 export const VenueOwnerDashboard = () => {
     const [isLive, setIsLive] = useState(false);
     const [selectedMatch, setSelectedMatch] = useState('');
+    const [showEditModal, setShowEditModal] = useState(false);
 
     return (
         <div className="min-h-screen bg-mosport-black pb-20">
@@ -31,7 +33,13 @@ export const VenueOwnerDashboard = () => {
                             />
                             <div className="absolute bottom-2 left-2 font-bold text-xl text-white">Puku Bar</div>
                         </div>
-                        <Button variant="outline" className="w-full mb-2">Edit Details</Button>
+                        <Button
+                            variant="outline"
+                            className="w-full mb-2"
+                            onClick={() => setShowEditModal(true)}
+                        >
+                            Edit Details
+                        </Button>
                         <div className="text-xs text-gray-500 text-center">Tier 1 Verified • Hanoi</div>
                     </div>
 
@@ -86,6 +94,11 @@ export const VenueOwnerDashboard = () => {
                     <h2 className="text-xl font-bold text-white mb-4">Performance Analytics</h2>
                     <VenueAnalyticsCharts />
                 </div>
+
+                {/* Edit Venue Profile Modal */}
+                {showEditModal && (
+                    <EditVenueProfile onClose={() => setShowEditModal(false)} />
+                )}
             </div>
         </div>
     );

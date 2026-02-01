@@ -6,13 +6,16 @@ import { getDecisionSignals } from '../services/moEngine';
 import { Navbar } from '../components/Navbar';
 import { SearchHero } from '../components/SearchHero';
 import { DecisionCard } from '../components/DecisionCard';
+import { AuthModal } from '../components/AuthModal';
 import { useAuthStore } from '../stores/useAuthStore';
+import { useLoginModal } from '../stores/useLoginModal';
 import { StaffDashboard } from '../components/StaffDashboard';
 import { VenueOwnerDashboard } from '../components/VenueOwnerDashboard';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
-    const { user, logout } = useAuthStore();
+    const { user, logout, setUser } = useAuthStore();
+    const { isOpen, closeLoginModal, onSuccessCallback } = useLoginModal();
     const [signals, setSignals] = useState<DecisionSignal[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -219,6 +222,26 @@ export const Dashboard = () => {
                     </div>
                 )}
             </main>
+
+            {/* AuthModal for Lazy Login */}
+            <AuthModal
+                isOpen={isOpen}
+                onClose={closeLoginModal}
+                onLoginAs={(role) => {
+                    setUser({
+                        id: 'temp-user',
+                        email: user?.email,
+                        role,
+                        isAuthenticated: true,
+                        isGuest: false,
+                        provider: 'google',
+                    });
+                    closeLoginModal();
+                    if (onSuccessCallback) {
+                        onSuccessCallback();
+                    }
+                }}
+            />
         </div>
     );
 };

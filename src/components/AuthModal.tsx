@@ -3,6 +3,7 @@ import { UserRole } from '../types';
 import { Button } from './Button';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
+import { User, ShieldCheck, ArrowRight, Lock } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -16,23 +17,30 @@ declare global {
     }
 }
 
+type TabMode = 'fan' | 'venue';
+type VenueSubMode = 'claim' | 'login';
+
 export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
-    const [view, setView] = useState<UserRole>(UserRole.FAN);
-    const [staffToken, setStaffToken] = useState('');
+    // Tab State: 'fan' (User) or 'venue' (Business)
+    const [activeTab, setActiveTab] = useState<TabMode>('fan');
+
+    // Venue Sub-State: 'login' or 'claim' (for invite codes)
+    const [venueMode, setVenueMode] = useState<VenueSubMode>('claim');
+
+    const [inviteCode, setInviteCode] = useState('');
+    const [venueEmail, setVenueEmail] = useState('');
+    const [venuePassword, setVenuePassword] = useState('');
+    const [fanEmail, setFanEmail] = useState('');
     const [error, setError] = useState('');
+
     const { setUser } = useAuthStore();
 
     if (!isOpen) return null;
 
-    const handleStaffLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        if (staffToken === 'Mosport001') {
-            onLoginAs(UserRole.STAFF);
-        } else {
-            setError('Invalid Staff Token. Try Mosport001.');
-        }
-    };
+    // Dynamic Theme Colors based on active tab
+    const themeColor = activeTab === 'fan' ? 'blue' : 'red';
+    const borderColor = activeTab === 'fan' ? 'border-blue-500/30' : 'border-red-500/30';
+    const glowColor = activeTab === 'fan' ? 'shadow-blue-500/20' : 'shadow-red-500/20';
 
     const handleFacebookLogin = () => {
         if (!window.FB) {
@@ -42,13 +50,11 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
 
         window.FB.login((response: any) => {
             if (response.authResponse) {
-                console.log('Welcome! Fetching your information.... ');
                 window.FB.api('/me', { fields: 'name,email,picture' }, (profile: any) => {
-                    console.log('Good to see you, ' + profile.name + '.');
-
-                    // Directly verify user via client-side SDK for smoother UX
                     setUser({
-                        role: view,
+                        id: profile.id,
+                        email: profile.email,
+                        role: activeTab === 'fan' ? UserRole.FAN : UserRole.VENUE,
                         isAuthenticated: true,
                         isGuest: false,
                         provider: 'facebook',
@@ -61,163 +67,266 @@ export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
                     onClose();
                 });
             } else {
-                console.log('User cancelled login or did not fully authorize.');
                 setError('Facebook login cancelled.');
             }
         }, { scope: 'public_profile,email' });
     };
 
     const handleOAuthLogin = (provider: 'google' | 'facebook' | 'zalo') => {
-        // Special handling for Facebook SDK
         if (provider === 'facebook') {
             handleFacebookLogin();
             return;
         }
 
-        // 產生 OAuth URL 並跳轉
-        const oauthUrl = generateOAuthUrl(provider, `${provider}_${view}_${Date.now()}`);
+        const role = activeTab === 'fan' ? UserRole.FAN : UserRole.VENUE;
+        const oauthUrl = generateOAuthUrl(provider, `${provider}_${role}_${Date.now()}`);
 
         if (oauthUrl === '#') {
-            setError(`Missing ${provider} credentials. Please check .env file.`);
+            setError(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login not configured yet.`);
             return;
         }
 
-        // 將當前角色存到 sessionStorage，callback 時會用到
-        sessionStorage.setItem('mosport_pending_role', view);
-
-        // 跳轉到 OAuth 授權頁面
         window.location.href = oauthUrl;
     };
 
+    const handleVenueClaimSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!inviteCode) {
+            setError('Please enter your invite code');
+            return;
+        }
+
+        // TODO: Verify invite code with backend
+        console.log('Claiming venue with code:', inviteCode);
+
+        // Mock success
+        setUser({
+            id: 'venue_claimed',
+            email: 'claimed@venue.com',
+            role: UserRole.VENUE,
+            isAuthenticated: true,
+            isGuest: false,
+        });
+        onLoginAs(UserRole.VENUE);
+        onClose();
+    };
+
+    const handleVenueLoginSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!venueEmail || !venuePassword) {
+            setError('Please enter email and password');
+            return;
+        }
+
+        // TODO: Login with backend
+        console.log('Venue login:', venueEmail);
+
+        // Mock success
+        setUser({
+            id: 'venue_owner',
+            email: venueEmail,
+            role: UserRole.VENUE,
+            isAuthenticated: true,
+            isGuest: false,
+        });
+        onLoginAs(UserRole.VENUE);
+        onClose();
+    };
+
+    const handleFanEmailSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        if (!fanEmail) {
+            setError('Please enter your email');
+            return;
+        }
+
+        // TODO: Email login with backend
+        console.log('Fan email login:', fanEmail);
+
+        // Mock success
+        setUser({
+            id: 'fan_user',
+            email: fanEmail,
+            role: UserRole.FAN,
+            isAuthenticated: true,
+            isGuest: false,
+        });
+        onLoginAs(UserRole.FAN);
+        onClose();
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className={`
+                w-full max-w-[400px] bg-neutral-900 border ${borderColor} rounded-xl shadow-2xl ${glowColor} 
+                overflow-hidden transition-all duration-300
+            `}>
 
-            <div className="relative w-full max-w-md bg-mosport-card border border-gray-800 rounded-2xl p-8 shadow-2xl animate-fadeIn">
-                <button type="button" onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                {/* === 1. TOP TOGGLE (The Identity Switcher) === */}
+                <div className="flex border-b border-white/10">
+                    <button
+                        onClick={() => setActiveTab('fan')}
+                        className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative
+                            ${activeTab === 'fan' ? 'text-blue-400 bg-blue-950/20' : 'text-gray-500 hover:text-gray-300'}
+                        `}
+                    >
+                        <User size={16} /> FAN ZONE
+                        {activeTab === 'fan' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500" />}
+                    </button>
 
-                <div className="text-center mb-6">
-                    <div className="inline-flex items-center gap-2 mb-4">
-                        <span className="text-3xl font-black italic tracking-tighter text-mosport-fan">MS</span>
-                        <span className="text-xl font-bold text-white">MOSPORT</span>
-                    </div>
-                    <h2 className="text-xl font-bold text-white mb-2">
-                        {view === UserRole.FAN ? 'Welcome, Fan' : view === UserRole.VENUE ? 'Partner Login' : 'Staff Portal'}
-                    </h2>
-                    <p className="text-sm text-gray-400">
-                        {view === UserRole.FAN ? 'Connect your social account to personalize your sports map' :
-                            view === UserRole.VENUE ? 'Claim your venue and manage events' :
-                                'Internal access only'}
+                    <button
+                        onClick={() => setActiveTab('venue')}
+                        className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors relative
+                            ${activeTab === 'venue' ? 'text-red-500 bg-red-950/20' : 'text-gray-500 hover:text-gray-300'}
+                        `}
+                    >
+                        <ShieldCheck size={16} /> VENUE PARTNER
+                        {activeTab === 'venue' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-red-500" />}
+                    </button>
+                </div>
+
+                {/* === 2. CONTENT AREA === */}
+                <div className="p-6 min-h-[300px] flex flex-col justify-center">
+
+                    {/* Error Display */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-950/30 border border-red-500/30 rounded-md text-red-400 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {/* --- SCENARIO A: FAN LOGIN (Standard) --- */}
+                    {activeTab === 'fan' && (
+                        <div className="space-y-4 animate-in fade-in duration-300">
+                            <div className="text-center mb-4">
+                                <h3 className="text-xl font-bold text-white">Join the Squad</h3>
+                                <p className="text-sm text-gray-400">Save venues, track matches, and get notified.</p>
+                            </div>
+
+                            <button
+                                onClick={() => handleOAuthLogin('google')}
+                                className="w-full bg-white text-black hover:bg-gray-200 font-bold h-11 rounded-lg flex items-center gap-2 justify-center transition-colors"
+                            >
+                                <span className="text-lg">G</span>
+                                Continue with Google
+                            </button>
+
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center">
+                                    <span className="w-full border-t border-white/10"></span>
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-neutral-900 px-2 text-gray-500">Or with Email</span>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleFanEmailSubmit} className="space-y-3">
+                                <input
+                                    type="email"
+                                    placeholder="hello@example.com"
+                                    value={fanEmail}
+                                    onChange={(e) => setFanEmail(e.target.value)}
+                                    className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <button
+                                    type="submit"
+                                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg h-11 transition-colors"
+                                >
+                                    Sign In
+                                </button>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* --- SCENARIO B: VENUE PARTNER (Red Mode) --- */}
+                    {activeTab === 'venue' && (
+                        <div className="space-y-4 animate-in fade-in duration-300">
+
+                            {/* Toggle: Login vs Claim */}
+                            <div className="flex justify-center gap-4 text-xs mb-2">
+                                <button
+                                    onClick={() => setVenueMode('claim')}
+                                    className={`${venueMode === 'claim' ? 'text-white underline' : 'text-gray-500 hover:text-gray-300'} transition-colors`}
+                                >
+                                    Have an Invite Code?
+                                </button>
+                                <span className="text-gray-700">|</span>
+                                <button
+                                    onClick={() => setVenueMode('login')}
+                                    className={`${venueMode === 'login' ? 'text-white underline' : 'text-gray-500 hover:text-gray-300'} transition-colors`}
+                                >
+                                    Owner Login
+                                </button>
+                            </div>
+
+                            {venueMode === 'claim' ? (
+                                <form onSubmit={handleVenueClaimSubmit} className="space-y-4">
+                                    <div className="text-center">
+                                        <h3 className="text-xl font-bold text-red-500 flex items-center justify-center gap-2">
+                                            <Lock size={18} /> Claim Venue
+                                        </h3>
+                                        <p className="text-xs text-gray-400 mt-1">Enter the 6-digit code from your invitation card.</p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. HAN-882"
+                                        value={inviteCode}
+                                        onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                        className="w-full bg-red-950/30 border border-red-500/30 text-center text-xl tracking-widest font-mono h-12 text-white placeholder:text-red-900/50 focus:outline-none focus:border-red-500 rounded-md"
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-red-600 hover:bg-red-500 text-white font-bold h-11 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                    >
+                                        Verify Code <ArrowRight size={16} />
+                                    </button>
+                                </form>
+                            ) : (
+                                <form onSubmit={handleVenueLoginSubmit} className="space-y-4">
+                                    <div className="text-center">
+                                        <h3 className="text-xl font-bold text-white">Owner Access</h3>
+                                        <p className="text-xs text-gray-400">Manage your live signals.</p>
+                                    </div>
+                                    <input
+                                        type="email"
+                                        placeholder="Venue Email"
+                                        value={venueEmail}
+                                        onChange={(e) => setVenueEmail(e.target.value)}
+                                        className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    />
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={venuePassword}
+                                        onChange={(e) => setVenuePassword(e.target.value)}
+                                        className="w-full bg-neutral-800 border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold h-11 rounded-lg transition-colors"
+                                    >
+                                        Enter Dashboard
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    )}
+
+                </div>
+
+                {/* Footer */}
+                <div className="p-3 bg-black/40 text-center border-t border-white/5">
+                    <p className="text-[10px] text-gray-600">
+                        By continuing, you agree to Mosport's Terms & Vibe Policy.
                     </p>
                 </div>
 
-                <div className="flex p-1 bg-gray-900 rounded-lg mb-6">
-                    {[UserRole.FAN, UserRole.VENUE, UserRole.STAFF].map(role => (
-                        <button
-                            key={role}
-                            onClick={() => { setView(role); setError(''); setStaffToken(''); }}
-                            className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${view === role ? 'bg-gray-800 text-white shadow' : 'text-gray-500 hover:text-gray-300'
-                                }`}
-                        >
-                            {role}
-                        </button>
-                    ))}
-                </div>
-
-                {error && <div className="text-xs text-red-500 font-bold bg-red-900/10 p-2 rounded text-center border border-red-900/30 mb-4">{error}</div>}
-
-                {view === UserRole.STAFF ? (
-                    // STAFF: Special Token Login
-                    <form onSubmit={handleStaffLogin} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Staff Access Token</label>
-                            <input
-                                type="password"
-                                required
-                                value={staffToken}
-                                onChange={(e) => setStaffToken(e.target.value)}
-                                className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-mosport-staff focus:outline-none focus:ring-1 focus:ring-mosport-staff"
-                                placeholder="Enter your staff token"
-                            />
-                        </div>
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            fullWidth
-                            className="bg-mosport-staff text-black hover:bg-white"
-                        >
-                            Access Portal
-                        </Button>
-                    </form>
-                ) : (
-                    // FAN/VENUE: OAuth Flow
-                    <div className="space-y-4">
-                        <div className="space-y-3">
-                            {/* Google OAuth */}
-                            <button
-                                type="button"
-                                onClick={() => handleOAuthLogin('google')}
-                                className="w-full flex items-center justify-center gap-3 bg-white text-black py-3 rounded-lg font-bold text-sm hover:bg-gray-100 transition-colors shadow-md"
-                            >
-                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                                </svg>
-                                Sign in with Google
-                            </button>
-
-                            {/* Facebook OAuth */}
-                            <button
-                                type="button"
-                                onClick={() => handleOAuthLogin('facebook')}
-                                className="w-full flex items-center justify-center gap-3 bg-[#1877F2] text-white py-3 rounded-lg font-bold text-sm hover:bg-[#166FE5] transition-colors shadow-md"
-                            >
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                </svg>
-                                Continue with Facebook
-                            </button>
-
-
-
-                            {/* Zalo OAuth */}
-                            <button
-                                type="button"
-                                onClick={() => handleOAuthLogin('zalo')}
-                                className="w-full flex items-center justify-center gap-3 bg-[#0068FF] text-white py-3 rounded-lg font-bold text-sm hover:bg-[#0052CC] transition-colors shadow-md"
-                            >
-                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652L4.4 24l4.8-2.4c.933.2 1.866.4 2.8.4 6.627 0 12-4.975 12-11.111S18.627 0 12 0z" />
-                                </svg>
-                                Login via Zalo
-                            </button>
-                        </div>
-
-                        {/* Skip Button */}
-                        <Button
-                            variant="outline"
-                            fullWidth
-                            onClick={() => onLoginAs(view)}
-                            className="bg-transparent border-gray-600 text-gray-400 hover:text-white hover:border-white mt-2"
-                        >
-                            Skip (Guest Mode)
-                        </Button>
-
-                        {/* Authorization Disclaimer */}
-                        <div className="pt-3 border-t border-gray-800">
-                            <p className="text-[10px] text-center text-gray-500 leading-relaxed">
-                                登入即代表同意 Mosport 存取您的公開社群資料以優化搜尋體驗。<br />
-                                <span className="text-gray-600">By signing in, you authorize Mosport to access your public social data.</span>
-                            </p>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
