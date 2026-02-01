@@ -1,7 +1,8 @@
 export enum UserRole {
     FAN = 'FAN',
     VENUE = 'VENUE',
-    STAFF = 'STAFF'
+    STAFF = 'STAFF',
+    ADMIN = 'ADMIN'
 }
 
 export enum QoETagType {

@@ -39,6 +39,16 @@ export const Dashboard = () => {
     }, [locationFilter, sportFilter, searchTerm, currentRole]);
 
     // === ROLE-BASED ROUTING LOGIC ===
+    // Automatically route to the appropriate dashboard based on role
+    useEffect(() => {
+        if (currentRole === UserRole.FAN) {
+            navigate('/dashboard/fan');
+        } else if (currentRole === UserRole.ADMIN) {
+            navigate('/dashboard/admin');
+        }
+        // VENUE and STAFF roles stay on this page
+    }, [currentRole, navigate]);
+
     // If user is STAFF, show StaffDashboard
     if (currentRole === UserRole.STAFF) {
         return <StaffDashboard />;
@@ -48,8 +58,6 @@ export const Dashboard = () => {
     if (currentRole === UserRole.VENUE) {
         return <VenueOwnerDashboard />;
     }
-
-    // Otherwise, show FAN view (default)
     // === END ROLE-BASED ROUTING ===
 
 

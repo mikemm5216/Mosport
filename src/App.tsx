@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
+import { FanDashboard } from './pages/dashboard/FanDashboard';
+import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { AuthCallback } from './pages/AuthCallback';
 import { VenueListDemo } from './pages/VenueListDemo';
 import { DataDeletionRequest } from './pages/DataDeletionRequest';
@@ -35,14 +37,23 @@ function App() {
                 <Route path="/data-deletion" element={<DataDeletionRequest />} />
 
                 {/* Protected/Guest Route */}
-                <Route
-                    path="/dashboard"
-                    element={
+                <Route path="/dashboard">
+                    <Route index element={
                         <RequireAuth>
                             <Dashboard />
                         </RequireAuth>
-                    }
-                />
+                    } />
+                    <Route path="fan" element={
+                        <RequireAuth>
+                            <FanDashboard />
+                        </RequireAuth>
+                    } />
+                    <Route path="admin" element={
+                        <RequireAuth>
+                            <AdminDashboard />
+                        </RequireAuth>
+                    } />
+                </Route>
 
                 {/* Catch-all redirect */}
                 <Route path="*" element={<Navigate to="/" replace />} />
