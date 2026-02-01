@@ -3,10 +3,16 @@
 import React, { useMemo } from 'react';
 import { getVibeImage } from '../../lib/venue-images';
 import { cn } from '../../lib/utils';
-import { Venue } from '../../types';
 
+// Minimal venue interface for VenueImage
 interface VenueImageProps {
-    venue: Venue;
+    venue: {
+        id: string;
+        name: string;
+        location?: string;
+        city?: string;
+        imageUrl?: string;
+    };
     className?: string;
 }
 
@@ -22,7 +28,7 @@ export const VenueImage: React.FC<VenueImageProps> = ({ venue, className }) => {
 
         // 2. Fallback: Use Antigravity's Vibe Assets
         return {
-            displayImage: getVibeImage(venue.location),
+            displayImage: getVibeImage(venue.location || venue.city || 'default'),
             isAiGenerated: true
         };
     }, [venue]);
