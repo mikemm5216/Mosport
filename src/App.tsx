@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { AuthCallback } from './pages/AuthCallback';
+import { VenueListDemo } from './pages/VenueListDemo';
 
 
 import { SEO } from './components/SEO';
@@ -29,6 +30,7 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/venue-list-demo" element={<VenueListDemo />} />
 
                 {/* Protected/Guest Route */}
                 <Route
