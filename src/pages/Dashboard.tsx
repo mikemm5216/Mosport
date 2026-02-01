@@ -8,6 +8,8 @@ import { SearchHero } from '../components/SearchHero';
 import { VenueAnalytics } from '../components/VenueAnalytics';
 import { DecisionCard } from '../components/DecisionCard';
 import { useAuthStore } from '../stores/useAuthStore';
+import { StaffDashboard } from '../components/StaffDashboard';
+import { VenueOwnerDashboard } from '../components/VenueOwnerDashboard';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
@@ -20,6 +22,20 @@ export const Dashboard = () => {
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
     const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
+
+    // === ROLE-BASED ROUTING LOGIC ===
+    // If user is STAFF, show StaffDashboard
+    if (currentRole === UserRole.STAFF) {
+        return <StaffDashboard />;
+    }
+
+    // If user is VENUE, show VenueOwnerDashboard
+    if (currentRole === UserRole.VENUE) {
+        return <VenueOwnerDashboard />;
+    }
+
+    // Otherwise, show FAN view (default)
+    // === END ROLE-BASED ROUTING ===
 
     useEffect(() => {
         const fetchData = async () => {

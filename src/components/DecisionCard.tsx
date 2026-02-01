@@ -3,6 +3,7 @@ import { Button as ButtonComp } from './Button';
 import { DecisionSignal, UserRole } from '../types';
 import { FALLBACK_VENUE_IMAGE, VLEAGUE_TEAM_LINKS } from '../constants';
 import { MapPin, Coffee } from 'lucide-react';
+import { VenueImage } from './venue/VenueImage';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
@@ -81,12 +82,11 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                 <div className="divide-y divide-gray-800">
                     {signal.matchedVenues.slice(0, 6).map((match) => (
                         <div key={match.venue.id} className="p-4 flex gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
-                            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
-                                <img
-                                    src={match.venue.imageUrl}
-                                    alt={match.venue.name}
-                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                                    onError={(e: any) => { e.currentTarget.src = FALLBACK_VENUE_IMAGE; }}
+                            {/* Updated to support 7:4 aspect ratio */}
+                            <div className="relative w-28 sm:w-36 flex-shrink-0">
+                                <VenueImage
+                                    venue={match.venue}
+                                    className="w-full shadow-lg"
                                 />
                             </div>
                             <div className="flex-1">
