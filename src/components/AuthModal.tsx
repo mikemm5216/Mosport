@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UserRole } from '../types';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -18,7 +18,7 @@ declare global {
 
 type TabMode = 'fan' | 'venue' | 'admin';
 
-export const AuthModal = ({ isOpen, onClose, onLoginAs }: AuthModalProps) => {
+export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     // Tab State: 'fan' (User), 'venue' (Business), or 'admin' (Platform Admin)
     const [activeTab, setActiveTab] = useState<TabMode>('fan');
 
