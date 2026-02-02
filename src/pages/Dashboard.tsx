@@ -24,6 +24,7 @@ export const Dashboard = () => {
     const [sportFilter, setSportFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
+    const [mostBenefitsFilter, setMostBenefitsFilter] = useState(false);
 
     const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
 
@@ -162,6 +163,12 @@ export const Dashboard = () => {
             }
         }
 
+        // 3. Most Benefits Filter (Placeholder)
+        // Logic pending user definition.
+        // if (mostBenefitsFilter) {
+        //     // e.g., s.matchedVenues.some(v => v.venue.benefits.length > 5)
+        // }
+
         return matchesSearch && matchesDate;
     });
 
@@ -191,6 +198,7 @@ export const Dashboard = () => {
                     onLocationChange={setLocationFilter}
                     dateRange={dateRange}
                     onDateChange={setDateRange}
+                    onMostBenefitsChange={setMostBenefitsFilter}
                 />
             )}
 

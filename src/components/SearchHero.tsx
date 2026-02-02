@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Button } from './Button';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { useUserLocation } from '../hooks/useUserLocation';
 import { useCities } from '../hooks/useCities';
 import { useSports } from '../hooks/useSports';
@@ -24,6 +24,7 @@ interface SearchHeroProps {
     onLocationChange: (loc: string) => void;
     dateRange: DateRange;
     onDateChange: (range: DateRange) => void;
+    onMostBenefitsChange: (active: boolean) => void;
 }
 
 interface TrendingData {
@@ -38,12 +39,13 @@ interface TrendingData {
     }>;
 }
 
-export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRange, onDateChange }: SearchHeroProps) => {
+export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRange, onDateChange, onMostBenefitsChange }: SearchHeroProps) => {
     const [term, setTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [trending, setTrending] = useState<TrendingData | null>(null);
     const [selectedSport, setSelectedSport] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [mostBenefits, setMostBenefits] = useState(false);
 
     const fromDateRef = useRef<HTMLInputElement>(null);
     const toDateRef = useRef<HTMLInputElement>(null);
@@ -95,6 +97,12 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
         if (!dateStr) return '';
         return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
+
+    const toggleMostBenefits = () => {
+        const newState = !mostBenefits;
+        setMostBenefits(newState);
+        onMostBenefitsChange(newState);
+    };
 
 
     // Tier 0 Strategy: Dynamic Sport Priority based on City
@@ -152,12 +160,12 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     Find Your Game, <span className="text-gray-500">Anywhere.</span>
                 </h1>
 
-                {/* 4 Filters */}
+                {/* Filters Container */}
                 <div className="max-w-6xl mx-auto bg-mosport-dark border border-gray-700 rounded-xl p-1 md:p-2 flex flex-col md:flex-row gap-1 md:gap-2 shadow-2xl">
 
                     {/* 1. Search Box */}
-                    <div className="flex-[1.5] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700 relative">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Search</label>
+                    <div className="flex-[1.8] px-4 py-2.5 md:py-2 border-b md:border-b-0 md:border-r border-gray-700 relative">
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-0">Search</label>
                         <input
                             type="text"
                             value={term}
@@ -169,7 +177,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 onSearch(val);
                             }}
                             placeholder="Teams, Leagues or Events"
-                            className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600"
+                            className="w-full bg-transparent text-white font-medium focus:outline-none placeholder-gray-600 text-sm md:text-base h-6 md:h-auto"
                         />
 
                         {/* Trending dropdown */}
@@ -196,9 +204,9 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     </div>
 
                     {/* 2. Sport Type */}
-                    <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Sport Type</label>
-                        <div className="flex items-center gap-2 w-full">
+                    <div className="flex-1 px-4 py-2.5 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-0">Sport Type</label>
+                        <div className="flex items-center gap-2 w-full h-6 md:h-auto">
                             <Select
                                 value={selectedSport}
                                 onValueChange={(val: string) => {
@@ -207,7 +215,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 }}
                                 disabled={sportsLoading}
                             >
-                                <SelectTrigger className="w-full bg-[#1a1a1a] border-blue-500/30 text-gray-200 hover:border-blue-400 focus:ring-blue-500 rounded-md h-auto py-2">
+                                <SelectTrigger className="w-full bg-[#1a1a1a] border-blue-500/30 text-gray-200 hover:border-blue-400 focus:ring-blue-500 rounded-md h-8 md:h-auto py-1 md:py-2 text-sm">
                                     <SelectValue placeholder="All Sports" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
@@ -225,15 +233,15 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     </div>
 
                     {/* 3. Date Range */}
-                    <div className="flex-[1.8] px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Date Range</label>
-                        <div className="flex items-center gap-2">
-                            <span className="text-blue-500">📅</span>
+                    <div className="flex-[1.8] px-4 py-2.5 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-0">Date Range</label>
+                        <div className="flex items-center gap-2 h-6 md:h-auto">
+                            <span className="text-blue-500 text-sm">📅</span>
                             <div
                                 className="relative flex items-center cursor-pointer min-w-[80px]"
                                 onClick={() => triggerPicker(fromDateRef)}
                             >
-                                <div className={`text-xs font-medium ${dateRange.from ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
+                                <div className={`text-xs md:text-sm font-medium ${dateRange.from ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
                                     {dateRange.from ? formatDate(dateRange.from) : 'Start'}
                                 </div>
                                 <input
@@ -250,7 +258,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 className="relative flex items-center cursor-pointer min-w-[80px]"
                                 onClick={() => triggerPicker(toDateRef)}
                             >
-                                <div className={`text-xs font-medium ${dateRange.to ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
+                                <div className={`text-xs md:text-sm font-medium ${dateRange.to ? 'text-white' : 'text-gray-500'} pointer-events-none`}>
                                     {dateRange.to ? formatDate(dateRange.to) : 'End'}
                                 </div>
                                 <input
@@ -266,10 +274,10 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                     </div>
 
                     {/* 4. Location */}
-                    <div className="flex-1 px-4 py-3 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider">Location</label>
-                        <div className="flex items-center gap-2 w-full">
-                            <span className="text-orange-500 whitespace-nowrap">📍</span>
+                    <div className="flex-1 px-4 py-2.5 md:py-2 border-b md:border-b-0 md:border-r border-gray-700">
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-0">Location</label>
+                        <div className="flex items-center gap-2 w-full h-6 md:h-auto">
+                            <span className="text-orange-500 whitespace-nowrap text-sm">📍</span>
                             <Select
                                 value={selectedLocation}
                                 onValueChange={(val: string) => {
@@ -278,7 +286,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                 }}
                                 disabled={citiesLoading}
                             >
-                                <SelectTrigger className="w-full bg-transparent border-none text-white font-medium focus:ring-0 focus:ring-offset-0 px-0 h-auto py-0 shadow-none hover:bg-transparent data-[placeholder]:text-white">
+                                <SelectTrigger className="w-full bg-transparent border-none text-white font-medium focus:ring-0 focus:ring-offset-0 px-0 h-auto py-0 shadow-none hover:bg-transparent data-[placeholder]:text-white text-sm md:text-base">
                                     <SelectValue placeholder={locationLoading ? 'Locating...' : 'All Locations'} />
                                 </SelectTrigger>
                                 <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md">
@@ -314,10 +322,21 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         </div>
                     </div>
 
-                    {/* GO 按鈕 */}
-                    <div className="p-1 md:p-0">
-                        <Button className="w-full md:w-auto py-3 md:py-0 md:px-8 md:h-full md:aspect-square" variant="primary">GO</Button>
+                    {/* 5. Most Benefits Toggle */}
+                    <div className="flex-1 md:flex-[0.5] px-4 py-2.5 md:py-2 flex items-center justify-center md:border-l border-gray-700 bg-gray-900/30 md:bg-transparent rounded-b-xl md:rounded-none">
+                        <button
+                            onClick={toggleMostBenefits}
+                            className={`w-full md:w-auto px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 border ${mostBenefits
+                                ? 'bg-red-500/90 text-white border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                                : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-200'
+                                }`}
+                        >
+                            <span>🔥</span>
+                            <span className="md:hidden lg:inline">Most benefits</span>
+                            <span className="hidden md:inline lg:hidden">Benefits</span>
+                        </button>
                     </div>
+
                 </div>
             </div>
         </div>
