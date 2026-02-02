@@ -7,6 +7,7 @@ import { MapPin, Coffee, ChevronDown, TrendingUp, History, Flame, ExternalLink, 
 import { VenueImage } from './venue/VenueImage';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useLoginModal } from '../stores/useLoginModal';
+import { apiClient } from '../services/api';
 
 interface DecisionCardProps {
     signal: DecisionSignal;
@@ -39,6 +40,31 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
 
         setIsEventSaved(!isEventSaved);
         // TODO: Call API to save/unsave event
+    };
+
+    const handleToggleVenueSave = async (e: MouseEvent, venueId: string) => {
+        e.stopPropagation();
+
+        if (!user || !user.isAuthenticated) {
+            openLoginModal({
+                onSuccess: () => {
+                    // Ideally we'd re-trigger the save here, but for now just login
+                }
+            });
+            return;
+        }
+
+        try {
+            // Need to track state per venue. For now we just fire and forget API
+            // In a real app we'd have a favorites map state
+            await apiClient.createFavorite({
+                target_type: 'venue',
+                target_id: venueId
+            });
+            // We'd update local state here if we had it
+        } catch (error) {
+            console.error('Failed to save venue', error);
+        }
     };
 
     const handleBuyTicket = (e: MouseEvent) => {
@@ -257,6 +283,15 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                     venue={match.venue}
                                     className="w-full shadow-lg"
                                 />
+                                <button
+                                    onClick={(e) => handleToggleVenueSave(e, match.venue.id)}
+                                    className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-black/60 transition-colors z-20 group/heart"
+                                >
+                                    <Heart
+                                        size={14}
+                                        className="text-gray-300 group-hover/heart:text-red-500 group-hover/heart:fill-red-500 transition-colors"
+                                    />
+                                </button>
                             </div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-start">

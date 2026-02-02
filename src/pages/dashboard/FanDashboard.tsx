@@ -1,10 +1,47 @@
 import React from 'react';
 import { DashboardLayout } from '../../components/dashboard/DashboardLayout';
 import { StatCard } from '../../components/dashboard/StatCard';
+import { VenueListRow } from '../../components/venue/VenueListRow';
+import { apiClient } from '../../services/api';
 import { UserRole } from '../../types';
 import { Users, TrendingUp, Award, Activity } from 'lucide-react';
 
 export const FanDashboard: React.FC = () => {
+    const [favoriteVenues, setFavoriteVenues] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const data = await apiClient.getMyFavorites() as any;
+                // Map API response to Component props format
+                // API returns { venues: [ { favorite_id, venue: { ... } } ] }
+                // We need to transform this to the shape VenueListRow expects
+                if (data && data.venues) {
+                    const formatted = data.venues.map((item: any) => ({
+                        id: item.venue.id,
+                        name: item.venue.name,
+                        city: item.venue.city,
+                        dist: 'Saved', // API specific field might differ
+                        rating: item.venue.rating || 4.5, // Fallback if missing
+                        tags: item.venue.tags || [],
+                        is_live: false, // Default
+                        verified: true,
+                        is_saved_by_user: true,
+                        matchData: null
+                    }));
+                    setFavoriteVenues(formatted);
+                }
+            } catch (error) {
+                console.error('Failed to fetch favorites', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFavorites();
+    }, []);
+
     return (
         <DashboardLayout role={UserRole.FAN}>
             <div className="space-y-8">
@@ -33,7 +70,7 @@ export const FanDashboard: React.FC = () => {
                     />
                     <StatCard
                         title="Favorite Venues"
-                        value="12"
+                        value={favoriteVenues.length.toString()}
                         icon={<Users className="h-6 w-6" />}
                         color="green"
                     />
@@ -50,11 +87,23 @@ export const FanDashboard: React.FC = () => {
                 {/* My Favorites Section */}
                 <div>
                     <h2 className="text-2xl font-bold text-white mb-4">My Favorites ⭐</h2>
-                    <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-                        <p className="text-gray-400 text-center py-8">
-                            收藏的賽事和場地將顯示在這裡
-                        </p>
-                    </div>
+                    {loading ? (
+                        <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-8 text-center text-gray-400">
+                            Loading favorites...
+                        </div>
+                    ) : favoriteVenues.length > 0 ? (
+                        <div className="space-y-0">
+                            {favoriteVenues.map(venue => (
+                                <VenueListRow key={venue.id} venue={venue} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 opacity-70">
+                            <p className="text-gray-400 text-center py-8">
+                                No favorite venues yet. Go explore!
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Nearby Venues Section */}

@@ -127,7 +127,9 @@ async def get_my_favorites(
                         "id": str(venue.id),
                         "name": venue.name,
                         "city": venue.city,
-                        "address": venue.address
+                        "address": venue.address,
+                        "rating": venue.qoe_score if venue.qoe_score else 0.0,
+                        "tags": venue.tags if venue.tags else []
                     }
                 })
         elif fav.target_type == 'sport':

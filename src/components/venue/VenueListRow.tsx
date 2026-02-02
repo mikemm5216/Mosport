@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { VenueImage } from './VenueImage';
 import { Button } from '../Button';
 import { Badge } from '../ui/Badge';
 import { MapPin, Tv, Flame, History, ExternalLink, ChevronDown, Heart } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useLoginModal } from '../../stores/useLoginModal';
+import { apiClient } from '../../services/api';
 
 // --- AI Match Data Interface ---
 interface MatchScoop {
@@ -37,7 +38,7 @@ export const VenueListRow: React.FC<VenueListRowProps> = ({ venue }) => {
     const [isSaved, setIsSaved] = useState(venue.is_saved_by_user || false);
     const { matchData, is_live } = venue;
 
-    const handleToggleSave = (e: React.MouseEvent) => {
+    const handleToggleSave = async (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -51,8 +52,57 @@ export const VenueListRow: React.FC<VenueListRowProps> = ({ venue }) => {
             return;
         }
 
-        setIsSaved(!isSaved);
-        // TODO: Call API to save/unsave
+        if (isSaved) {
+            // Unsave
+            // We need favoriteId to delete. If we don't have it (e.g. freshly toggled), we might have an issue.
+            // For now, let's assume this component is used in a context where we might not have the ID immediately if just toggled
+            // But if loaded from Favorites list, we should have it.
+            // As a simplification for this 'Solo-Dev' stage, we might need a lookup or just handle 'create' efficiently.
+            // Actually, best user experience: Optimistic UI update (already done via setIsSaved)
+            // Then background call.
+            // BUT delete requires ID. createFavorite returns ID.
+            // To simplify: We will just support adding for now, or we need to manage the favorite ID state.
+            // Let's rely on backend check logic if we really wanted to be robust, but here:
+            // logic: createFavorite handles "already favorited" by error?
+            // Let's implement create only for 'Save', and for 'Unsave'... we need the favorite ID.
+            // If we lack the favorite ID, we can't delete easily without a "delete by target" endpoint.
+            // Let's check api.ts... deleteFavorite takes ID.
+            // OK, for this iteration, let's support SAVE (Create). Unsave from list might need ID.
+            // Refactoring VenueListRow to accept favoriteId?
+            try {
+                // Check if favorited first? No, too slow.
+                // We'll just try to create.
+                if (!isSaved) { // User wants to save (currentState is !isSaved because we just toggled? No, logic above is inverted)
+                    // Wait, lines 54 setIsSaved(!isSaved).
+                    // So if it WAS saved, isSaved becomes false.
+                }
+            } catch (e) { }
+        }
+
+        // Improved Logic:
+        const newSavedState = !isSaved;
+        setIsSaved(newSavedState);
+
+        try {
+            if (newSavedState) {
+                await apiClient.createFavorite({
+                    target_type: 'venue',
+                    target_id: venue.id
+                });
+            } else {
+                // To unsave, we need the favorite ID.
+                // This is a limitation of the current row if it doesn't get the fav ID.
+                // We can fetch it via checkIsFavorited
+                const check = await apiClient.checkIsFavorited('venue', venue.id);
+                if (check.is_favorited && check.favorite_id) {
+                    await apiClient.deleteFavorite(check.favorite_id);
+                }
+            }
+        } catch (error) {
+            console.error('Favorite toggle failed', error);
+            // Revert state on error
+            setIsSaved(!newSavedState);
+        }
     };
 
     const handleRowClick = () => {
