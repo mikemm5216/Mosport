@@ -24,7 +24,7 @@ export const Dashboard = () => {
     const [sportFilter, setSportFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
-    const [mostBenefitsFilter, setMostBenefitsFilter] = useState(false);
+    const [sortBy, setSortBy] = useState('recommended');
 
     const currentRole: UserRole = (user?.role as UserRole) || UserRole.FAN;
 
@@ -163,12 +163,7 @@ export const Dashboard = () => {
             }
         }
 
-        // 3. Most Benefits Filter (Placeholder)
-        // Logic pending user definition.
-        if (mostBenefitsFilter) {
-            // Placeholder: currently acts as a pass-through until benefit logic is defined
-            // e.g., s.matchedVenues.some(v => v.venue.benefits.length > 5)
-        }
+
 
         return matchesSearch && matchesDate;
     });
@@ -199,7 +194,7 @@ export const Dashboard = () => {
                     onLocationChange={setLocationFilter}
                     dateRange={dateRange}
                     onDateChange={setDateRange}
-                    onMostBenefitsChange={setMostBenefitsFilter}
+                    onSortChange={setSortBy}
                 />
             )}
 
@@ -218,20 +213,50 @@ export const Dashboard = () => {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {filteredBySearch.length > 0 ? (
-                            filteredBySearch.map(signal => (
-                                <DecisionCard
-                                    key={signal.eventId}
-                                    signal={signal}
-                                    userRole={currentRole}
-                                />
-                            ))
-                        ) : (
-                            <div className="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-gray-800 border-dashed">
-                                <p className="font-bold">No matches found.</p>
-                                <p className="text-xs mt-1">Try adjusting your filters.</p>
-                            </div>
-                        )}
+                        {(() => {
+                            // Apply Sorting
+                            let displaySignals = [...filteredBySearch];
+
+                            if (sortBy === 'rating') {
+                                displaySignals.sort((a, b) => {
+                                    const maxRatingA = Math.max(...a.matchedVenues.map(m => m.venue.rating));
+                                    const maxRatingB = Math.max(...b.matchedVenues.map(m => m.venue.rating));
+                                    return maxRatingB - maxRatingA;
+                                });
+                            } else if (sortBy === 'benefits') {
+                                displaySignals.sort((a, b) => {
+                                    // Count tags + features (mock logic for features count)
+                                    const countA = Math.max(...a.matchedVenues.map(m => m.venue.tags.length));
+                                    const countB = Math.max(...b.matchedVenues.map(m => m.venue.tags.length));
+                                    return countB - countA;
+                                });
+                            } else if (sortBy === 'nearest') {
+                                displaySignals.sort((a, b) => {
+                                    // Parse distance string "1.2 km" -> 1.2
+                                    const getDist = (s: DecisionSignal) => {
+                                        const distStr = s.matchedVenues[0]?.venue.distance || '9999';
+                                        return parseFloat(distStr.replace(/[^0-9.]/g, ''));
+                                    };
+                                    return getDist(a) - getDist(b);
+                                });
+                            }
+                            // 'recommended' is default order
+
+                            return displaySignals.length > 0 ? (
+                                displaySignals.map(signal => (
+                                    <DecisionCard
+                                        key={signal.eventId}
+                                        signal={signal}
+                                        userRole={currentRole}
+                                    />
+                                ))
+                            ) : (
+                                <div className="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-gray-800 border-dashed">
+                                    <p className="font-bold">No matches found.</p>
+                                    <p className="text-xs mt-1">Try adjusting your filters.</p>
+                                </div>
+                            );
+                        })()}
                     </div>
                 )}
             </main>

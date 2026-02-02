@@ -24,7 +24,7 @@ interface SearchHeroProps {
     onLocationChange: (loc: string) => void;
     dateRange: DateRange;
     onDateChange: (range: DateRange) => void;
-    onMostBenefitsChange: (active: boolean) => void;
+    onSortChange: (sort: string) => void;
 }
 
 interface TrendingData {
@@ -39,13 +39,13 @@ interface TrendingData {
     }>;
 }
 
-export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRange, onDateChange, onMostBenefitsChange }: SearchHeroProps) => {
+export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRange, onDateChange, onSortChange }: SearchHeroProps) => {
     const [term, setTerm] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [trending, setTrending] = useState<TrendingData | null>(null);
     const [selectedSport, setSelectedSport] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
-    const [mostBenefits, setMostBenefits] = useState(false);
+    const [sortBy, setSortBy] = useState('recommended');
 
     const fromDateRef = useRef<HTMLInputElement>(null);
     const toDateRef = useRef<HTMLInputElement>(null);
@@ -98,10 +98,9 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
         return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    const toggleMostBenefits = () => {
-        const newState = !mostBenefits;
-        setMostBenefits(newState);
-        onMostBenefitsChange(newState);
+    const handleSortChange = (val: string) => {
+        setSortBy(val);
+        onSortChange(val);
     };
 
 
@@ -322,19 +321,34 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                         </div>
                     </div>
 
-                    {/* 5. Most Benefits Toggle */}
-                    <div className="flex-1 md:flex-[0.5] px-4 py-2.5 md:py-2 flex items-center justify-center md:border-l border-gray-700 bg-gray-900/30 md:bg-transparent rounded-b-xl md:rounded-none">
-                        <button
-                            onClick={toggleMostBenefits}
-                            className={`w-full md:w-auto px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 border ${mostBenefits
-                                ? 'bg-red-500/90 text-white border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-                                : 'bg-gray-800 text-gray-400 border-gray-700 hover:border-gray-500 hover:text-gray-200'
-                                }`}
-                        >
-                            <span>🔥</span>
-                            <span className="md:hidden lg:inline">Most benefits</span>
-                            <span className="hidden md:inline lg:hidden">Benefits</span>
-                        </button>
+                    {/* 5. Sort By Dropdown (RemoteOK Style) */}
+                    <div className="flex-[0.8] px-4 py-2.5 md:py-2 md:border-l border-gray-700">
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5 md:mb-0">Sort By</label>
+                        <div className="flex items-center gap-2 w-full h-6 md:h-auto">
+                            <span className="text-gray-400 text-sm">📌</span>
+                            <Select
+                                value={sortBy}
+                                onValueChange={handleSortChange}
+                            >
+                                <SelectTrigger className="w-full bg-transparent border-none text-white font-medium focus:ring-0 focus:ring-offset-0 px-0 h-auto py-0 shadow-none hover:bg-transparent data-[placeholder]:text-white text-sm md:text-base">
+                                    <SelectValue placeholder="Sort by" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-[#1a1a1a] border-blue-500/20 text-gray-300 shadow-lg shadow-blue-900/20 rounded-md min-w-[180px]">
+                                    <SelectItem value="recommended" className="focus:bg-blue-900/30 focus:text-white cursor-pointer py-2">
+                                        🔥 Recommended
+                                    </SelectItem>
+                                    <SelectItem value="rating" className="focus:bg-blue-900/30 focus:text-white cursor-pointer py-2">
+                                        ⭐ Highest Rated
+                                    </SelectItem>
+                                    <SelectItem value="benefits" className="focus:bg-blue-900/30 focus:text-white cursor-pointer py-2">
+                                        🎁 Most Benefits
+                                    </SelectItem>
+                                    <SelectItem value="nearest" className="focus:bg-blue-900/30 focus:text-white cursor-pointer py-2">
+                                        📍 Nearest
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
                 </div>
