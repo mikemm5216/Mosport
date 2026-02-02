@@ -165,9 +165,10 @@ export const Dashboard = () => {
 
         // 3. Most Benefits Filter (Placeholder)
         // Logic pending user definition.
-        // if (mostBenefitsFilter) {
-        //     // e.g., s.matchedVenues.some(v => v.venue.benefits.length > 5)
-        // }
+        if (mostBenefitsFilter) {
+            // Placeholder: currently acts as a pass-through until benefit logic is defined
+            // e.g., s.matchedVenues.some(v => v.venue.benefits.length > 5)
+        }
 
         return matchesSearch && matchesDate;
     });
