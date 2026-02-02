@@ -93,7 +93,7 @@ export const VenueListRow: React.FC<VenueListRowProps> = ({ venue }) => {
                 // To unsave, we need the favorite ID.
                 // This is a limitation of the current row if it doesn't get the fav ID.
                 // We can fetch it via checkIsFavorited
-                const check = await apiClient.checkIsFavorited('venue', venue.id);
+                const check = await apiClient.checkIsFavorited('venue', venue.id) as { is_favorited: boolean; favorite_id?: string };
                 if (check.is_favorited && check.favorite_id) {
                     await apiClient.deleteFavorite(check.favorite_id);
                 }
