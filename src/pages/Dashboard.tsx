@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { APP_VERSION } from '../constants';
 import { DecisionSignal, UserRole } from '../types';
+import { normalizeSearchTerm } from '../lib/search/synonyms';
 import { getDecisionSignals } from '../services/moEngine';
 import { Navbar } from '../components/Navbar';
 import { SearchHero } from '../components/SearchHero';
@@ -63,12 +64,41 @@ export const Dashboard = () => {
         navigate('/');
     };
 
+    // Helper: Basic Levenshtein Distance for fuzzy match
+    const levenshtein = (a: string, b: string): number => {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+
+        const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+
+        for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+        for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+        for (let j = 1; j <= b.length; j++) {
+            for (let i = 1; i <= a.length; i++) {
+                const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[j][i] = Math.min(
+                    matrix[j][i - 1] + 1,
+                    matrix[j - 1][i] + 1,
+                    matrix[j - 1][i - 1] + indicator
+                );
+            }
+        }
+        return matrix[b.length][a.length];
+    };
+
     const filteredBySearch = signals.filter(s => {
         // 1. Fuzzy Text Search
-        const lowerTerm = searchTerm.toLowerCase().trim();
+        const rawTerm = searchTerm.toLowerCase().trim();
+        // Layer 1: Synonym Engine
+        // Normalize the search term (e.g., "Man U" -> "Manchester United")
+        // We use this normalized term for checking includes/keywords
+        const normalizedTerm = normalizeSearchTerm(rawTerm).toLowerCase();
+
+        // We still keep rawTerm for fuzzy matching to handle typos that might not be in synonyms
         let matchesSearch = true;
 
-        if (lowerTerm) {
+        if (rawTerm) {
             // Special case for "live events" tag
             if (lowerTerm === 'live events' || lowerTerm === 'live') {
                 // If searching for live events, only show hot/live events
@@ -89,56 +119,16 @@ export const Dashboard = () => {
                 ${venueText.toLowerCase()}
             `;
 
-            // Synonym handling
-            const synonyms: Record<string, string> = {
-                'soccer': 'football',
-                'football': 'soccer',
-                'basketbal': 'basketball', // Common typo
-                'b-ball': 'basketball'
-            };
-
-            const synonym = synonyms[lowerTerm];
-
-            // Basic Levenshtein Distance for fuzzy match
-            const levenshtein = (a: string, b: string): number => {
-                if (a.length === 0) return b.length;
-                if (b.length === 0) return a.length;
-
-                const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
-
-                for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
-                for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
-
-                for (let j = 1; j <= b.length; j++) {
-                    for (let i = 1; i <= a.length; i++) {
-                        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-                        matrix[j][i] = Math.min(
-                            matrix[j][i - 1] + 1,
-                            matrix[j - 1][i] + 1,
-                            matrix[j - 1][i - 1] + indicator
-                        );
-                    }
-                }
-                return matrix[b.length][a.length];
-            };
-
-            // Check if any searchable field fuzzy matches the term (allow 2 typos for words > 4 chars)
-            // Or strict includes
-            const fields = [
-                s.event.title.toLowerCase(),
-                s.event.league.toLowerCase(),
-                s.event.sport.toLowerCase(),
-                s.event.teamA.toLowerCase(),
-                s.event.teamB.toLowerCase()
-            ];
-
-            matchesSearch = searchableText.includes(lowerTerm) ||
-                (!!synonym && searchableText.includes(synonym)) ||
+            // Start with normalized checks (exact substring match of normalized term)
+            matchesSearch = searchableText.includes(normalizedTerm) ||
+                searchableText.includes(rawTerm) ||
+                fields.some(f => f.includes(normalizedTerm)) ||
+                // Then do fuzzy on the raw term
                 fields.some(f => {
                     // Split field into words for better fuzzy matching against single-word query
                     return f.split(' ').some((word: string) => {
-                        if (Math.abs(word.length - lowerTerm.length) > 2) return false;
-                        return levenshtein(word, lowerTerm) <= 2;
+                        if (Math.abs(word.length - rawTerm.length) > 2) return false;
+                        return levenshtein(word, rawTerm) <= 2;
                     });
                 });
         }
@@ -255,20 +245,86 @@ export const Dashboard = () => {
                             }
                             // 'recommended' is default order
 
-                            return displaySignals.length > 0 ? (
-                                displaySignals.map(signal => (
+                            // Layer 3: Category Fallback Logic
+                            const showVenueFallback = displaySignals.length === 0 && searchTerm;
+
+                            // Find venues that match the search term (even if no event exists)
+                            // This is a "Safety Net" to prevent empty results for searched categories
+                            const fallbackVenues = showVenueFallback ?
+                                // We can't access 'all venues' easily here since we only have 'signals' which contain matched venues.
+                                // However, we can scan all venues from the signals list (deduplicated) or fetch them.
+                                // Ideally, we should filter from a global venue list.
+                                // For now, let's scan all signals' unique venues as a proxy, or import MOCK_VENUES if needed.
+                                // Let's try to filter based on available unique venues in 'signals' (mock or api data)
+                                Array.from(new Map(signals.flatMap(s => s.matchedVenues).map(mv => [mv.venue.id, mv.venue])).values())
+                                    .filter(venue => {
+                                        const term = normalizeSearchTerm(searchTerm).toLowerCase();
+                                        return (
+                                            venue.tags.some(t => t.label.toLowerCase().includes(term)) ||
+                                            venue.name.toLowerCase().includes(term) ||
+                                            // Also check simplified features if available
+                                            (venue.features && JSON.stringify(venue.features).toLowerCase().includes(term))
+                                        );
+                                    }).slice(0, 3)
+                                : [];
+
+                            if (displaySignals.length > 0) {
+                                return displaySignals.map(signal => (
                                     <DecisionCard
                                         key={signal.eventId}
                                         signal={signal}
                                         userRole={currentRole}
                                     />
-                                ))
-                            ) : (
-                                <div className="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-gray-800 border-dashed">
-                                    <p className="font-bold">No matches found.</p>
-                                    <p className="text-xs mt-1">Try adjusting your filters.</p>
-                                </div>
-                            );
+                                ));
+                            } else if (showVenueFallback && fallbackVenues.length > 0) {
+                                // Layer 3 UI: Fallback to Venues
+                                return (
+                                    <div className="space-y-6">
+                                        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-6">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="p-2 bg-yellow-500/20 rounded-full text-yellow-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /></svg>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-white">No scheduled matches found for "{searchTerm}"</h3>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-gray-400 ml-11 mb-4">
+                                                However, these venues are known for showing <strong>{normalizeSearchTerm(searchTerm)}</strong>.
+                                                We recommend checking them out!
+                                            </p>
+
+                                            <div className="grid gap-3">
+                                                {fallbackVenues.map(venue => (
+                                                    <div key={venue.id} className="bg-mosport-card border border-gray-800 p-4 rounded-lg flex justify-between items-center hover:bg-gray-800 transition-colors cursor-pointer" onClick={() => window.open(venue.googleMapUrl, '_blank')}>
+                                                        <div className="flex items-center gap-3">
+                                                            <img src={venue.imageUrl} alt={venue.name} className="w-12 h-12 rounded-full object-cover border border-gray-700" />
+                                                            <div>
+                                                                <h4 className="font-bold text-white">{venue.name}</h4>
+                                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                                    <span>{venue.location}</span>
+                                                                    <span>•</span>
+                                                                    <span className="text-yellow-500">★ {venue.rating}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button className="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded border border-gray-700">
+                                                            View
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            } else {
+                                return (
+                                    <div className="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-gray-800 border-dashed">
+                                        <p className="font-bold">No matches found.</p>
+                                        <p className="text-xs mt-1">Try adjusting your filters.</p>
+                                    </div>
+                                );
+                            }
                         })()}
                     </div>
                 )}

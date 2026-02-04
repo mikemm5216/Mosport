@@ -349,7 +349,8 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
 
                                                 {/* V6.5 Feature: Breakfast Indicator */}
                                                 {/* Logic: Show if venue opens early for NBA/NFL and breakfast is available */}
-                                                {match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nba &&
+                                                {(match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nba ||
+                                                    match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nfl) &&
                                                     match.venue.features?.broadcast_capabilities?.amenities?.breakfast_available && (
                                                         <div className="flex items-center gap-1 text-[10px] bg-amber-900/40 text-amber-200 px-1.5 py-0.5 rounded border border-amber-800/50">
                                                             <Coffee className="w-3 h-3" />

@@ -13,5 +13,8 @@ if [ $? -eq 0 ]; then
     echo "✅ Seed data inserted successfully"
 else
     echo "⚠️ Seed data insertion failed, but continuing..."
-    exit 0  # Don't fail the deployment if seed fails
 fi
+
+# Run Super Bowl Script
+echo "🏈 Adding Super Bowl Event..."
+python3 "$SCRIPT_DIR/add_super_bowl.py"

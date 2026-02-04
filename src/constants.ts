@@ -139,10 +139,10 @@ export const MOCK_VENUES: Venue[] = [
         ],
         features: {
             broadcast_capabilities: {
-                supported_leagues: ['nba'],
+                supported_leagues: ['nba', 'nfl'],
                 special_hours: {
                     open_early_for_nba: true,
-                    open_early_for_nfl: false,
+                    open_early_for_nfl: true,
                     open_late_for_ucl: false
                 },
                 amenities: {
@@ -392,11 +392,11 @@ export const MOCK_EVENTS = [
         isHot: true
     },
     {
-        id: 'e6',
-        title: 'Chiefs vs 49ers',
+        id: 'e_superbowl_lix',
+        title: 'Super Bowl LIX: Chiefs vs 49ers',
         league: 'NFL',
         sport: 'American Football',
-        startTime: new Date('2026-02-09T06:30:00'),
+        startTime: new Date('2026-02-09T06:30:00'), // Feb 9 Morning (Asia) = Feb 8 Evening (US)
         teamA: 'Kansas City Chiefs',
         teamB: 'San Francisco 49ers',
         isHot: true
