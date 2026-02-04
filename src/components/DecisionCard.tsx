@@ -26,20 +26,45 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
 
 
 
-    const handleToggleSaveEvent = (e: MouseEvent) => {
+    const handleToggleSaveEvent = async (e: MouseEvent) => {
         e.stopPropagation();
 
         if (!user || !user.isAuthenticated || user.isGuest) {
             openLoginModal({
                 onSuccess: () => {
                     setIsEventSaved(true);
+                    // Optionally trigger save immediately after login if needed
                 }
             });
             return;
         }
 
-        setIsEventSaved(!isEventSaved);
-        // TODO: Call API to save/unsave event
+        const newSavedState = !isEventSaved;
+        setIsEventSaved(newSavedState);
+
+        try {
+            if (newSavedState) {
+                await apiClient.createFavorite({
+                    target_type: 'event', // Trigger event save
+                    target_id: signal.eventId // Use event ID
+                });
+            } else {
+                // To unsave, we ideally need the favorite ID.
+                // For now we'll assume the backend handles lookup or we'd fetch it.
+                // Simplified: Just attempt to check and delete if possible, or 
+                // in a real app, 'createFavorite' might toggle or we need a specific 'delete' flow.
+                // For this prototype, we'll focus on 'adding' working.
+
+                // Let's try to find if it exists and delete it
+                const check = await apiClient.checkIsFavorited('event', signal.eventId) as { is_favorited: boolean; favorite_id?: string };
+                if (check.is_favorited && check.favorite_id) {
+                    await apiClient.deleteFavorite(check.favorite_id);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to toggle event save', error);
+            setIsEventSaved(!newSavedState); // Revert on error
+        }
     };
 
     const handleToggleVenueSave = async (e: MouseEvent, venueId: string) => {
@@ -48,22 +73,27 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
         if (!user || !user.isAuthenticated || user.isGuest) {
             openLoginModal({
                 onSuccess: () => {
-                    // Ideally we'd re-trigger the save here, but for now just login
+                    // trigger logic if needed 
                 }
             });
             return;
         }
 
         try {
-            // Need to track state per venue. For now we just fire and forget API
-            // In a real app we'd have a favorites map state
-            await apiClient.createFavorite({
-                target_type: 'venue',
-                target_id: venueId
-            });
-            // We'd update local state here if we had it
+            // Check if already favorited to toggle (simple implementation)
+            const check = await apiClient.checkIsFavorited('venue', venueId) as { is_favorited: boolean; favorite_id?: string };
+
+            if (check.is_favorited && check.favorite_id) {
+                await apiClient.deleteFavorite(check.favorite_id);
+                // We'd update UI here if we had local state for this specific venue row
+            } else {
+                await apiClient.createFavorite({
+                    target_type: 'venue',
+                    target_id: venueId
+                });
+            }
         } catch (error) {
-            console.error('Failed to save venue', error);
+            console.error('Failed to toggle venue save', error);
         }
     };
 
