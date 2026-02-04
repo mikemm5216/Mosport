@@ -42,11 +42,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
         const newSavedState = !isEventSaved;
         setIsEventSaved(newSavedState);
 
-        // Mock mode for temp-user
-        if (user.id === 'temp-user') {
-            console.log('Mock mode: Event favorite toggled', newSavedState);
-            return;
-        }
+
 
         try {
             if (newSavedState) {
@@ -87,11 +83,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
             [venueId]: newSavedState
         }));
 
-        // Mock mode for temp-user
-        if (user.id === 'temp-user') {
-            console.log('Mock mode: Venue favorite toggled', venueId, newSavedState);
-            return;
-        }
+
 
         try {
             if (newSavedState) {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { useAuthStore } from '../stores/useAuthStore';
+import { apiClient } from '../services/api';
 
 
 export const AuthCallback = () => {
@@ -43,42 +45,31 @@ export const AuthCallback = () => {
             }
 
             try {
-                // TODO: Replace with real backend authentication later
-                // For now, use client-side mock authentication
-                console.log('OAuth callback received:', { provider, role, code });
+                // Call backend for OAuth exchange
+                const response = await apiClient.handleOAuthCallback({
+                    code,
+                    provider,
+                    role
+                }) as any;
 
-                // 🛡️ SECURITY: Strict Admin Lock
-                let userEmail = 'user@example.com';
-                let userName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`;
-
-                // If attempting to login as ADMIN, we strictly enforce/simulate the specific email
-                if (role === 'ADMIN') {
-                    // 🚨 CRITICAL: Mocking strictly requires "Proof"
-                    // In real life, Google/FB gives us this verified email.
-                    // Here, we force the user to type it to "Simulate" they are that person.
-                    const mockInputEmail = prompt("🔐 SECURITY CHECK\n\nSimulating Google Verification.\nPlease enter your authorized Admin email:");
-
-                    if (mockInputEmail !== 'mikemm5216@gmail.com') {
-                        const failedAttempt = mockInputEmail || 'No input';
-                        throw new Error(`⛔ ACCESS DENIED: '${failedAttempt}' is not authorized.`);
-                    }
-                    userEmail = mockInputEmail;
-                    userName = 'Mike MM';
-                }
+                const { user, access_token } = response;
 
                 // Create user session
                 setUser({
-                    id: `${provider}_${Date.now()}`,
-                    role: role as any,
+                    id: user.id,
+                    role: user.role,
                     isAuthenticated: true,
-                    isGuest: false,
-                    provider: provider,
+                    isGuest: user.is_guest,
+                    provider: user.oauth_provider,
                     profile: {
-                        name: userName,
-                        email: userEmail,
-                        picture: `https://api.dicebear.com/7.x/avatars/svg?seed=${Date.now()}`
+                        name: user.name,
+                        email: user.email,
+                        picture: user.picture_url
                     }
                 });
+
+                // Store token (if you have a token store, otherwise just in memory/cookie)
+                localStorage.setItem('auth_token', access_token);
 
                 setStatus('success');
 

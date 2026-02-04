@@ -2,6 +2,10 @@ import { VenueListRow } from '../components/venue/VenueListRow';
 import { MajorEventBanner } from '../components/MajorEventBanner';
 import { AuthModal } from '../components/AuthModal';
 import { useLoginModal } from '../stores/useLoginModal';
+/**
+ * @deprecated This demo component uses hardcoded data and should be removed.
+ * Use Dashboard.tsx with real DecisionCard components instead.
+ */
 import { useAuthStore } from '../stores/useAuthStore';
 import { UserRole } from '../types';
 import { Trophy } from 'lucide-react';
