@@ -26,6 +26,7 @@ interface VenueListRowProps {
         is_live: boolean;
         verified: boolean;
         is_saved_by_user?: boolean;
+        fan_base?: string;
         // The venue now holds active match data if available
         matchData?: MatchScoop | null;
     };
