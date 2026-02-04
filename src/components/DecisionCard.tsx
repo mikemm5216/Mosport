@@ -25,6 +25,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const { openLoginModal } = useLoginModal();
 
 
+    const [favoriteVenues, setFavoriteVenues] = React.useState<Record<string, boolean>>({});
 
     const handleToggleSaveEvent = async (e: MouseEvent) => {
         e.stopPropagation();
@@ -33,7 +34,6 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
             openLoginModal({
                 onSuccess: () => {
                     setIsEventSaved(true);
-                    // Optionally trigger save immediately after login if needed
                 }
             });
             return;
@@ -42,6 +42,12 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
         const newSavedState = !isEventSaved;
         setIsEventSaved(newSavedState);
 
+        // Mock mode for temp-user
+        if (user.id === 'temp-user') {
+            console.log('Mock mode: Event favorite toggled', newSavedState);
+            return;
+        }
+
         try {
             if (newSavedState) {
                 await apiClient.createFavorite({
@@ -49,13 +55,6 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                     target_id: signal.eventId // Use event ID
                 });
             } else {
-                // To unsave, we ideally need the favorite ID.
-                // For now we'll assume the backend handles lookup or we'd fetch it.
-                // Simplified: Just attempt to check and delete if possible, or 
-                // in a real app, 'createFavorite' might toggle or we need a specific 'delete' flow.
-                // For this prototype, we'll focus on 'adding' working.
-
-                // Let's try to find if it exists and delete it
                 const check = await apiClient.checkIsFavorited('event', signal.eventId) as { is_favorited: boolean; favorite_id?: string };
                 if (check.is_favorited && check.favorite_id) {
                     await apiClient.deleteFavorite(check.favorite_id);
@@ -79,21 +78,40 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
             return;
         }
 
-        try {
-            // Check if already favorited to toggle (simple implementation)
-            const check = await apiClient.checkIsFavorited('venue', venueId) as { is_favorited: boolean; favorite_id?: string };
+        const isCurrentlySaved = !!favoriteVenues[venueId];
+        const newSavedState = !isCurrentlySaved;
 
-            if (check.is_favorited && check.favorite_id) {
-                await apiClient.deleteFavorite(check.favorite_id);
-                // We'd update UI here if we had local state for this specific venue row
-            } else {
+        // Optimistic update
+        setFavoriteVenues(prev => ({
+            ...prev,
+            [venueId]: newSavedState
+        }));
+
+        // Mock mode for temp-user
+        if (user.id === 'temp-user') {
+            console.log('Mock mode: Venue favorite toggled', venueId, newSavedState);
+            return;
+        }
+
+        try {
+            if (newSavedState) {
                 await apiClient.createFavorite({
                     target_type: 'venue',
                     target_id: venueId
                 });
+            } else {
+                const check = await apiClient.checkIsFavorited('venue', venueId) as { is_favorited: boolean; favorite_id?: string };
+                if (check.is_favorited && check.favorite_id) {
+                    await apiClient.deleteFavorite(check.favorite_id);
+                }
             }
         } catch (error) {
             console.error('Failed to toggle venue save', error);
+            // Revert
+            setFavoriteVenues(prev => ({
+                ...prev,
+                [venueId]: isCurrentlySaved
+            }));
         }
     };
 
@@ -305,110 +323,115 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                     {isVenueRole && <span className="text-[10px] font-bold text-mosport-venue">VENUE MODE: SHOWING RANKING</span>}
                 </div>
                 <div className="divide-y divide-gray-800">
-                    {signal.matchedVenues.slice(0, 6).map((match) => (
-                        <div key={match.venue.id} className="p-4 flex gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
-                            {/* Updated to support 7:4 aspect ratio */}
-                            <div className="relative w-28 sm:w-36 flex-shrink-0">
-                                <VenueImage
-                                    venue={match.venue}
-                                    className="w-full shadow-lg"
-                                />
-                                <button
-                                    onClick={(e) => handleToggleVenueSave(e, match.venue.id)}
-                                    className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-black/60 transition-colors z-20 group/heart"
-                                >
-                                    <Heart
-                                        size={14}
-                                        className="text-gray-300 group-hover/heart:text-red-500 group-hover/heart:fill-red-500 transition-colors"
+                    {signal.matchedVenues.slice(0, 6).map((match) => {
+                        const isVenueSaved = !!favoriteVenues[match.venue.id];
+                        return (
+                            <div key={match.venue.id} className="p-4 flex gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
+                                {/* Updated to support 7:4 aspect ratio */}
+                                <div className="relative w-28 sm:w-36 flex-shrink-0">
+                                    <VenueImage
+                                        venue={match.venue}
+                                        className="w-full shadow-lg"
                                     />
-                                </button>
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h4 className="font-bold text-white group-hover:text-blue-400 transition-colors">
-                                            {match.venue.name}
-                                            <span className="ml-2 text-xs font-normal text-gray-500">@{match.venue.location}</span>
-                                        </h4>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            {match.verificationStatus === 'VERIFIED' && (
-                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">
-                                                    <span>🤖</span> AI CONFIRMED
-                                                </span>
-                                            )}
-                                            {match.verificationStatus === 'ON_REQUEST' && (
-                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded border border-yellow-400/20">
-                                                    <span>⏳</span> PENDING CHECK
-                                                </span>
-                                            )}
+                                    <button
+                                        onClick={(e) => handleToggleVenueSave(e, match.venue.id)}
+                                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-black/60 transition-colors z-20 group/heart"
+                                    >
+                                        <Heart
+                                            size={14}
+                                            className={`transition-colors ${isVenueSaved
+                                                ? "fill-red-500 text-red-500"
+                                                : "text-gray-300 group-hover/heart:text-red-500 group-hover/heart:fill-red-500"
+                                                }`}
+                                        />
+                                    </button>
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-bold text-white group-hover:text-blue-400 transition-colors">
+                                                {match.venue.name}
+                                                <span className="ml-2 text-xs font-normal text-gray-500">@{match.venue.location}</span>
+                                            </h4>
                                             <div className="flex items-center gap-2 mt-1">
-                                                <div className="flex items-center text-xs text-gray-400">
-                                                    <MapPin className="w-3 h-3 mr-1" />
-                                                    {match.venue.location} • {match.venue.distance}
+                                                {match.verificationStatus === 'VERIFIED' && (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                                                        <span>🤖</span> AI CONFIRMED
+                                                    </span>
+                                                )}
+                                                {match.verificationStatus === 'ON_REQUEST' && (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-1.5 py-0.5 rounded border border-yellow-400/20">
+                                                        <span>⏳</span> PENDING CHECK
+                                                    </span>
+                                                )}
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <div className="flex items-center text-xs text-gray-400">
+                                                        <MapPin className="w-3 h-3 mr-1" />
+                                                        {match.venue.location} • {match.venue.distance}
+                                                    </div>
+
+                                                    {/* V6.5 Feature: Breakfast Indicator */}
+                                                    {/* Logic: Show if venue opens early for NBA/NFL and breakfast is available */}
+                                                    {(match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nba ||
+                                                        match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nfl) &&
+                                                        match.venue.features?.broadcast_capabilities?.amenities?.breakfast_available && (
+                                                            <div className="flex items-center gap-1 text-[10px] bg-amber-900/40 text-amber-200 px-1.5 py-0.5 rounded border border-amber-800/50">
+                                                                <Coffee className="w-3 h-3" />
+                                                                <span>Breakfast</span>
+                                                            </div>
+                                                        )}
                                                 </div>
+                                                <div className="flex gap-1 ml-2 flex-wrap">
+                                                    {match.venue.tags.map(tag => {
+                                                        let colorClass = "border-gray-700 text-gray-400";
+                                                        if (tag.type === 'BROADCAST') colorClass = "border-pink-500/30 text-pink-400 bg-pink-500/10";
+                                                        if (tag.type === 'VIBE') colorClass = "border-cyan-500/30 text-cyan-400 bg-cyan-500/10";
+                                                        if (tag.type === 'SURVIVAL') colorClass = "border-green-500/30 text-green-400 bg-green-500/10";
 
-                                                {/* V6.5 Feature: Breakfast Indicator */}
-                                                {/* Logic: Show if venue opens early for NBA/NFL and breakfast is available */}
-                                                {(match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nba ||
-                                                    match.venue.features?.broadcast_capabilities?.special_hours?.open_early_for_nfl) &&
-                                                    match.venue.features?.broadcast_capabilities?.amenities?.breakfast_available && (
-                                                        <div className="flex items-center gap-1 text-[10px] bg-amber-900/40 text-amber-200 px-1.5 py-0.5 rounded border border-amber-800/50">
-                                                            <Coffee className="w-3 h-3" />
-                                                            <span>Breakfast</span>
-                                                        </div>
-                                                    )}
-                                            </div>
-                                            <div className="flex gap-1 ml-2 flex-wrap">
-                                                {match.venue.tags.map(tag => {
-                                                    let colorClass = "border-gray-700 text-gray-400";
-                                                    if (tag.type === 'BROADCAST') colorClass = "border-pink-500/30 text-pink-400 bg-pink-500/10";
-                                                    if (tag.type === 'VIBE') colorClass = "border-cyan-500/30 text-cyan-400 bg-cyan-500/10";
-                                                    if (tag.type === 'SURVIVAL') colorClass = "border-green-500/30 text-green-400 bg-green-500/10";
-
-                                                    return (
-                                                        <span key={tag.id} className={`text-[9px] px-1.5 rounded border ${colorClass} flex items-center gap-1`}>
-                                                            {tag.label}
-                                                            {tag.confidence > 0.9 && <span className="text-[6px] opacity-70">★</span>}
-                                                        </span>
-                                                    );
-                                                })}
+                                                        return (
+                                                            <span key={tag.id} className={`text-[9px] px-1.5 rounded border ${colorClass} flex items-center gap-1`}>
+                                                                {tag.label}
+                                                                {tag.confidence > 0.9 && <span className="text-[6px] opacity-70">★</span>}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="flex items-center justify-end gap-1 text-yellow-500 text-xs font-bold">
-                                            <span>★</span><span>{match.venue.rating.toFixed(1)}</span>
-                                        </div>
-                                        {isVenueRole ? (
-                                            <div className="mt-2 text-mosport-venue font-mono text-xs">
-                                                Prob: {(match.matchProbability * 100).toFixed(0)}%
+                                        <div className="text-right">
+                                            <div className="flex items-center justify-end gap-1 text-yellow-500 text-xs font-bold">
+                                                <span>★</span><span>{match.venue.rating.toFixed(1)}</span>
                                             </div>
-                                        ) : (
-                                            <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => {
-                                                e.stopPropagation();
-                                                // Open Google Maps directly without login
-                                                const { googleMapUrl, name, location, latitude, longitude } = match.venue;
+                                            {isVenueRole ? (
+                                                <div className="mt-2 text-mosport-venue font-mono text-xs">
+                                                    Prob: {(match.matchProbability * 100).toFixed(0)}%
+                                                </div>
+                                            ) : (
+                                                <ButtonComp variant="primary" className="mt-2 text-xs py-1 px-3 h-8" onClick={(e: any) => {
+                                                    e.stopPropagation();
+                                                    // Open Google Maps directly without login
+                                                    const { googleMapUrl, name, location, latitude, longitude } = match.venue;
 
-                                                if (googleMapUrl) {
-                                                    window.open(googleMapUrl, '_blank');
-                                                } else if (latitude && longitude) {
-                                                    // Use coordinates for exact pin
-                                                    const query = `${latitude},${longitude}`;
-                                                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
-                                                } else {
-                                                    // Fallback to name search
-                                                    const query = encodeURIComponent(`${name} ${location}`);
-                                                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
-                                                }
-                                            }}>
-                                                Book Table
-                                            </ButtonComp>
-                                        )}
+                                                    if (googleMapUrl) {
+                                                        window.open(googleMapUrl, '_blank');
+                                                    } else if (latitude && longitude) {
+                                                        // Use coordinates for exact pin
+                                                        const query = `${latitude},${longitude}`;
+                                                        window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                                                    } else {
+                                                        // Fallback to name search
+                                                        const query = encodeURIComponent(`${name} ${location}`);
+                                                        window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                                                    }
+                                                }}>
+                                                    Book Table
+                                                </ButtonComp>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </div>
         </div>
