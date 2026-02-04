@@ -305,17 +305,15 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
                                         </SelectGroup>
                                     )}
 
-                                    {/* Group by Country */}
-                                    {Object.entries(groupedCities).map(([country, citiesList]) => (
-                                        <SelectGroup key={country}>
-                                            <SelectLabel className="text-gray-500 text-xs px-2 py-1">{citiesList[0].flag_emoji} {country}</SelectLabel>
-                                            {citiesList.filter(c => !c.is_nearby).map(city => (
-                                                <SelectItem key={city.name} value={city.name} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
-                                                    {city.name} {city.distance_km && `(${city.distance_km}km)`}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    ))}
+                                    {/* All Cities (Flat List) */}
+                                    <SelectGroup>
+                                        <SelectLabel className="text-gray-500 text-xs px-2 py-1">🌎 All Locations</SelectLabel>
+                                        {cities.filter(c => !c.is_nearby).map(city => (
+                                            <SelectItem key={city.name} value={city.name} className="focus:bg-blue-900/30 focus:text-white cursor-pointer">
+                                                {city.flag_emoji} {city.name} {city.distance_km && `(${city.distance_km}km)`}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
                                 </SelectContent>
                             </Select>
                         </div>

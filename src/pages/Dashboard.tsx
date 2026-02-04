@@ -183,6 +183,21 @@ export const Dashboard = () => {
                 onHomeClick={handleHomeClick}
             />
 
+            {/* V6.2 WBC Campaign Banner - Re-positioned to Top */}
+            {currentRole === UserRole.FAN && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <MajorEventBanner
+                        eventName="WBC 2026: Taipei Pool"
+                        hypeText="Team Taiwan 🇹🇼 takes on the world! Catch every strike live at validated audio-enabled venues."
+                        ctaText="Find Official Parties"
+                        onCtaClick={() => {
+                            setSearchTerm('WBC');
+                            setSportFilter('Baseball');
+                        }}
+                    />
+                </div>
+            )}
+
             {currentRole === UserRole.FAN && (
                 <SearchHero
                     onSearch={setSearchTerm}
@@ -196,18 +211,7 @@ export const Dashboard = () => {
 
             <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8 safe-bottom">
 
-                {/* V6.2 WBC Campaign Banner */}
-                {currentRole === UserRole.FAN && (
-                    <MajorEventBanner
-                        eventName="WBC 2026: Taipei Pool"
-                        hypeText="Team Taiwan 🇹🇼 takes on the world! Catch every strike live at validated audio-enabled venues."
-                        ctaText="Find Official Parties"
-                        onCtaClick={() => {
-                            setSearchTerm('WBC');
-                            setSportFilter('Baseball');
-                        }}
-                    />
-                )}
+
 
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2 tracking-tight">

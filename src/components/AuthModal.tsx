@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { UserRole } from '../types';
 import { generateOAuthUrl } from '../config/oauth';
 import { useAuthStore } from '../stores/useAuthStore';
-import { User, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
+import { User, ShieldCheck, Lock, ArrowRight, X } from 'lucide-react';
+
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -127,6 +128,14 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 w-full max-w-[400px] bg-neutral-900 border rounded-xl shadow-2xl overflow-hidden transition-all duration-300
                 ${activeTab === 'fan' ? 'border-blue-500/30 shadow-blue-500/20' : activeTab === 'admin' ? 'border-purple-500/30 shadow-purple-500/20' : 'border-red-500/30 shadow-red-500/20'}
             `}>
+
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-2 right-2 p-2 text-gray-500 hover:text-white hover:bg-white/10 rounded-full z-10 transition-colors"
+                >
+                    <X size={20} />
+                </button>
 
                 {/* === 1. TOP TOGGLE (The Identity Switcher) === */}
                 <div className="flex border-b border-white/10">
