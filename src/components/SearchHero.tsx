@@ -140,14 +140,7 @@ export const SearchHero = ({ onSearch, onSportChange, onLocationChange, dateRang
         return 0;
     });
 
-    // Group cities by country
-    const groupedCities = cities.reduce((acc, city) => {
-        if (!acc[city.country]) {
-            acc[city.country] = [];
-        }
-        acc[city.country].push(city);
-        return acc;
-    }, {} as Record<string, typeof cities>);
+
 
     const nearbyCities = cities.filter(c => c.is_nearby);
 
