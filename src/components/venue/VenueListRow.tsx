@@ -43,7 +43,7 @@ export const VenueListRow: React.FC<VenueListRowProps> = ({ venue }) => {
         e.stopPropagation();
         e.preventDefault();
 
-        if (!user || !user.isAuthenticated) {
+        if (!user || !user.isAuthenticated || user.isGuest) {
             // STRATEGY: Lazy Login - Open the modal
             openLoginModal({
                 onSuccess: () => {

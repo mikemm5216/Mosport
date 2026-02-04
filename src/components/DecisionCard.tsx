@@ -29,7 +29,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const handleToggleSaveEvent = (e: MouseEvent) => {
         e.stopPropagation();
 
-        if (!user || !user.isAuthenticated) {
+        if (!user || !user.isAuthenticated || user.isGuest) {
             openLoginModal({
                 onSuccess: () => {
                     setIsEventSaved(true);
@@ -45,7 +45,7 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
     const handleToggleVenueSave = async (e: MouseEvent, venueId: string) => {
         e.stopPropagation();
 
-        if (!user || !user.isAuthenticated) {
+        if (!user || !user.isAuthenticated || user.isGuest) {
             openLoginModal({
                 onSuccess: () => {
                     // Ideally we'd re-trigger the save here, but for now just login
