@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # AI / LLM
     OPENAI_API_KEY: Union[str, None] = None
     
+    # Sports Data
+    API_FOOTBALL_KEY: Union[str, None] = None
+    
     # Scheduler Control (Constitutional Compliance: 1.4)
     ENABLE_SCHEDULER: bool = True  # Set to False during development/testing
     SCHEDULER_TYPE: str = "apscheduler"  # Options: 'apscheduler', 'celery'

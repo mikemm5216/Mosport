@@ -42,6 +42,10 @@ class VenueBase(BaseModel):
     vibes: list = []
     social_count: int = 0
 
+    # V6.2 WBC Data
+    event_tags: List[str] = []
+    fan_base: Optional[str] = None
+
     model_config = ConfigDict(from_attributes=True)
 
 # Event Schemas

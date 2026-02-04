@@ -50,6 +50,10 @@ class Venue(Base):
     features = Column(JSONB, default={})
     vibes = Column(JSONB, default=[])
     social_count = Column(Integer, default=0)
+
+    # V6.2 WBC Sprint
+    event_tags = Column(ARRAY(String), default=[])  # e.g. ["#TeamTaiwan", "#AudioConfirmed"]
+    fan_base = Column(String)  # e.g. "Taiwan National Team"
     
     owner = relationship("User", back_populates="venues")
     # Using VennueEvent association

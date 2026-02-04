@@ -158,6 +158,12 @@ export const VenueListRow: React.FC<VenueListRowProps> = ({ venue }) => {
                                 VERIFIED
                             </Badge>
                         )}
+                        {/* V6.2 Fan Base Badge */}
+                        {venue.fan_base && (
+                            <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 border-yellow-500/50 text-yellow-400">
+                                {venue.fan_base}
+                            </Badge>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-2 text-xs text-gray-400">

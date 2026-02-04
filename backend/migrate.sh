@@ -139,6 +139,11 @@ CREATE INDEX IF NOT EXISTS venues_name_trgm_idx ON venues USING GIN (name gin_tr
 CREATE INDEX IF NOT EXISTS venues_tags_idx ON venues USING GIN (tags);
 CREATE INDEX IF NOT EXISTS venues_dtss_status_idx ON venues(current_dtss_status);
 
+-- V6.2 WBC Data
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS event_tags TEXT[] DEFAULT '{}';
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS fan_base VARCHAR(255);
+
+
 EOSQL
 
 if [ $? -eq 0 ]; then
