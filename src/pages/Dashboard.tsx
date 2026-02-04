@@ -100,7 +100,7 @@ export const Dashboard = () => {
 
         if (rawTerm) {
             // Special case for "live events" tag
-            if (lowerTerm === 'live events' || lowerTerm === 'live') {
+            if (rawTerm === 'live events' || rawTerm === 'live') {
                 // If searching for live events, only show hot/live events
                 if (!s.event.isHot) return false;
             }
@@ -118,6 +118,15 @@ export const Dashboard = () => {
                 ${s.event.teamB.toLowerCase()}
                 ${venueText.toLowerCase()}
             `;
+
+            // Define fields for specific field matching
+            const fields = [
+                s.event.title.toLowerCase(),
+                s.event.league.toLowerCase(),
+                s.event.sport.toLowerCase(),
+                s.event.teamA.toLowerCase(),
+                s.event.teamB.toLowerCase()
+            ];
 
             // Start with normalized checks (exact substring match of normalized term)
             matchesSearch = searchableText.includes(normalizedTerm) ||
