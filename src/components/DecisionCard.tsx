@@ -423,7 +423,8 @@ export const DecisionCard = ({ signal, userRole }: DecisionCardProps) => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        )
+                    })}`
                 </div>
             </div>
         </div>
