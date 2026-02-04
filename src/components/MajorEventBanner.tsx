@@ -44,7 +44,7 @@ export const MajorEventBanner: React.FC<MajorEventBannerProps> = ({
                 <div className="shrink-0 flex items-center gap-3">
                     <Button
                         onClick={onCtaClick}
-                        className="bg-white text-blue-900 hover:bg-gray-100 font-bold px-6 py-2 shadow-xl transition-all hover:scale-105"
+                        className="bg-blue-900 text-pink-400 hover:bg-blue-800 border border-pink-500/50 font-bold px-6 py-2 shadow-xl transition-all hover:scale-105"
                     >
                         {ctaText}
                     </Button>
