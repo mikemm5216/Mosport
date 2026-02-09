@@ -1,5 +1,0 @@
-1. **Checkout** - 拉取代碼
-2. **Setup Node.js** - 安裝 Node.js 20
-3. **Install** - `npm install` 安裝依賴
-4. **Build** - `npm run build` 構建生產版本
-5. **Deploy** - 部署到 GitHub Pages
